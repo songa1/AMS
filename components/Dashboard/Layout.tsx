@@ -30,11 +30,11 @@ function Layout({ children }: { children: React.ReactNode }) {
   ];
 
   return (
-    <div className="h-screen flex items-start">
-      <div className="w-64 h-full">
+    <div className="h-full flex items-start">
+      <div className="fixed w-64 h-screen">
         <Sidebar />
       </div>
-      <div className="p-5">{children}</div>
+      <div className="p-5 w-full ml-64">{children}</div>
     </div>
   );
 }
