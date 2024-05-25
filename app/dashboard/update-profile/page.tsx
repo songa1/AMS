@@ -1,13 +1,16 @@
-"use client"
+"use client";
 
-import React from 'react';
+import TopTitle from "@/components/Dashboard/TopTitle";
+import UpdateProfile from "@/components/Dashboard/UpdateProfile";
+import React from "react";
 
 function page() {
-    return (
-        <div>
-            <h1>Update Profile</h1>
-        </div>
-    );
+  return (
+    <div>
+      <TopTitle title="Update Profile" />
+      <UpdateProfile />
+    </div>
+  );
 }
 
 export default page;
