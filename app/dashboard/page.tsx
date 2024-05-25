@@ -1,11 +1,12 @@
 "use client";
 
+import TopTitle from "@/components/Dashboard/TopTitle";
 import React from "react";
 
 function page() {
   return (
     <div>
-      <h1>Dashboard</h1>
+      <TopTitle title="Dashboard" />
     </div>
   );
 }

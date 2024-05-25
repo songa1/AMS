@@ -34,7 +34,7 @@ function Layout({ children }: { children: React.ReactNode }) {
       <div className="w-64 h-full">
         <Sidebar />
       </div>
-      <div>{children}</div>
+      <div className="p-5">{children}</div>
     </div>
   );
 }
