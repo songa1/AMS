@@ -8,7 +8,7 @@ import { MdMenu } from "react-icons/md";
 
 const Sidebar: React.FC = () => {
   return (
-    <aside className="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0">
+    <aside className="top-0 left-0 z-40 w-64 h-full transition-transform -translate-x-full sm:translate-x-0">
       <div className="h-full px-3 py-4 overflow-y-auto bg-mainBlue">
         <div className="border-b-4 border-b-white flex justify-between items-center mb-2 py-3">
           <div className="border border-white bg-white p-2 rounded-lg text-mainBlue">
