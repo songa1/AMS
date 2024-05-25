@@ -1,12 +1,11 @@
 "use client";
 
-import Link from "next/link";
 import React from "react";
 
 function page() {
   return (
     <div>
-      <Link href="/dashboard">Login</Link>
+      <h1>Dashboard</h1>
     </div>
   );
 }
