@@ -42,6 +42,9 @@ const LoginPage = () => {
                 className="mt-1 p-2 w-full border rounded-md"
                 placeholder="Enter your password" />
             </div>
+            
+            <Link href="/forgotpassword" className='mt-70 pt-25 item-left text-yellow'>Forgot Password?</Link>
+            
             <div>
               <button
                 type="submit"

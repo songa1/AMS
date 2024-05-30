@@ -76,7 +76,7 @@ const Sidebar: React.FC = () => {
             >
               <BiLock />
               <span className="flex-1 ms-3 whitespace-nowrap">
-                Change Password
+                Reset Password
               </span>
             </Link>
           </li>
