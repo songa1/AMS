@@ -1,9 +1,7 @@
-
 // pages/change-password.tsx
 "use client";
 
-import React, {useState } from "react";
-
+import React, { useState } from "react";
 
 const ChangePasswordPage = () => {
   const [oldPassword] = useState("");
@@ -12,7 +10,6 @@ const ChangePasswordPage = () => {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,9 +45,11 @@ const ChangePasswordPage = () => {
   return (
     <div className="flex items-center justify-center  w-full p-10 ">
       <div className="p-6 bg-white rounded shadow-md">
-        <h1 className="mb-4 text-2xl font-bold">Change Password</h1>
         <form onSubmit={handleSubmit}>
-        <label htmlFor="old-password" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="old-password"
+            className="block text-sm font-medium text-gray-700"
+          >
             Old Password:
           </label>
           <input
@@ -61,7 +60,10 @@ const ChangePasswordPage = () => {
             required
             className="w-full p-2 mt-1 border rounded"
           />
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="password"
+            className="block text-sm font-medium text-gray-700"
+          >
             New Password:
           </label>
           <input
@@ -72,7 +74,10 @@ const ChangePasswordPage = () => {
             required
             className="w-full p-2 mt-1 border rounded"
           />
-          <label htmlFor="confirm-password" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="confirm-password"
+            className="block text-sm font-medium text-gray-700"
+          >
             Confirm Password:
           </label>
           <input

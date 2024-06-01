@@ -4,7 +4,6 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Avatar } from "primereact/avatar";
 import { Button } from "primereact/button";
-import { Fieldset } from "primereact/fieldset";
 import { Panel } from "primereact/panel";
 import React, { useState } from "react";
 
