@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import React from "react";
-import { BiChat, BiEdit, BiLock, BiLogOut } from "react-icons/bi";
+import { BiChat, BiEdit, BiLock, BiLogOut, BiUser } from "react-icons/bi";
 import { HiHome } from "react-icons/hi";
 import { ImProfile } from "react-icons/im";
 import { MdMenu } from "react-icons/md";
@@ -43,6 +43,17 @@ const Sidebar: React.FC = () => {
               <BiEdit />
               <span className="flex-1 ms-3 whitespace-nowrap">
                 Edit Profile
+              </span>
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="/dashboard/users"
+              className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+            >
+              <BiUser />
+              <span className="flex-1 ms-3 whitespace-nowrap">
+                Users
               </span>
             </Link>
           </li>
