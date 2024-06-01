@@ -2,9 +2,11 @@
 
 import Header from "@/components/Home/Header";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React from "react";
 
 const LoginPage = () => {
+  const router = useRouter();
   return (
     <div className="flex h-screen lg:inline ">
       <div className="w-full lg:w -1/1 flex flex-col  justify-center items-center">
@@ -58,6 +60,7 @@ const LoginPage = () => {
               <button
                 type="submit"
                 className="w-full bg-mainBlue text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
+                onClick={() => router.push("/dashboard")}
               >
                 Login
               </button>
