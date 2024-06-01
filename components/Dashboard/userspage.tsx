@@ -58,16 +58,16 @@ const UsersPage = () => {
           setValue={handleSearch}
           onSubmit={filteredUsers}
         />
-        <div>
+        <div className="flex gap-2 items-center">
           <button
-            className=" right-1 top-1 z-10 select-none rounded bg-mainBlue py-2 px-4 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md transition-all hover:shadow-md focus:shadow-lg active:shadow-md"
+            className=" right-1 top-1 select-none rounded bg-mainBlue py-2 px-4 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md transition-all hover:shadow-md focus:shadow-lg active:shadow-md"
             type="submit"
             onClick={() => setIsOpen(!isOpen)}
           >
             Upload Users
           </button>
           <button
-            className=" right-1 top-1 z-10 select-none rounded bg-mainBlue py-2 px-4 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md transition-all hover:shadow-md focus:shadow-lg active:shadow-md"
+            className=" right-1 top-1 select-none rounded bg-mainBlue py-2 px-4 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md transition-all hover:shadow-md focus:shadow-lg active:shadow-md"
             type="submit"
             onClick={() => router.push("add-new-user")}
           >
