@@ -3,7 +3,7 @@ import { Avatar } from "primereact/avatar";
 import { useRouter } from "next/navigation";
 import SearchInput from "../Other/SearchInput";
 
-const users = [
+export const users = [
     {
         id: 1,
         name: "Mukamugema Sophie",
