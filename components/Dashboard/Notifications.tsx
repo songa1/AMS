@@ -30,7 +30,11 @@ function Notifications() {
           </li>
         </ul>
       </div>
-      <div className="notifications-right"></div>
+      <div className="notifications-right">
+        <div>
+          <h1>You are required to update your profile</h1>
+        </div>
+      </div>
     </div>
   );
 }

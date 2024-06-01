@@ -13,28 +13,28 @@ function DashboardHome() {
       icon: <BiUser className="text-mainBlue" size={30} />,
       number: 234,
       title: "Users",
-      link: "/",
+      link: "/dashboard/users",
     },
     {
       id: 2,
       icon: <BiEnvelope className="text-mainBlue" size={30} />,
       number: 234,
       title: "Messages",
-      link: "/",
+      link: "/dashboard/chat",
     },
     {
       id: 3,
       icon: <MdOutlinePending className="text-mainBlue" size={30} />,
       number: 234,
       title: "Pending Updates",
-      link: "/",
+      link: "#",
     },
     {
       id: 4,
       icon: <FaMessage className="text-mainBlue" size={30} />,
       number: 100,
       title: "Unread Messages",
-      link: "/",
+      link: "/dashboard/chat",
     },
   ];
   return (
