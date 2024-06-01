@@ -64,3 +64,19 @@
 .p-panel-content {
   @apply py-2;
 }
+
+.notifications {
+  @apply grid grid-cols-3 gap-3 h-[75vh];
+}
+
+.notifications-left {
+  @apply border border-gray-200 rounded-md p-4 h-full overflow-scroll no-scrollbar;
+}
+
+.notifications-right {
+  @apply border border-gray-200 col-span-2 rounded-md p-4 h-full overflow-scroll no-scrollbar;
+}
+
+.sidebar-menu {
+  @apply flex items-center p-2 rounded-lg text-white hover:bg-gray-800;
+}

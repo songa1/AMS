@@ -18,28 +18,19 @@ const Sidebar: React.FC = () => {
         </div>
         <ul className="space-y-2 font-medium">
           <li>
-            <Link
-              href="/dashboard"
-              className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
-            >
+            <Link href="/dashboard" className="sidebar-menu">
               <HiHome />
               <span className="ms-3">Home</span>
             </Link>
           </li>
           <li>
-            <Link
-              href="/dashboard/profile"
-              className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
-            >
+            <Link href="/dashboard/profile" className="sidebar-menu">
               <ImProfile />
               <span className="ms-3">My Profile</span>
             </Link>
           </li>
           <li>
-            <Link
-              href="/dashboard/update-profile"
-              className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
-            >
+            <Link href="/dashboard/update-profile" className="sidebar-menu">
               <BiEdit />
               <span className="flex-1 ms-3 whitespace-nowrap">
                 Edit Profile
@@ -47,30 +38,19 @@ const Sidebar: React.FC = () => {
             </Link>
           </li>
           <li>
-            <Link
-              href="/dashboard/users"
-              className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
-            >
+            <Link href="/dashboard/users" className="sidebar-menu">
               <BiUser />
-              <span className="flex-1 ms-3 whitespace-nowrap">
-                Users
-              </span>
+              <span className="flex-1 ms-3 whitespace-nowrap">Users</span>
             </Link>
           </li>
           <li>
-            <Link
-              href="/dashboard/chat"
-              className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
-            >
+            <Link href="/dashboard/chat" className="sidebar-menu">
               <BiChat />
               <span className="flex-1 ms-3 whitespace-nowrap">Chat</span>
             </Link>
           </li>
           <li>
-            <Link
-              href="/dashboard/notifications"
-              className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
-            >
+            <Link href="/dashboard/notifications" className="sidebar-menu">
               <BiLock />
               <span className="flex-1 ms-3 whitespace-nowrap">
                 Notifications
@@ -81,10 +61,7 @@ const Sidebar: React.FC = () => {
             </Link>
           </li>
           <li>
-            <Link
-              href="/dashboard/change-password"
-              className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
-            >
+            <Link href="/dashboard/change-password" className="sidebar-menu">
               <BiLock />
               <span className="flex-1 ms-3 whitespace-nowrap">
                 Reset Password
@@ -94,10 +71,7 @@ const Sidebar: React.FC = () => {
         </ul>
         <ul className="pt-4 mt-4 space-y-2 font-medium border-t border-gray-200">
           <li>
-            <Link
-              href="#"
-              className="flex items-center p-2 text-gray-900 transition duration-75 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-white group"
-            >
+            <Link href="#" className="sidebar-menu">
               <BiLogOut />
               <span className="ms-3">Logout</span>
             </Link>
