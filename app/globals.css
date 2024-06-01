@@ -52,3 +52,15 @@
   margin-bottom: 20px;
   word-wrap: break-word;
 }
+
+.p-panel {
+  @apply flex flex-col gap-0;
+}
+
+.p-panel-header {
+  @apply bg-white py-0 my-0;
+}
+
+.p-panel-content {
+  @apply py-2;
+}

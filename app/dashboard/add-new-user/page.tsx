@@ -1,14 +1,14 @@
 "use client";
 
-import NewUserPage from "@/components/Dashboard/AddNewUserPage";
+import NewProfile from "@/components/Dashboard/AddNewUserPage";
 import TopTitle from "@/components/Dashboard/TopTitle";
 import React from "react";
 
 function page() {
   return (
     <div>
-      <TopTitle title="A new user" />
-      <NewUserPage/>
+      <TopTitle title="Add New User" />
+      <NewProfile/>
     </div>
   );
 }

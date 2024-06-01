@@ -81,8 +81,10 @@ function ChatPage() {
       >
         <Avatar icon={<BiUser />} />
         <div className="flex flex-col">
-          <h2 className="font-bold text-mainBlue">{user?.username}</h2>
-          <p className="text-xs">{user?.status}</p>
+          <h2 className="font-bold text-mainBlue">Community Chat</h2>
+          <p className="text-xs">
+            {user?.username}, {otherUser?.username} + 100 others
+          </p>
         </div>
       </div>
       <div
