@@ -1,12 +1,78 @@
 "use react";
 
 import { Avatar } from "primereact/avatar";
-import { InputText } from "primereact/inputtext";
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { BiUser } from "react-icons/bi";
 import ChatInput from "../Other/ChatInput";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 
 function ChatPage() {
+  const user = {
+    id: 1,
+    username: "Sophie",
+    status: "Online",
+    picture:
+      "https://static1.mujerhoy.com/www/multimedia/202303/02/media/mira-murati/mira-murati-captura.jpeg",
+  };
+
+  const otherUser = {
+    id: 1,
+    username: "Achille",
+    status: "Online",
+    picture:
+      "https://static.wikia.nocookie.net/silicon-valley/images/3/33/Richard_Hendricks.jpg",
+  };
+
+  const [messages, setMessages] = useState([
+    { id: 1, sender: "Achille", receiver: "Sophie", message: "Hi!" },
+    { id: 2, sender: "Achille", receiver: "Sophie", message: "How are you?" },
+    {
+      id: 3,
+      sender: "Sophie",
+      receiver: "Achille",
+      message: "I am good. How are you?",
+    },
+    {
+      id: 4,
+      sender: "Achille",
+      receiver: "Sophie",
+      message: "Can I borrow you laptop?",
+    },
+  ]);
+
+  const messagesEndRef: any = useRef(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  const formik = useFormik({
+    initialValues: {
+      id: Date.now(),
+      message: "",
+      sender: user?.username,
+      receiver: otherUser?.username,
+    },
+    validationSchema: Yup.object({
+      message: Yup.string().required("Message is required"),
+      sender: Yup.string(),
+      receiver: Yup.string(),
+    }),
+    onSubmit: (values) => {
+      try {
+        setMessages((prev) => [...prev, values]);
+        formik.resetForm();
+      } catch (error) {
+        console.log(error);
+      }
+    },
+  });
+
   return (
     <div className="chat">
       <div
@@ -15,30 +81,51 @@ function ChatPage() {
       >
         <Avatar icon={<BiUser />} />
         <div className="flex flex-col">
-          <h2 className="font-bold text-mainBlue">Mukamugema Sophie</h2>
-          <p className="text-xs">Online</p>
+          <h2 className="font-bold text-mainBlue">{user?.username}</h2>
+          <p className="text-xs">{user?.status}</p>
         </div>
       </div>
       <div
         className={`h-[70vh] p-2 rounded-xl w-full content-end overflow-scroll my-scrollable-div no-scrollbar`}
       >
-        <div className={`flex flex-1 gap-1 w-full receivedContainer`}>
-          <Avatar icon={<BiUser />} />
-          <div className={`message received`}>
-            <p className="text-xs font-bold">Sonia</p>
-            <p>Lorem Ipsum doler</p>
-          </div>
-        </div>
-        <div className={`flex flex-1 gap-1 w-full sentContainer`}>
-          <Avatar icon={<BiUser />} />
-          <div className={`message sent`}>
-            <p className="text-xs font-bold">Iranzi</p>
-            <p>Lorem Ipsum doler</p>
-          </div>
-        </div>
+        {messages &&
+          messages.map((message) => {
+            return (
+              <div
+                key={message?.id}
+                className={`flex flex-1 gap-1 w-full ${
+                  message?.sender === user?.username
+                    ? "sentContainer"
+                    : "receivedContainer"
+                }`}
+              >
+                <Avatar
+                  icon={<BiUser />}
+                  image={
+                    message?.sender === user?.username
+                      ? user?.picture
+                      : otherUser?.picture
+                  }
+                />
+                <div
+                  className={`message ${
+                    message?.sender === user?.username ? "sent" : "received"
+                  }`}
+                >
+                  <p className="text-xs font-bold">{message?.sender}</p>
+                  <p>{message?.message}</p>
+                </div>
+              </div>
+            );
+          })}
+        <div ref={messagesEndRef} />
       </div>
       <form className="flex gap-2 items-center">
-        <ChatInput />
+        <ChatInput
+          onSubmit={() => formik.handleSubmit()}
+          value={formik.values.message}
+          setValue={(e: any) => formik.setFieldValue("message", e.target.value)}
+        />
       </form>
     </div>
   );
