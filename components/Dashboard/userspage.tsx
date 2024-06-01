@@ -4,28 +4,28 @@ import { useRouter } from "next/navigation";
 import SearchInput from "../Other/SearchInput";
 import FullScreenModal from "../Other/FullScreenModal";
 
-const users = [
-  {
-    id: 1,
-    name: "Mukamugema Sophie",
-    email: "sophiemukamugema@gmail.com",
-    phone: "+250789635342",
-    gender: "Female",
-  },
-  {
-    id: 2,
-    name: "Songa Achille",
-    email: "achillesonga12@gmail.com",
-    phone: "+25078963234",
-    gender: "Male",
-  },
-  {
-    id: 3,
-    name: "Valens Ntirenganya",
-    email: "vava12@gmail.com",
-    phone: "+250789635342",
-    gender: "Male",
-  },
+export const users = [
+    {
+        id: 1,
+        name: "Mukamugema Sophie",
+        email: "sophiemukamugema@gmail.com",
+        phone: "+250789635342",
+        gender: "Female",
+    },
+    {
+        id: 2,
+        name: "Songa Achille",
+        email: "achillesonga12@gmail.com",
+        phone: "+25078963234",
+        gender: "Male",
+    },
+    {
+        id: 3,
+        name: "Valens Ntirenganya",
+        email: "vava12@gmail.com",
+        phone: "+250789635342",
+        gender: "Male",
+    }
 ];
 
 const UsersPage = () => {

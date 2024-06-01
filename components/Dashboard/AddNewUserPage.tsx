@@ -1,3 +1,4 @@
+import { useFormik } from "formik";
 import { useRouter } from "next/navigation";
 import { Avatar } from "primereact/avatar";
 import { Button } from "primereact/button";
@@ -5,164 +6,187 @@ import { InputText } from "primereact/inputtext";
 import { InputTextarea } from "primereact/inputtextarea";
 import { Panel } from "primereact/panel";
 import React, { useState } from "react";
+import * as Yup from "yup";
+import { users } from "./userspage";
 
-function UpdateProfile() {
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  phone: string;
+  gender: string;
+  birthDate: string;
+  language: string;
+  location: string;
+  description: string;
+}
+
+const addUser = (users: User[], newUser: User): User[] => {
+  return [...users, newUser];
+};
+
+function NewProfile() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState(0);
+  // const [users, setUsers] = useState<User[]>([]);
+  const [newUser, setNewUser] = useState<User>({
+    id: users.length + 1,
+    name: "",
+    email: "",
+    phone: "",
+    gender: "",
+    birthDate: "",
+    language: "",
+    location: "",
+    description: "",
+  });
 
   const handleTabClick = (index: number) => {
     setActiveTab(index);
   };
 
-  const Personal = () => (
-    <div className="grid grid-cols-2 gap-3">
-      <Panel header="Email:">
-        <InputText
-          variant="filled"
-          className="w-full p-3"
-          type="text"
-          placeholder="email"
-        />
-      </Panel>
-      <Panel header="Phone Number">
-        <InputText
-          variant="filled"
-          className="w-full p-3"
-          type="text"
-          placeholder="Phone Number"
-        />
-      </Panel>
-      <Panel header="Gender">
-        <InputText
-          variant="filled"
-          className="w-full p-3"
-          type="text"
-          placeholder=""
-        />
-      </Panel>
-      <Panel header="Birth Date">
-        <InputText variant="filled" className="w-full p-3" type="date" />
-      </Panel>
-      <Panel header="Language">
-        <InputText
-          variant="filled"
-          className="w-full p-3"
-          type="text"
-          placeholder=""
-        />
-      </Panel>
-      <Panel header="Location">
-        <InputText
-          variant="filled"
-          className="w-full p-3"
-          type="text"
-          placeholder=""
-        />
-      </Panel>
-    </div>
-  );
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    field: keyof User
+  ) => {
+    setNewUser({ ...newUser, [field]: e.target.value });
+  };
 
+  const handleSaveProfile = () => {
+    setUsers((prevUsers) => addUser(prevUsers, newUser));
+    router.push("/dashboard/users");
+  };
+
+  const formik = useFormik({
+    initialValues: {
+      id: Date.now(),
+      name: "",
+      email: "",
+      phone: "",
+      gender: "",
+    },
+
+    validationSchema: Yup.object({
+      name: Yup.string().required("name  is required"),
+      email: Yup.string().email().required("Email is required"),
+      phone: Yup.string().required("Phone Number is required"),
+      gender: Yup.string().required("Gender is required"),
+    }),
+
+    onSubmit: (values) => {
+      try {
+        // Users(prevUsers => addUser(prevUsers, newUser));
+        users.push(values);
+        formik.resetForm();
+        router.push("/dashboard/users");
+      } catch (error) {
+        console.log(error);
+      }
+    },
+  });
+
+  const Personal = ({ formik }: any) => {
+    const [email, setEmail] = useState("");
+    const [phoneNumber, setPhoneNumber] = useState("");
+    const [gender, setGender] = useState("");
+    const [birthDate, setBirthDate] = useState("");
+    const [language, setLanguage] = useState("");
+    const [location, setLocation] = useState("");
+
+    return (
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label>Email:</label>
+          <InputText
+            variant="filled"
+            className="w-full p-3"
+            type="text"
+            placeholder="Email"
+            value={formik.values.email}
+            onChange={(e) => formik.setFieldValue("email", e.target.value)}
+            required
+          />
+        </div>
+        <div>
+          <label>Phone Number:</label>
+          <InputText
+            variant="filled"
+            className="w-full p-3"
+            type="text"
+            placeholder="Phone Number"
+            value={formik.values.phone}
+            onChange={(e) => formik.setFieldValue("phone", e.target.value)}
+            required
+          />
+        </div>
+        <div>
+          <label>Gender:</label>
+          <InputText
+            variant="filled"
+            className="w-full p-3"
+            type="text"
+            placeholder="Gender"
+            value={formik.values.gender}
+            onChange={(e) => formik.setFieldValue("gender", e.target.value)}
+            required
+          />
+        </div>
+        <div>
+          <label>Birth Date:</label>
+          <InputText
+            variant="filled"
+            className="w-full p-3"
+            type="date"
+            value={birthDate}
+            onChange={(e) => setBirthDate(e.target.value)}
+            required
+          />
+        </div>
+        <div>
+          <label>Language:</label>
+          <InputText
+            variant="filled"
+            className="w-full p-3"
+            type="text"
+            placeholder="Language"
+            value={language}
+            onChange={(e) => setLanguage(e.target.value)}
+            required
+          />
+        </div>
+        <div>
+          <label>Location:</label>
+          <InputText
+            variant="filled"
+            className="w-full p-3"
+            type="text"
+            placeholder="Location"
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+            required
+          />
+        </div>
+      </div>
+    );
+  };
   const Education = () => (
     <div className="grid grid-cols-2 gap-3">
-      <Panel header="Email">
-        <InputText
-          variant="filled"
-          className="w-full p-3"
-          type="text"
-          placeholder="Email"
-        />
-      </Panel>
-      <Panel header="Phone Number">
-        <InputText
-          variant="filled"
-          className="w-full p-3"
-          type="text"
-          placeholder="Phone Number"
-        />
-      </Panel>
-      <Panel header="Gender">
-        <InputText
-          variant="filled"
-          className="w-full p-3"
-          type="text"
-          placeholder=""
-        />
-      </Panel>
-      <Panel header="Birth Date">
-        <InputText variant="filled" className="w-full p-3" type="date" />
-      </Panel>
-      <Panel header="Language">
-        <InputText
-          variant="filled"
-          className="w-full p-3"
-          type="text"
-          placeholder=""
-        />
-      </Panel>
-      <Panel header="Location">
-        <InputText
-          variant="filled"
-          className="w-full p-3"
-          type="text"
-          placeholder=""
-        />
-      </Panel>
+      {/* Additional education fields can be added here */}
     </div>
   );
 
   const Work = () => (
     <div className="grid grid-cols-2 gap-3">
-      <Panel header="Email">
-        <InputText
-          variant="filled"
-          className="w-full p-3"
-          type="text"
-          placeholder="Email"
-        />
-      </Panel>
-      <Panel header="Phone Number">
-        <InputText
-          variant="filled"
-          className="w-full p-3"
-          type="text"
-          placeholder="Phone Number"
-        />
-      </Panel>
-      <Panel header="Gender">
-        <InputText
-          variant="filled"
-          className="w-full p-3"
-          type="text"
-          placeholder=""
-        />
-      </Panel>
-      <Panel header="Birth Date">
-        <InputText variant="filled" className="w-full p-3" type="date" />
-      </Panel>
-      <Panel header="Language">
-        <InputText
-          variant="filled"
-          className="w-full p-3"
-          type="text"
-          placeholder=""
-        />
-      </Panel>
-      <Panel header="Location">
-        <InputText
-          variant="filled"
-          className="w-full p-3"
-          type="text"
-          placeholder=""
-        />
-      </Panel>
+      {/* Additional work fields can be added here */}
     </div>
   );
 
   const tabs = [
-    { label: "Personal", content: <Personal /> },
+    { label: "Personal", content: <Personal formik={formik} /> },
     { label: "Education", content: <Education /> },
     { label: "Work", content: <Work /> },
   ];
+
   return (
     <div className="">
       <div className="w-full">
@@ -171,44 +195,31 @@ function UpdateProfile() {
           className="w-full h-40 object-cover rounded-t-xl"
         />
         <div className="relative">
-          <div className="p-5 absolute top-[-50px]">
-            <Avatar
-              shape="circle"
-              image="/profile.jpg"
-              label="S"
-              size="xlarge"
-            />
-          </div>
-          <div className="ml-[100px] flex justify-between items-center p-2">
-            <div>
-              <h1 className="flex items-center gap-1 font-bold text-xl">
-                <InputText
-                  variant="filled"
-                  value="Mukamugema Sophie"
-                  className="w-full p-3"
-                  type="text"
-                />
-              </h1>
-            </div>
-            <div className="flex gap-2 items-center">
-              <Button
-                label="Save Profile"
-                className="bg-mainBlue text-white px-5"
-                rounded
-                onClick={() => router.push("/dashboard/update-profile")}
+          <div className="grid grid-cols-2 items-center justify-end p-2">
+            <Panel header="Names: ">
+              <InputText
+                variant="filled"
+                className="w-full p-3"
+                type="text"
+                placeholder="FullName"
+                value={formik.values.name}
+                onChange={(e) => formik.setFieldValue("name", e.target.value)}
               />
-            </div>
+            </Panel>
+            <button
+              className="right-1 top-1 z-10 select-none rounded bg-mainBlue py-2 px-4 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md transition-all hover:shadow-md focus:shadow-lg active:shadow-md"
+              type="submit"
+              onClick={() => formik.handleSubmit()}
+            >
+              Save
+            </button>
           </div>
         </div>
         <div className="p-5 text-justify">
           <p>
             <InputTextarea
-              value="Lorem ipsum dolor sit amet, consectetur adipisicing elit. Debitis
-            error quasi velit amet quam eveniet impedit nulla! Blanditiis
-            deserunt corporis neque debitis saepe ratione totam quis
-            necessitatibus! Hic aspernatur repudiandae qui dicta perferendis
-            aliquid, nobis sequi suscipit enim distinctio odio sit dolore? Nihil
-            sint praesentium labore vero dolor magnam corrupti!"
+              value={newUser.description}
+              onChange={(e) => handleInputChange(e, "description")}
               variant="filled"
               className="w-full p-3"
               rows={5}
@@ -245,4 +256,8 @@ function UpdateProfile() {
   );
 }
 
-export default UpdateProfile;
+export default NewProfile;
+
+function setUsers(arg0: (prevUsers: any) => User[]) {
+  throw new Error("Function not implemented.");
+}
