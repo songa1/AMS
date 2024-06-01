@@ -75,7 +75,7 @@ const Sidebar: React.FC = () => {
         </ul>
         <ul className="pt-4 mt-4 space-y-2 font-medium border-t border-gray-200">
           <li>
-            <Link href="#" className="sidebar-menu">
+            <Link href="/" className="sidebar-menu">
               <BiLogOut />
               <span className="ms-3">Logout</span>
             </Link>
