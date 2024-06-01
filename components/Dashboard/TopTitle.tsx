@@ -6,7 +6,7 @@ import { GoDotFill } from "react-icons/go";
 
 function TopTitle({ title }: { title: string }) {
   return (
-    <div className="flex w-full justify-between items-center mb-10 border-b p-2">
+    <div className="flex w-full justify-between items-center mb-10 border-b border-gray-200 p-2 cursor-pointer">
       <h1 className="text-xl text-mainBlue font-bold">{title}</h1>
       <div className="flex gap-3 items-center">
         <div className="flex flex-col items-start">

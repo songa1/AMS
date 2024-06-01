@@ -18,7 +18,7 @@ function UpdateProfile() {
 
   const Personal = () => (
     <div className="grid grid-cols-2 gap-3">
-      <Panel header="Email">
+      <Panel header="Email:">
         <InputText
           variant="filled"
           className="w-full p-3"
@@ -26,7 +26,7 @@ function UpdateProfile() {
           placeholder="email@example.com"
         />
       </Panel>
-      <Panel header="Phone Number">
+      <Panel className="bg-white" header="Phone Number:">
         <InputText
           variant="filled"
           className="w-full p-3"
@@ -34,7 +34,7 @@ function UpdateProfile() {
           placeholder="+2508899399399"
         />
       </Panel>
-      <Panel header="Gender">
+      <Panel header="Gender:">
         <InputText
           variant="filled"
           className="w-full p-3"
@@ -42,10 +42,10 @@ function UpdateProfile() {
           placeholder="Female"
         />
       </Panel>
-      <Panel header="Birth Date">
+      <Panel header="Birth Date:">
         <InputText variant="filled" className="w-full p-3" type="date" />
       </Panel>
-      <Panel header="Language">
+      <Panel header="Language:">
         <InputText
           variant="filled"
           className="w-full p-3"
@@ -53,7 +53,7 @@ function UpdateProfile() {
           placeholder="English"
         />
       </Panel>
-      <Panel header="Location">
+      <Panel header="Location:">
         <InputText
           variant="filled"
           className="w-full p-3"
