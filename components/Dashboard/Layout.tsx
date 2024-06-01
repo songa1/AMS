@@ -34,7 +34,9 @@ function Layout({ children }: { children: React.ReactNode }) {
       <div className="fixed w-64 h-screen">
         <Sidebar />
       </div>
-      <div className="p-5 w-full relative ml-64">{children}</div>
+      <div className="p-5 w-full relative ml-64 bg-gray-50 h-screen">
+        {children}
+      </div>
     </div>
   );
 }
