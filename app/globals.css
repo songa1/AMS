@@ -70,13 +70,29 @@
 }
 
 .notifications-left {
-  @apply border border-gray-200 rounded-md p-4 h-full overflow-scroll no-scrollbar;
+  @apply border border-gray-200 rounded-md h-full overflow-scroll no-scrollbar relative;
+}
+
+.noti-sticky-header {
+  @apply text-center w-full bg-gray-100 p-3 rounded-t-md flex items-center justify-center h-10 font-bold text-mainBlue sticky top-0 right-0 left-0;
 }
 
 .notifications-right {
-  @apply border border-gray-200 col-span-2 rounded-md p-4 h-full overflow-scroll no-scrollbar;
+  @apply border border-gray-200 col-span-2 rounded-md h-full overflow-scroll no-scrollbar relative;
 }
 
 .sidebar-menu {
   @apply flex items-center p-2 rounded-lg text-white hover:bg-gray-800;
+}
+
+.notification ul {
+  @apply list-disc list-inside;
+}
+
+.notification div {
+  @apply w-full flex items-center justify-evenly py-2;
+}
+
+.notification div a {
+  @apply select-none rounded bg-mainBlue py-2 px-4 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md transition-all hover:shadow-md focus:shadow-lg active:shadow-md;
 }

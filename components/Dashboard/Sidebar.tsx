@@ -5,8 +5,10 @@ import { BiChat, BiEdit, BiLock, BiLogOut, BiUser } from "react-icons/bi";
 import { HiHome } from "react-icons/hi";
 import { ImProfile } from "react-icons/im";
 import { MdMenu } from "react-icons/md";
+import { nots } from "./Notifications";
 
 const Sidebar: React.FC = () => {
+  const notifications = nots.filter((notif) => !notif.isRead);
   return (
     <aside className="top-0 left-0 z-40 w-64 h-full transition-transform -translate-x-full sm:translate-x-0">
       <div className="h-full px-3 py-4 overflow-y-auto bg-mainBlue">
@@ -55,9 +57,11 @@ const Sidebar: React.FC = () => {
               <span className="flex-1 ms-3 whitespace-nowrap">
                 Notifications
               </span>
-              <span className="inline-flex items-center justify-center px-2 ms-3 text-sm font-medium text-gray-800 bg-gray-100 rounded-full dark:bg-gray-700 dark:text-gray-300">
-                3
-              </span>
+              {notifications.length > 0 && (
+                <span className="inline-flex items-center justify-center px-2 ms-3 text-sm font-medium text-gray-800 bg-gray-100 rounded-full dark:bg-gray-700 dark:text-gray-300">
+                  {notifications.length}
+                </span>
+              )}
             </Link>
           </li>
           <li>
