@@ -33,7 +33,7 @@ const ForgotPasswordPage = () => {
         if (error?.status === 404) {
           setError(error?.data?.message);
         } else {
-          setError("An error occurred. Please try again.");
+          setError("Action Failed! Try again, or contact the administrator!");
         }
       } finally {
         setLoading(false);
