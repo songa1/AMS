@@ -2,6 +2,7 @@
 
 import React from "react";
 import Sidebar from "./Sidebar";
+import { AccessDashboard } from "../Other/AccessDashboard";
 
 function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -9,9 +10,9 @@ function Layout({ children }: { children: React.ReactNode }) {
       <div className="fixed w-64 h-screen">
         <Sidebar />
       </div>
-      <div className="p-5 w-full ml-64 h-screen">
-        {children}
-      </div>
+      <AccessDashboard>
+        <div className="p-5 w-full ml-64 h-screen">{children}</div>
+      </AccessDashboard>
     </div>
   );
 }

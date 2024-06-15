@@ -1,42 +1,35 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Avatar } from "primereact/avatar";
 import { useRouter } from "next/navigation";
 import SearchInput from "../Other/SearchInput";
 import FullScreenModal from "../Other/FullScreenModal";
-
-export const users = [
-    {
-        id: 1,
-        name: "Mukamugema Sophie",
-        email: "sophiemukamugema@gmail.com",
-        phone: "+250789635342",
-        gender: "Female",
-    },
-    {
-        id: 2,
-        name: "Songa Achille",
-        email: "achillesonga12@gmail.com",
-        phone: "+25078963234",
-        gender: "Male",
-    },
-    {
-        id: 3,
-        name: "Valens Ntirenganya",
-        email: "vava12@gmail.com",
-        phone: "+250789635342",
-        gender: "Male",
-    }
-];
+import { useUsersQuery } from "@/lib/features/userSlice";
+import { User } from "@/types/user";
 
 const UsersPage = () => {
   const router = useRouter();
   const [searchText, setSearchText] = useState("");
   const [isOpen, setIsOpen] = useState(false);
+  const [users, setUsers] = useState<User[]>([]);
+
+  const { data, isLoading } = useUsersQuery("");
+
+  console.log(data);
+
+  useEffect(() => {
+    if (data) {
+      setUsers(data?.data);
+    }
+  }, [data]);
 
   const searchUsers = (text: string) => {
     const results = [];
     for (const user of users) {
-      if (user.name.toLowerCase().includes(text.toLowerCase())) {
+      if (
+        user.firstName.toLowerCase().includes(text.toLowerCase()) ||
+        user.lastName.toLowerCase().includes(text.toLowerCase()) ||
+        user.email.toLowerCase().includes(text.toLowerCase())
+      ) {
         results.push(user);
       }
     }
@@ -92,10 +85,12 @@ const UsersPage = () => {
               <td className="py-2 px-4 border-b">
                 <Avatar image="/profile.jpg" shape="circle" />
               </td>
-              <td className="py-2 px-4 border-b">{user.name}</td>
+              <td className="py-2 px-4 border-b">
+                {user.firstName + " " + user.lastName}
+              </td>
               <td className="py-2 px-4 border-b">{user.email}</td>
-              <td className="py-2 px-4 border-b">{user.phone}</td>
-              <td className="py-2 px-4 border-b">{user.gender}</td>
+              <td className="py-2 px-4 border-b">{user.phoneNumber}</td>
+              <td className="py-2 px-4 border-b">{user.genderName}</td>
               <td className="py-2 px-4 flex gap-1 mt-1">
                 <button
                   className=" bg-mainBlue text-xs p-1  rounded"
