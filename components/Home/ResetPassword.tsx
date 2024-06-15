@@ -1,0 +1,156 @@
+"use client";
+
+import Header from "@/components/Home/Header";
+import InputError from "@/components/Other/InputError";
+import {
+  useLoginMutation,
+  useResetPasswordMutation,
+} from "@/lib/features/authSlice";
+import { useFormik } from "formik";
+import Link from "next/link";
+import { useParams, useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
+import * as Yup from "yup";
+import Cookies from "js-cookie";
+import { AUTH_STORED_DATA } from "@/helpers/auth";
+
+const ResetPassword = () => {
+  const { token } = useParams();
+  const router = useRouter();
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [success, setSuccess] = useState("");
+
+  const [resetPassword] = useResetPasswordMutation();
+
+  const formik = useFormik({
+    initialValues: {
+      password: "",
+      cPassword: "",
+    },
+    validationSchema: Yup.object({
+      password: Yup.string().required("Password is required"),
+      cPassword: Yup.string()
+        .required("Kindly repeat the new password!")
+        .oneOf([Yup.ref("password")], "Passwords must match"),
+    }),
+    onSubmit: async (values) => {
+      setIsLoading(true);
+      try {
+        const result = await resetPassword({
+          token,
+          newPassword: values.password,
+        }).unwrap();
+
+        if (result?.status === 200) {
+          formik.resetForm();
+          setSuccess(result.message);
+        }
+      } catch (err: any) {
+        console.error("Failed to reset:", err);
+        if (err?.status === 401) {
+          setError(err?.data?.error);
+        } else {
+          setError("Reset Failed! Try again, or contact the administrator!");
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    },
+  });
+
+  useEffect(() => {
+    error &&
+      setTimeout(() => {
+        setError("");
+      }, 5000);
+  }, [error]);
+
+  return (
+    <div className="flex h-screen lg:inline ">
+      <div className="w-full lg:w min-w-[300px] flex flex-col  items-center">
+        <Header />
+        <div className="max-w-md w-full space-y-8 mt-20">
+          <h1 className="mb-4 text-2xl font-bold">Change your Password</h1>
+          {success && (
+            <div className="flex flex-col gap-3 items-center jsutify-center items-center">
+              {" "}
+              <p className="bg-green-500 text-white rounded-md text-center p-2 w-full">
+                {success}
+              </p>
+              <Link href="/" className="underline">
+                Go to Login
+              </Link>
+            </div>
+          )}
+          {!success && (
+            <form className="mt-4 space-y-6">
+              {error && (
+                <p className="bg-red-500 text-white rounded-md text-center p-2 w-full">
+                  {error}
+                </p>
+              )}
+              <div>
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  New Password:
+                </label>
+                <input
+                  type="password"
+                  value={formik.values.password}
+                  onChange={(e) =>
+                    formik.setFieldValue("password", e.target.value)
+                  }
+                  required
+                  className="mt-1 p-2 w-full border rounded-md"
+                  placeholder="Enter the new password"
+                />
+                {formik.errors.password && formik.touched.password && (
+                  <InputError error={formik.errors.password} />
+                )}
+              </div>
+              <div>
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Repeat Password:
+                </label>
+                <input
+                  type="password"
+                  value={formik.values.cPassword}
+                  onChange={(e) =>
+                    formik.setFieldValue("cPassword", e.target.value)
+                  }
+                  required
+                  className="mt-1 p-2 w-full border rounded-md"
+                  placeholder="Repeat the new password"
+                />
+                {formik.errors.cPassword && formik.touched.cPassword && (
+                  <InputError error={formik.errors.cPassword} />
+                )}
+              </div>
+
+              <div>
+                <button
+                  type="submit"
+                  className="w-full bg-mainBlue text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    formik.handleSubmit();
+                  }}
+                >
+                  {isLoading ? "Resetting..." : "Reset Password"}
+                </button>
+              </div>
+            </form>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ResetPassword;
