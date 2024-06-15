@@ -1,68 +1,99 @@
 // pages/forgot-password.tsx
 "use client";
 
-import React, { useState } from "react";
+import { useRequestResetMutation } from "@/lib/features/authSlice";
+import { useFormik } from "formik";
+import React, { useEffect, useState } from "react";
+import * as Yup from "yup";
+import InputError from "../Other/InputError";
 
 const ForgotPasswordPage = () => {
-  const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState("");
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
-    setMessage("");
+  const [requestReset] = useRequestResetMutation();
 
-    try {
-      const response = await fetch("/api/auth/request-reset", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email }),
-      });
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+    },
+    validationSchema: Yup.object({
+      email: Yup.string().email("Invalid Email").required("Email is required"),
+    }),
+    onSubmit: async (values) => {
+      setLoading(true);
+      try {
+        const response = await requestReset(values).unwrap();
 
-      const data = await response.json();
-      if (response.ok) {
-        setMessage(data.message);
-      } else {
-        setError(data.error);
+        if (response.status === 200) {
+          setSuccess(response.message);
+        }
+      } catch (error: any) {
+        if (error?.status === 404) {
+          setError(error?.data?.message);
+        } else {
+          setError("An error occurred. Please try again.");
+        }
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      setError("An error occurred. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
+    },
+  });
+
+  useEffect(() => {
+    error &&
+      setTimeout(() => {
+        setError("");
+      }, 5000);
+  }, [error]);
 
   return (
     <div className="flex items-center justify-center w-full p-40 ">
-      <div className="p-6 bg-white rounded shadow-md">
+      <div className="p-6 bg-white rounded shadow-md min-w-[300px]">
         <h1 className="mb-4 text-2xl font-bold">Forgot Password</h1>
-        <form onSubmit={handleSubmit}>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-            Enter your email address:
-          </label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            className="w-full p-2 mt-1 border rounded"
-          />
-          <button
-            type="submit"
-            className="w-full px-4 py-2 mt-4 font-bold text-white bg-mainBlue rounded hover:bg-mainblue-700"
-            disabled={loading}
-          >
-            {loading ? "Requesting..." : "Request Password Reset"}
-          </button>
-        </form>
-        {message && <p className="mt-4 text-green-500">{message}</p>}
-        {error && <p className="mt-4 text-red-500">{error}</p>}
+        {success && (
+          <p className="bg-green-500 text-white rounded-md text-center p-2 w-full">
+            {success}
+          </p>
+        )}
+        {!success && (
+          <form>
+            {error && (
+              <p className="bg-red-500 text-white rounded-md text-center p-2 w-full">
+                {error}
+              </p>
+            )}
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700 mt-2"
+            >
+              Enter your email address:
+            </label>
+            <input
+              type="email"
+              id="email"
+              value={formik.values.email}
+              onChange={(e) => formik.setFieldValue("email", e.target.value)}
+              required
+              className="w-full p-2 mt-1 border rounded"
+            />
+            {formik.errors.email && formik.touched.email && (
+              <InputError error={formik.errors.email} />
+            )}
+            <button
+              type="submit"
+              className="w-full px-4 py-2 mt-4 font-bold text-white bg-mainBlue rounded hover:bg-mainblue-700"
+              disabled={loading}
+              onClick={(e) => {
+                e.preventDefault();
+                formik.handleSubmit();
+              }}
+            >
+              {loading ? "Requesting..." : "Request Password Reset"}
+            </button>
+          </form>
+        )}
       </div>
     </div>
   );

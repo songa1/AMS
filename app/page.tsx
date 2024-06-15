@@ -14,6 +14,7 @@ import { AUTH_STORED_DATA } from "@/helpers/auth";
 const LoginPage = () => {
   const router = useRouter();
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [login] = useLoginMutation();
 
   const formik = useFormik({
@@ -26,6 +27,7 @@ const LoginPage = () => {
       password: Yup.string().required("Password is required"),
     }),
     onSubmit: async (values) => {
+      setIsLoading(true);
       try {
         const result = await login(values).unwrap();
         console.log("Login successful:", result);
@@ -46,6 +48,8 @@ const LoginPage = () => {
         } else {
           setError("Login Failed! Try again, or contact the administrator!");
         }
+      } finally {
+        setIsLoading(false);
       }
     },
   });
@@ -59,7 +63,7 @@ const LoginPage = () => {
 
   return (
     <div className="flex h-screen lg:inline ">
-      <div className="w-full lg:w -1/1 flex flex-col  items-center">
+      <div className="w-full lg:w min-w-[300px] flex flex-col  items-center">
         <Header />
         <div className="max-w-md w-full space-y-8 mt-20">
           <form className="mt-4 space-y-6">
@@ -131,7 +135,7 @@ const LoginPage = () => {
                   formik.handleSubmit();
                 }}
               >
-                Login
+                {isLoading ? "Loading.." : "Login"}
               </button>
             </div>
           </form>

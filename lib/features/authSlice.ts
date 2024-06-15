@@ -13,14 +13,25 @@ export const authSlices = createApi({
         body: credentials,
       }),
     }),
-    requestReset: builder.query({
-      query: () => `auth/request-link`,
+    requestReset: builder.mutation({
+      query: (credentials) => ({
+        url: "auth/request-link",
+        method: "POST",
+        body: credentials,
+      }),
     }),
-    resetPassword: builder.query({
-      query: () => `auth/reset-password`,
+    resetPassword: builder.mutation({
+      query: (credentials) => ({
+        url: "auth/reset-password",
+        method: "POST",
+        body: credentials,
+      }),
     }),
   }),
 });
 
-export const { useLoginMutation, useRequestResetQuery, useResetPasswordQuery } =
-  authSlices;
+export const {
+  useLoginMutation,
+  useRequestResetMutation,
+  useResetPasswordMutation,
+} = authSlices;
