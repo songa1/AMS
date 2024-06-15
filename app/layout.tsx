@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import { PrimeReactProvider, PrimeReactContext } from "primereact/api";
 import "./globals.css";
 import "primereact/resources/themes/lara-light-cyan/theme.css";
+import StoreProvider from "./StoreProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -16,11 +17,12 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  
   return (
     <html lang="en">
       <PrimeReactProvider>
-        <body className={inter.className}>{children}</body>
+        <StoreProvider>
+          <body className={inter.className}>{children}</body>
+        </StoreProvider>
       </PrimeReactProvider>
     </html>
   );
