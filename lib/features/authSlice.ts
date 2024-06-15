@@ -6,8 +6,12 @@ export const authSlices = createApi({
     baseUrl: process.env.NEXT_PUBLIC_API_URL,
   }),
   endpoints: (builder) => ({
-    login: builder.query({
-      query: () => "auth/login",
+    login: builder.mutation({
+      query: (credentials) => ({
+        url: "auth/login",
+        method: "POST",
+        body: credentials,
+      }),
     }),
     requestReset: builder.query({
       query: () => `auth/request-link`,
@@ -18,5 +22,5 @@ export const authSlices = createApi({
   }),
 });
 
-export const { useLoginQuery, useRequestResetQuery, useResetPasswordQuery } =
+export const { useLoginMutation, useRequestResetQuery, useResetPasswordQuery } =
   authSlices;
