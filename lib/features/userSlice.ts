@@ -9,7 +9,22 @@ export const usersSlices = createApi({
     users: builder.query({
       query: (code) => `users`,
     }),
+    addUser: builder.mutation({
+      query: (credentials) => ({
+        url: "users",
+        method: "POST",
+        body: credentials,
+      }),
+    }),
+    bulkAddUsers: builder.mutation({
+      query: (credentials) => ({
+        url: "users/bulk",
+        method: "POST",
+        body: credentials,
+      }),
+    }),
   }),
 });
 
-export const { useUsersQuery } = usersSlices;
+export const { useUsersQuery, useAddUserMutation, useBulkAddUsersMutation } =
+  usersSlices;
