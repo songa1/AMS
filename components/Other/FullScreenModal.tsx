@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import Papa from "papaparse";
 import * as XLSX from "xlsx";
 import Button from "./Button";
+import { useBulkAddUsersMutation } from "@/lib/features/userSlice";
 
 const FullScreenModal = ({
   isOpen,
@@ -14,6 +15,10 @@ const FullScreenModal = ({
   setIsOpen: any;
 }) => {
   const [data, setData] = useState([]);
+  const [savedData, setSavedData] = useState([]);
+
+  const [bulkAddUsers] = useBulkAddUsersMutation();
+
   const toggleModal = () => {
     setIsOpen(!isOpen);
   };
@@ -71,6 +76,25 @@ const FullScreenModal = ({
     reader.readAsBinaryString(file);
   };
 
+  const handleSave = async () => {
+    const goodData = data.map((d: any) => {
+      return {
+        name: d.name,
+        email: d.email,
+        phoneNumber: d.phoneNumber,
+        gender: d.gender,
+        cohortId: d.cohortId,
+        companySectorId: d.companySectorId,
+      };
+    });
+    try {
+      const res = await bulkAddUsers(goodData).unwrap();
+      console.log(savedData);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div>
       {isOpen &&
@@ -113,7 +137,7 @@ const FullScreenModal = ({
                     className="p-3"
                     onChange={handleFileUpload}
                   />
-                  <Button title="Save" onClick={null} />
+                  <Button title="Save" onClick={handleSave} />
                 </div>
               </div>
 
