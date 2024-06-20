@@ -1,82 +1,87 @@
+"use client";
+
 import { useFormik } from "formik";
 import { useRouter } from "next/navigation";
-import { Avatar } from "primereact/avatar";
-import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
-import { InputTextarea } from "primereact/inputtextarea";
-import { Panel } from "primereact/panel";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import * as Yup from "yup";
-import { users } from "./userspage";
-
-interface User {
-  id: number;
-  name: string;
-  email: string;
-  phone: string;
-  gender: string;
-  birthDate: string;
-  language: string;
-  location: string;
-  description: string;
-}
-
-const addUser = (users: User[], newUser: User): User[] => {
-  return [...users, newUser];
-};
+import { User } from "@/types/user";
+import { Dropdown } from "primereact/dropdown";
+import {
+  useCohortsQuery,
+  useDistrictsQuery,
+  useGenderQuery,
+  useSectorsByDistrictQuery,
+} from "@/lib/features/otherSlice";
 
 function NewProfile() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState(0);
-  // const [users, setUsers] = useState<User[]>([]);
-  const [newUser, setNewUser] = useState<User>({
-    id: users.length + 1,
-    name: "",
-    email: "",
-    phone: "",
-    gender: "",
-    birthDate: "",
-    language: "",
-    location: "",
-    description: "",
+  const [genders, setGenders] = useState([]);
+  const [cohorts, setCohorts] = useState([]);
+  const [districts, setDistricts] = useState([]);
+  const [sectors, setSectors] = useState([]);
+  const [selectedDistrict, setSelectedDistrict] = useState(null);
+
+  const { data: GenderData } = useGenderQuery("");
+  const { data: DistrictData } = useDistrictsQuery("");
+  const { data: CohortsData } = useCohortsQuery("");
+  const { data: SectorsData } = useSectorsByDistrictQuery(selectedDistrict, {
+    skip: !selectedDistrict,
   });
+
+  useEffect(() => {
+    if (GenderData) {
+      setGenders(GenderData?.data);
+    }
+  }, [GenderData]);
+
+  useEffect(() => {
+    if (CohortsData) {
+      setCohorts(CohortsData?.data);
+    }
+  }, [CohortsData]);
+
+  useEffect(() => {
+    if (SectorsData) {
+      setSectors(SectorsData?.data);
+    }
+  }, [SectorsData]);
+
+  useEffect(() => {
+    if (DistrictData) {
+      setDistricts(DistrictData?.data);
+    }
+  }, [DistrictData]);
 
   const handleTabClick = (index: number) => {
     setActiveTab(index);
   };
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    field: keyof User
-  ) => {
-    setNewUser({ ...newUser, [field]: e.target.value });
-  };
-
-  const handleSaveProfile = () => {
-    setUsers((prevUsers) => addUser(prevUsers, newUser));
-    router.push("/dashboard/users");
-  };
-
   const formik = useFormik({
     initialValues: {
-      id: Date.now(),
-      name: "",
+      firstName: "",
+      middleName: "",
+      lastName: "",
       email: "",
-      phone: "",
       gender: "",
+      phoneNumber: "",
+      districtName: "",
+      sectorId: "",
+      whatsAppNumber: "",
+      nearlestLandmark: "",
+      track: "",
+      cohortId: null,
     },
-
     validationSchema: Yup.object({
       name: Yup.string().required("name  is required"),
       email: Yup.string().email().required("Email is required"),
       phone: Yup.string().required("Phone Number is required"),
       gender: Yup.string().required("Gender is required"),
+      districtName: Yup.string().required("District Name is required"),
     }),
-
     onSubmit: (values) => {
       try {
-        // Users(prevUsers => addUser(prevUsers, newUser));
-        users.push(values);
         formik.resetForm();
         router.push("/dashboard/users");
       } catch (error) {
@@ -86,16 +91,45 @@ function NewProfile() {
   });
 
   const Personal = ({ formik }: any) => {
-    const [email, setEmail] = useState("");
-    const [phoneNumber, setPhoneNumber] = useState("");
-    const [gender, setGender] = useState("");
-    const [birthDate, setBirthDate] = useState("");
-    const [language, setLanguage] = useState("");
-    const [location, setLocation] = useState("");
-
     return (
       <div className="grid grid-cols-2 gap-3">
-        <div>
+        <div className="field">
+          <label>First Name:</label>
+          <InputText
+            variant="filled"
+            className="w-full p-3"
+            type="text"
+            placeholder="First Name"
+            value={formik.values.firstName}
+            onChange={(e) => formik.setFieldValue("firstName", e.target.value)}
+            required
+          />
+        </div>
+        <div className="field">
+          <label>Middle Name:</label>
+          <InputText
+            variant="filled"
+            className="w-full p-3"
+            type="text"
+            placeholder="Middle Name"
+            value={formik.values.middleName}
+            onChange={(e) => formik.setFieldValue("middleName", e.target.value)}
+            required
+          />
+        </div>
+        <div className="field">
+          <label>Last Name:</label>
+          <InputText
+            variant="filled"
+            className="w-full p-3"
+            type="text"
+            placeholder="Last Name"
+            value={formik.values.lastName}
+            onChange={(e) => formik.setFieldValue("lastName", e.target.value)}
+            required
+          />
+        </div>
+        <div className="field">
           <label>Email:</label>
           <InputText
             variant="filled"
@@ -107,62 +141,119 @@ function NewProfile() {
             required
           />
         </div>
-        <div>
+        <div className="field">
           <label>Phone Number:</label>
           <InputText
             variant="filled"
             className="w-full p-3"
             type="text"
             placeholder="Phone Number"
-            value={formik.values.phone}
-            onChange={(e) => formik.setFieldValue("phone", e.target.value)}
+            value={formik.values.phoneNumber}
+            onChange={(e) =>
+              formik.setFieldValue("phoneNumber", e.target.value)
+            }
             required
           />
         </div>
-        <div>
+        <div className="field">
+          <label>WhatsApp Number:</label>
+          <InputText
+            variant="filled"
+            className="w-full p-3"
+            type="text"
+            placeholder="WhatsApp Number"
+            value={formik.values.whatsAppNumber}
+            onChange={(e) =>
+              formik.setFieldValue("whatsAppNumber", e.target.value)
+            }
+            required
+          />
+        </div>
+        <div className="field">
           <label>Gender:</label>
-          <InputText
+          <Dropdown
             variant="filled"
             className="w-full p-3"
             type="text"
-            placeholder="Gender"
+            placeholder="Select a gender"
             value={formik.values.gender}
+            options={genders}
             onChange={(e) => formik.setFieldValue("gender", e.target.value)}
+            optionLabel="name"
             required
           />
         </div>
-        <div>
-          <label>Birth Date:</label>
-          <InputText
+        <div className="field">
+          <label>District:</label>
+          <Dropdown
             variant="filled"
             className="w-full p-3"
-            type="date"
-            value={birthDate}
-            onChange={(e) => setBirthDate(e.target.value)}
+            placeholder="Select a district"
+            value={formik?.values?.districtName}
+            options={districts}
+            onChange={(e) => {
+              setSelectedDistrict(e.value.name);
+              formik.setFieldValue("districtName", e.value);
+              formik.setFieldValue("sectorId", "");
+              console.log(formik.values.districtName);
+            }}
+            optionLabel="name"
             required
           />
         </div>
-        <div>
-          <label>Language:</label>
+        <div className="field">
+          <label>Sector:</label>
+          <Dropdown
+            variant="filled"
+            className="w-full p-3"
+            type="text"
+            placeholder="Select a sector"
+            value={formik.values.sectorId}
+            options={sectors}
+            onChange={(e) => {
+              formik.setFieldValue("sectorId", e.target.value);
+            }}
+            optionLabel="name"
+            required
+          />
+        </div>
+        <div className="field">
+          <label>Cohort:</label>
+          <Dropdown
+            variant="filled"
+            className="w-full p-3"
+            type="text"
+            placeholder="Select a cohort"
+            value={formik.values.cohortId}
+            options={cohorts}
+            onChange={(e) => formik.setFieldValue("cohortId", e.target.value)}
+            optionLabel="name"
+            required
+          />
+        </div>
+        <div className="field">
+          <label>Nearest Landmark:</label>
           <InputText
             variant="filled"
             className="w-full p-3"
             type="text"
-            placeholder="Language"
-            value={language}
-            onChange={(e) => setLanguage(e.target.value)}
+            placeholder="What's the popular place near you?"
+            value={formik.values.nearlestLandmark}
+            onChange={(e) =>
+              formik.setFieldValue("nearlestLandmark", e.target.value)
+            }
             required
           />
         </div>
-        <div>
-          <label>Location:</label>
+        <div className="field">
+          <label>Track:</label>
           <InputText
             variant="filled"
             className="w-full p-3"
             type="text"
-            placeholder="Location"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
+            placeholder="What's your track?"
+            value={formik.values.track}
+            onChange={(e) => formik.setFieldValue("track", e.target.value)}
             required
           />
         </div>
@@ -195,17 +286,8 @@ function NewProfile() {
           className="w-full h-40 object-cover rounded-t-xl"
         />
         <div className="relative">
-          <div className="grid grid-cols-2 items-center justify-end p-2">
-            <Panel header="Names: ">
-              <InputText
-                variant="filled"
-                className="w-full p-3"
-                type="text"
-                placeholder="FullName"
-                value={formik.values.name}
-                onChange={(e) => formik.setFieldValue("name", e.target.value)}
-              />
-            </Panel>
+          <div className="grid grid-cols-4 items-center justify-end p-2">
+            <div className="col-span-3"></div>
             <button
               className="right-1 top-1 z-10 select-none rounded bg-mainBlue py-2 px-4 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md transition-all hover:shadow-md focus:shadow-lg active:shadow-md"
               type="submit"
@@ -216,7 +298,7 @@ function NewProfile() {
           </div>
         </div>
         <div className="p-5 text-justify">
-          <p>
+          {/* <p>
             <InputTextarea
               value={newUser.description}
               onChange={(e) => handleInputChange(e, "description")}
@@ -225,7 +307,7 @@ function NewProfile() {
               rows={5}
               autoResize
             />
-          </p>
+          </p> */}
           <div className="my-5">
             <ul className="-mb-px flex items-center gap-4 text-sm font-medium">
               {tabs.map((tab, index) => (
