@@ -101,7 +101,7 @@ const UsersPage = () => {
                 </button>
                 <button
                   className=" bg-green-400 text-xs p-1 rounded"
-                  onClick={() => router.push("update-profile")} 
+                  onClick={() => router.push("update-profile/" + user.id)} 
                 >
                   Edit
                 </button>

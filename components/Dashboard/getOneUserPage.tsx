@@ -54,10 +54,10 @@ function GetUser() {
   const Education = () => (
     <div className="grid grid-cols-2 gap-3">
       <Panel header="Email">
-        <p className="m-0">sophiemukamugema@gmail.com</p>
+        <p className="m-0">{user?.email}</p>
       </Panel>
       <Panel header="Phone Number">
-        <p className="m-0">+250789635342</p>
+        <p className="m-0">{user?.phoneNumber}</p>
       </Panel>
       <Panel header="Gender">
         <p className="m-0">Female</p>
