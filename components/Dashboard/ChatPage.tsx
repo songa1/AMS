@@ -1,4 +1,4 @@
-"use react";
+"use client";
 
 import { Avatar } from "primereact/avatar";
 import React, { useEffect, useRef, useState } from "react";
