@@ -1,5 +1,3 @@
-"use client";
-
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import React, { useState, useEffect } from "react";
@@ -18,6 +16,7 @@ const FullScreenModal = ({
 }) => {
   const [data, setData] = useState([]);
   const [savedData, setSavedData] = useState([]);
+
   const [bulkAddUsers] = useBulkAddUsersMutation();
 
   const toggleModal = () => {
@@ -57,17 +56,7 @@ const FullScreenModal = ({
         Papa.parse(data, {
           header: true,
           complete: (results: any) => {
-            const mappedData = results.data.map((user: any) => ({
-              firstName: user.firstName,
-              middleName: user.middleName,
-              lastName: user.lastName,
-              email: user.email,
-              phoneNumber: user.phoneNumber,
-              whatsappNumber: user.whatsappNumber,
-              genderName: user.genderName,
-              track: user.track,
-            }));
-            setData(mappedData);
+            setData(results.data);
           },
         });
       } else if (
@@ -80,18 +69,7 @@ const FullScreenModal = ({
         const worksheet: any = XLSX.utils.sheet_to_json(
           workbook.Sheets[sheetName]
         );
-        const mappedData = worksheet.map((user: any) => ({
-          firstName: user.firstName,
-          middleName: user.middleName,
-          lastName: user.lastName,
-          email: user.email,
-          phoneNumber: user.phoneNumber,
-          whatsappNumber: user.whatsappNumber,
-          genderName: user.genderName,
-          track: user.track,
-        }));
-        setData(mappedData);
-        console.log(mappedData);
+        setData(worksheet);
       }
     };
 
@@ -99,11 +77,18 @@ const FullScreenModal = ({
   };
 
   const handleSave = async () => {
+    const goodData = data.map((d: any) => {
+      return {
+        name: d.name,
+        email: d.email,
+        phoneNumber: d.phoneNumber,
+        gender: d.gender,
+        cohortId: d.cohortId,
+        companySectorId: d.companySectorId,
+      };
+    });
     try {
-      const res = await bulkAddUsers({ users: data }).unwrap();
-      if (res.status === 201) {
-        setSavedData(res.data);
-      }
+      const res = await bulkAddUsers(goodData).unwrap();
       console.log(savedData);
     } catch (error) {
       console.log(error);
@@ -145,7 +130,7 @@ const FullScreenModal = ({
                 </div>
                 <p className="text-xs">Use Excel or CSV file</p>
               </div>
-              <div className="border border-gray-200 rounded-md">
+              <div className=" border border-gray-200 rounded-md">
                 <div className="w-[90%] mx-auto items-center justify-between flex">
                   <input
                     type="file"
