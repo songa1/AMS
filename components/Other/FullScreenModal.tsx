@@ -1,5 +1,3 @@
-"use client";
-
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import React, { useState, useEffect, useRef } from "react";
@@ -24,6 +22,7 @@ const FullScreenModal = ({
 }) => {
   const [data, setData] = useState<any>([]);
   const [savedData, setSavedData] = useState([]);
+
   const [bulkAddUsers] = useBulkAddUsersMutation();
   const toast: any = useRef(null);
 
@@ -85,6 +84,16 @@ const FullScreenModal = ({
   };
 
   const handleSave = async () => {
+    const goodData = data.map((d: any) => {
+      return {
+        name: d.name,
+        email: d.email,
+        phoneNumber: d.phoneNumber,
+        gender: d.gender,
+        cohortId: d.cohortId,
+        companySectorId: d.companySectorId,
+      };
+    });
     try {
       const res = await bulkAddUsers({ users: data }).unwrap();
       if (res.status === 201) {
@@ -132,7 +141,7 @@ const FullScreenModal = ({
                 </div>
                 <p className="text-xs">Use Excel or CSV file</p>
               </div>
-              <div className="border border-gray-200 rounded-md">
+              <div className=" border border-gray-200 rounded-md">
                 <div className="w-[90%] mx-auto items-center justify-between flex">
                   <input
                     type="file"

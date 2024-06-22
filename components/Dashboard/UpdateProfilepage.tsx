@@ -1,7 +1,7 @@
 "use client";
 
 import { useFormik } from "formik";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { InputText } from "primereact/inputtext";
 import React, { useEffect, useState } from "react";
 import * as Yup from "yup";
@@ -13,7 +13,7 @@ import {
   useGenderQuery,
   useSectorsByDistrictQuery,
 } from "@/lib/features/otherSlice";
-import {useAddUserMutation  } from "@/lib/features/userSlice";
+import { useGetOneUserQuery, useUpdatedUserMutation, useUsersQuery } from "@/lib/features/userSlice";
 import Loading from "@/app/loading";
 
 const Personal = ({
@@ -375,19 +375,30 @@ const Employment = ({
   </div>
 );
 
-function NewProfile() {
+const UpdateProfile: React.FC = () => {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState(0);
-  const [genders, setGenders] = useState([]);
-  const [cohorts, setCohorts] = useState([]);
-  const [districts, setDistricts] = useState([]);
-  const [sectors, setSectors] = useState([]);
-  const [selectedDistrict, setSelectedDistrict] = useState(null);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const { id } = useParams();
+  const [activeTab, setActiveTab] = useState<number>(0);
+  const [genders, setGenders] = useState<any[]>([]);
+  const [cohorts, setCohorts] = useState<any[]>([]);
+  const [districts, setDistricts] = useState<any[]>([]);
+  const [sectors, setSectors] = useState<any[]>([]);
+  const [selectedDistrict, setSelectedDistrict] = useState<any | null>(null);
+  const [error, setError] = useState<string>("");
+  const [success, setSuccess] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  // const [data, setData] = useState<User>()
 
-  const [addUser] = useAddUserMutation();
+  const { data } = useGetOneUserQuery(id);
+
+  // useEffect(() => {
+  //   if (UserData) { setData(UserData) }
+  // }, [UserData])
+
+  console.log(data)
+
+  const [updateUser] = useUpdatedUserMutation(); // Assuming you have an update mutation
+
   const { data: GenderData } = useGenderQuery("");
   const { data: DistrictData } = useDistrictsQuery("");
   const { data: CohortsData } = useCohortsQuery("");
@@ -425,27 +436,27 @@ function NewProfile() {
 
   const formik = useFormik({
     initialValues: {
-      firstName: "",
-      middleName: "",
-      lastName: "",
-      email: "",
-      gender: "",
-      phoneNumber: "",
+      firstName: data?.firstName,
+      middleName: data?.middleName,
+      lastName: data?.lastName,
+      email: data?.email,
+      gender: data?.genderName,
+      phoneNumber: data?.phoneNumber,
       districtName: "",
       sectorId: "",
-      whatsAppNumber: "",
-      nearlestLandmark: "",
-      track: "",
+      whatsAppNumber: data?.whatsappNumber,
+      nearlestLandmark: data?.nearestLandmark,
+      track: data?.track,
       cohortId: null,
       initiativeName: "",
       mainSector: "",
-      foundedPosition: "",
+      foundedPosition: data?.positionInFounded,
       foundedDistrictName: "",
       foundedSectorId: "",
       foundedWebsite: "",
       companyName: "",
       companySector: "",
-      companyPosition: "",
+      companyPosition: data?.positionInEmployed,
       companyWebsite: "",
       companyDistrictName: "",
       companySectorId: "",
@@ -465,7 +476,7 @@ function NewProfile() {
     setIsLoading(true);
     const values: any = formik.values;
     try {
-      const res = await addUser({
+      const res = await updateUser({
         user: {
           firstName: values.firstName,
           middleName: values.middleName,
@@ -499,7 +510,7 @@ function NewProfile() {
       }).unwrap();
       if (res.message) {
         formik.resetForm();
-        setSuccess("User added successfully!");
+        setSuccess("User updated successfully!");
       }
     } catch (error: any) {
       console.log(error);
@@ -507,7 +518,7 @@ function NewProfile() {
         setError(error?.data?.error);
       } else {
         setError(
-          "Adding user Failed! Try again, or contact the administrator!"
+          "Updating user Failed! Try again, or contact the administrator!"
         );
       }
     } finally {
@@ -592,17 +603,15 @@ function NewProfile() {
               {tabs.map((tab, index) => (
                 <li
                   key={index}
-                  className={`flex-1 ${
-                    index === activeTab
-                      ? "border-b border-blue-700 cursor-pointer"
-                      : "cursor-pointer"
-                  }`}
+                  className={`flex-1 ${index === activeTab
+                    ? "border-b border-blue-700 cursor-pointer"
+                    : "cursor-pointer"
+                    }`}
                   onClick={() => handleTabClick(index)}
                 >
                   <a
-                    className={`relative flex items-center justify-center gap-2 px-1 py-3 text-gray-500 hover:text-blue-700 font-bold ${
-                      index === activeTab ? "text-blue-700" : ""
-                    }`}
+                    className={`relative flex items-center justify-center gap-2 px-1 py-3 text-gray-500 hover:text-blue-700 font-bold ${index === activeTab ? "text-blue-700" : ""
+                      }`}
                   >
                     {tab.label}
                   </a>
@@ -617,8 +626,7 @@ function NewProfile() {
   );
 }
 
-export default NewProfile;
 
-function setUsers(arg0: (prevUsers: any) => User[]) {
-  throw new Error("Function not implemented.");
-}
+
+export default UpdateProfile;
+

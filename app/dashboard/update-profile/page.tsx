@@ -1,12 +1,13 @@
 
 import TopTitle from "@/components/Dashboard/TopTitle";
-import UpdateProfile from "@/components/Dashboard/UpdateProfile";
+import UpdateProfilepage from "@/components/Dashboard/UpdateProfilepage";
+import React from "react";
 
 function page() {
   return (
     <div>
       <TopTitle title="Update Profile" />
-      <UpdateProfile />
+      <UpdateProfilepage />
     </div>
   );
 }
