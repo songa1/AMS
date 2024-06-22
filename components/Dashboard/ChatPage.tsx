@@ -6,40 +6,27 @@ import { BiUser } from "react-icons/bi";
 import ChatInput from "../Other/ChatInput";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { useAddMessageMutation, useChatsQuery } from "@/lib/features/chatSlice";
+import { Message } from "@/types/message";
+import { getUser } from "@/helpers/auth";
+import { useUsersQuery } from "@/lib/features/userSlice";
+import { User } from "@/types/user";
 
 function ChatPage() {
-  const user = {
-    id: 1,
-    username: "Sophie",
-    status: "Online",
-    picture:
-      "https://static1.mujerhoy.com/www/multimedia/202303/02/media/mira-murati/mira-murati-captura.jpeg",
-  };
+  const user = getUser();
 
-  const otherUser = {
-    id: 1,
-    username: "Achille",
-    status: "Online",
-    picture:
-      "https://static.wikia.nocookie.net/silicon-valley/images/3/33/Richard_Hendricks.jpg",
-  };
+  const [messages, setMessages] = useState<Message[]>([]);
 
-  const [messages, setMessages] = useState([
-    { id: 1, sender: "Achille", receiver: "Sophie", message: "Hi!" },
-    { id: 2, sender: "Achille", receiver: "Sophie", message: "How are you?" },
-    {
-      id: 3,
-      sender: "Sophie",
-      receiver: "Achille",
-      message: "I am good. How are you?",
-    },
-    {
-      id: 4,
-      sender: "Achille",
-      receiver: "Sophie",
-      message: "Can I borrow you laptop?",
-    },
-  ]);
+  const { data } = useChatsQuery("", { pollingInterval: 500 });
+  const [addMessage] = useAddMessageMutation();
+  const { data: UsersQuery } = useUsersQuery("");
+  console.log(UsersQuery);
+
+  useEffect(() => {
+    if (data) {
+      setMessages(data?.data);
+    }
+  }, [data]);
 
   const messagesEndRef: any = useRef(null);
 
@@ -53,19 +40,16 @@ function ChatPage() {
 
   const formik = useFormik({
     initialValues: {
-      id: Date.now(),
       message: "",
-      sender: user?.username,
-      receiver: otherUser?.username,
+      senderId: user?.id,
     },
     validationSchema: Yup.object({
       message: Yup.string().required("Message is required"),
       sender: Yup.string(),
-      receiver: Yup.string(),
     }),
-    onSubmit: (values) => {
+    onSubmit: async (values) => {
       try {
-        setMessages((prev) => [...prev, values]);
+        const res = await addMessage({ data: values }).unwrap();
         formik.resetForm();
       } catch (error) {
         console.log(error);
@@ -83,7 +67,11 @@ function ChatPage() {
         <div className="flex flex-col">
           <h2 className="font-bold text-mainBlue">Community Chat</h2>
           <p className="text-xs">
-            {user?.username}, {otherUser?.username} + 100 others
+            {UsersQuery?.data
+              .slice(0, 2)
+              .map((user: User) => user?.firstName + ", ")}
+            {UsersQuery?.data.length > 2 &&
+              " and " + UsersQuery?.data.length + " others"}
           </p>
         </div>
       </div>
@@ -96,30 +84,35 @@ function ChatPage() {
               <div
                 key={message?.id}
                 className={`flex flex-1 gap-1 w-full ${
-                  message?.sender === user?.username
+                  message?.senderId === user?.id
                     ? "sentContainer"
                     : "receivedContainer"
                 }`}
               >
                 <Avatar
                   icon={<BiUser />}
-                  image={
-                    message?.sender === user?.username
-                      ? user?.picture
-                      : otherUser?.picture
-                  }
+                  image={message?.senderId === user?.id ? user?.picture : ""}
                 />
                 <div
                   className={`message ${
-                    message?.sender === user?.username ? "sent" : "received"
+                    message?.senderId === user?.id ? "sent" : "received"
                   }`}
                 >
-                  <p className="text-xs font-bold">{message?.sender}</p>
+                  <p className="text-xs font-bold">
+                    {message?.sender?.firstName +
+                      " " +
+                      message?.sender?.middleName || ""}
+                  </p>
                   <p>{message?.message}</p>
                 </div>
               </div>
             );
           })}
+        {messages.length === 0 && (
+          <div className="flex h-full w-full justify-center items-center">
+            No messages yet, send a message to start the conversation!
+          </div>
+        )}
         <div ref={messagesEndRef} />
       </div>
       <form className="flex gap-2 items-center">

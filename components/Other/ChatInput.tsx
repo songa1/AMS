@@ -16,17 +16,19 @@ function ChatInput({
       <button
         className="!absolute right-1 top-1 select-none rounded bg-mainBlue py-2 px-4 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md transition-all hover:shadow-md focus:shadow-lg active:shadow-md"
         type="submit"
-        onClick={onSubmit}
+        onClick={(e) => {
+          e.preventDefault();
+          onSubmit();
+        }}
       >
         Send
       </button>
       <input
-        type="email"
+        type="text"
         value={value}
         onChange={setValue}
         className="h-full w-full rounded-md border border-mainBlue bg-transparent px-3 py-2.5 pr-20 text-sm font-normal outline-0 transition-all"
         placeholder="Enter your message"
-        required
       />
     </div>
   );
