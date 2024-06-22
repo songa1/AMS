@@ -2,12 +2,18 @@
 
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import Papa from "papaparse";
-import * as XLSX from "xlsx";
 import Button from "./Button";
 import { useBulkAddUsersMutation } from "@/lib/features/userSlice";
+import { Toast } from "primereact/toast";
+
+const acceptedCSVTypes = [
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  "application/vnd.ms-excel",
+  "text/csv",
+];
 
 const FullScreenModal = ({
   isOpen,
@@ -16,9 +22,18 @@ const FullScreenModal = ({
   isOpen: boolean;
   setIsOpen: any;
 }) => {
-  const [data, setData] = useState([]);
+  const [data, setData] = useState<any>([]);
   const [savedData, setSavedData] = useState([]);
   const [bulkAddUsers] = useBulkAddUsersMutation();
+  const toast: any = useRef(null);
+
+  const show = () => {
+    toast.current.show({
+      severity: "success",
+      summary: "Success",
+      detail: "Users added successfully",
+    });
+  };
 
   const toggleModal = () => {
     setIsOpen(!isOpen);
@@ -48,63 +63,34 @@ const FullScreenModal = ({
 
   const handleFileUpload = (event: any) => {
     const file = event.target.files[0];
-    const reader = new FileReader();
-
-    reader.onload = (e: any) => {
-      const data = e.target.result;
-
-      if (file.type === "text/csv") {
-        Papa.parse(data, {
-          header: true,
-          complete: (results: any) => {
-            const mappedData = results.data.map((user: any) => ({
-              firstName: user.firstName,
-              middleName: user.middleName,
-              lastName: user.lastName,
-              email: user.email,
-              phoneNumber: user.phoneNumber,
-              whatsappNumber: user.whatsappNumber,
-              genderName: user.genderName,
-              track: user.track,
-            }));
-            setData(mappedData);
-          },
+    Papa.parse(file, {
+      skipEmptyLines: true,
+      header: true,
+      complete: function (results) {
+        const mappedData = results.data.map((item: any) => {
+          return {
+            firstName: item["First name"],
+            middleName: item["Middle Name"],
+            lastName: item["Second name"],
+            email: item["Email Address"],
+            phoneNumber: item["Your personal Phone number"],
+            whatsappNumber: item["Your WhatsApp number"],
+            genderName: item["Gender"],
+            track: item["Track"],
+          };
         });
-      } else if (
-        file.type ===
-          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
-        file.type === "application/vnd.ms-excel"
-      ) {
-        const workbook = XLSX.read(data, { type: "binary" });
-        const sheetName = workbook.SheetNames[0];
-        const worksheet: any = XLSX.utils.sheet_to_json(
-          workbook.Sheets[sheetName]
-        );
-        const mappedData = worksheet.map((user: any) => ({
-          firstName: user.firstName,
-          middleName: user.middleName,
-          lastName: user.lastName,
-          email: user.email,
-          phoneNumber: user.phoneNumber,
-          whatsappNumber: user.whatsappNumber,
-          genderName: user.genderName,
-          track: user.track,
-        }));
         setData(mappedData);
-        console.log(mappedData);
-      }
-    };
-
-    reader.readAsBinaryString(file);
+      },
+    });
   };
 
   const handleSave = async () => {
     try {
       const res = await bulkAddUsers({ users: data }).unwrap();
       if (res.status === 201) {
-        setSavedData(res.data);
+        setIsOpen(!isOpen);
+        show();
       }
-      console.log(savedData);
     } catch (error) {
       console.log(error);
     }
@@ -112,6 +98,7 @@ const FullScreenModal = ({
 
   return (
     <div>
+      <Toast ref={toast} />
       {isOpen &&
         createPortal(
           <div className="modal fixed w-full h-full top-0 left-0 flex items-center justify-center">
@@ -151,13 +138,18 @@ const FullScreenModal = ({
                     type="file"
                     className="p-3"
                     onChange={handleFileUpload}
+                    accept={acceptedCSVTypes.join(",")}
                   />
                   <Button title="Save" onClick={handleSave} />
                 </div>
               </div>
 
               <div className="w-[90%] mx-auto h-[90vh] overflow-scroll no-scrollbar">
-                <DataTable value={data} tableStyle={{ minWidth: "50rem" }}>
+                <DataTable
+                  value={data}
+                  tableStyle={{ minWidth: "50rem" }}
+                  editMode="cell"
+                >
                   {data.length > 0 &&
                     Object.keys(data[0]).map((key) => (
                       <Column key={key} field={key} header={key}></Column>
