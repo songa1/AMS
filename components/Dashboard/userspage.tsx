@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
 import { Avatar } from "primereact/avatar";
 import { useRouter } from "next/navigation";

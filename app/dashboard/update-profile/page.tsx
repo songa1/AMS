@@ -1,4 +1,3 @@
-"use client";
 
 import TopTitle from "@/components/Dashboard/TopTitle";
 import UpdateProfilepage from "@/components/Dashboard/UpdateProfilepage";

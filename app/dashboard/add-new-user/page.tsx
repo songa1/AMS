@@ -1,8 +1,5 @@
-"use client";
-
 import NewProfile from "@/components/Dashboard/AddNewUserPage";
 import TopTitle from "@/components/Dashboard/TopTitle";
-import React from "react";
 
 function page() {
   return (
