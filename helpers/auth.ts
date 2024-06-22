@@ -13,5 +13,5 @@ export const isAuthenticated = () => {
 
 export const getUser = () => {
   const user: any = Cookies.get(AUTH_STORED_DATA?.USER);
-  return JSON.parse(user);
+  return user ? JSON.parse(user) : null;
 };

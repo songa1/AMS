@@ -7,7 +7,7 @@ import React, { useEffect, useState } from "react";
 import { GoDotFill } from "react-icons/go";
 
 function TopTitle({ title }: { title: string }) {
-  const user = getUser();
+  const user: User = getUser();
   return (
     <div className="flex w-full justify-between items-center mb-10 border-b border-gray-200 p-2 cursor-pointer">
       <h1 className="text-xl text-mainBlue font-bold">{title}</h1>
