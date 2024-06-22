@@ -3,7 +3,7 @@ import { Avatar } from "primereact/avatar";
 import { useRouter } from "next/navigation";
 import SearchInput from "../Other/SearchInput";
 import FullScreenModal from "../Other/FullScreenModal";
-import { useUsersQuery } from "@/lib/features/userSlice";
+import {  useDeleteUserMutation, useUsersQuery } from "@/lib/features/userSlice";
 import { User } from "@/types/user";
 
 const UsersPage = () => {
@@ -12,7 +12,8 @@ const UsersPage = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [users, setUsers] = useState<User[]>([]);
 
-  const { data, isLoading } = useUsersQuery("");
+  const { data, isLoading, refetch } = useUsersQuery("");
+  const [deleteUser] = useDeleteUserMutation()
 
   console.log(data);
 
@@ -94,17 +95,23 @@ const UsersPage = () => {
               <td className="py-2 px-4 flex gap-1 mt-1">
                 <button
                   className=" bg-mainBlue text-xs p-1  rounded"
-                  onClick={() => router.push("profile")}
+                  onClick={() => router.push("users/" + user.id)}
                 >
                   View
                 </button>
                 <button
                   className=" bg-green-400 text-xs p-1 rounded"
-                  onClick={() => router.push("update-profile")}
+                  onClick={() => router.push("update-profile")} 
                 >
                   Edit
                 </button>
-                <button className=" bg-red-600 text-xs p-1 rounded">
+                <button className=" bg-red-600 text-xs p-1 rounded" onClick={async (e) => {
+                  e.preventDefault();
+                  const res = await deleteUser(user?.id).unwrap();
+                  if (res.message) {
+                    refetch()
+                  }
+                }}>
                   Delete
                 </button>
               </td>

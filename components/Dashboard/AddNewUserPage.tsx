@@ -13,7 +13,7 @@ import {
   useGenderQuery,
   useSectorsByDistrictQuery,
 } from "@/lib/features/otherSlice";
-import { useAddUserMutation } from "@/lib/features/userSlice";
+import {useAddUserMutation  } from "@/lib/features/userSlice";
 import Loading from "@/app/loading";
 
 const Personal = ({

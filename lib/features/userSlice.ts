@@ -9,6 +9,23 @@ export const usersSlices = createApi({
     users: builder.query({
       query: (code) => `users`,
     }),
+    getOneUser: builder.query({
+      query: (userId) => `users/${userId}`,
+    }),
+    deleteUser: builder.mutation({
+      // Assuming your API endpoint for deleting a user is like DELETE /users/{userId}
+
+      query: (userId) => ({
+        url: `users/${userId}`,
+        method: 'DELETE',
+      }),
+    }),
+    updatedUser: builder.mutation({
+      query: (userId) => ({
+        url: `users/${userId}`,
+        method: 'UPDATE',
+      }),
+    }),
     addUser: builder.mutation({
       query: (credentials) => ({
         url: "users",
@@ -26,5 +43,6 @@ export const usersSlices = createApi({
   }),
 });
 
-export const { useUsersQuery, useAddUserMutation, useBulkAddUsersMutation } =
-  usersSlices;
+
+export const { useUsersQuery, useGetOneUserQuery, useDeleteUserMutation ,useUpdatedUserMutation ,useAddUserMutation ,useBulkAddUsersMutation } = usersSlices;
+
