@@ -13,8 +13,13 @@ import {
   useGenderQuery,
   useSectorsByDistrictQuery,
 } from "@/lib/features/otherSlice";
-import { useGetOneUserQuery, useUpdatedUserMutation, useUsersQuery } from "@/lib/features/userSlice";
+import {
+  useGetOneUserQuery,
+  useUpdatedUserMutation,
+  useUsersQuery,
+} from "@/lib/features/userSlice";
 import Loading from "@/app/loading";
+import { getUser } from "@/helpers/auth";
 
 const Personal = ({
   formik,
@@ -383,21 +388,15 @@ const UpdateProfile: React.FC = () => {
   const [cohorts, setCohorts] = useState<any[]>([]);
   const [districts, setDistricts] = useState<any[]>([]);
   const [sectors, setSectors] = useState<any[]>([]);
-  const [selectedDistrict, setSelectedDistrict] = useState<any | null>(null);
+  const [user, setUser] = useState<User>(getUser());
+  const [selectedDistrict, setSelectedDistrict] = useState<any | null>(
+    user?.residentDistrict?.id
+  );
   const [error, setError] = useState<string>("");
   const [success, setSuccess] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  // const [data, setData] = useState<User>()
 
-  const { data } = useGetOneUserQuery(id);
-
-  // useEffect(() => {
-  //   if (UserData) { setData(UserData) }
-  // }, [UserData])
-
-  console.log(data)
-
-  const [updateUser] = useUpdatedUserMutation(); // Assuming you have an update mutation
+  const [updateUser] = useUpdatedUserMutation();
 
   const { data: GenderData } = useGenderQuery("");
   const { data: DistrictData } = useDistrictsQuery("");
@@ -436,34 +435,33 @@ const UpdateProfile: React.FC = () => {
 
   const formik = useFormik({
     initialValues: {
-      firstName: data?.firstName,
-      middleName: data?.middleName,
-      lastName: data?.lastName,
-      email: data?.email,
-      gender: data?.genderName,
-      phoneNumber: data?.phoneNumber,
-      districtName: "",
-      sectorId: "",
-      whatsAppNumber: data?.whatsappNumber,
-      nearlestLandmark: data?.nearestLandmark,
-      track: data?.track,
-      cohortId: null,
-      initiativeName: "",
-      mainSector: "",
-      foundedPosition: data?.positionInFounded,
-      foundedDistrictName: "",
-      foundedSectorId: "",
-      foundedWebsite: "",
-      companyName: "",
-      companySector: "",
-      companyPosition: data?.positionInEmployed,
-      companyWebsite: "",
-      companyDistrictName: "",
-      companySectorId: "",
+      firstName: user?.firstName,
+      middleName: user?.middleName,
+      lastName: user?.lastName,
+      email: user?.email,
+      gender: user?.gender,
+      phoneNumber: user?.phoneNumber,
+      districtName: user?.residentDistrict,
+      sectorId: user?.residentSector,
+      whatsAppNumber: user?.whatsappNumber,
+      nearlestLandmark: user?.nearestLandmark,
+      track: user?.track,
+      cohortId: user?.cohort,
+      initiativeName: user?.organizationFounded?.name,
+      mainSector: user?.organizationFounded?.workingSector,
+      foundedPosition: user?.positionInFounded,
+      foundedDistrictName: user?.organizationFounded?.district,
+      foundedSectorId: user?.organizationFounded?.sector,
+      foundedWebsite: user?.organizationFounded?.website,
+      companyName: user?.organizationEmployed?.name,
+      companySector: user?.organizationEmployed?.workingSector,
+      companyPosition: user?.positionInEmployed,
+      companyWebsite: user?.organizationEmployed?.website,
+      companyDistrictName: user?.organizationEmployed?.district,
+      companySectorId: user?.organizationEmployed?.sector,
     },
     validationSchema: Yup.object({
-      name: Yup.string().required("name  is required"),
-      email: Yup.string().email().required("Email is required"),
+      email: Yup.string().email("Invalid email").required("Email is required"),
       phone: Yup.string().required("Phone Number is required"),
       gender: Yup.string().required("Gender is required"),
     }),
@@ -496,14 +494,14 @@ const UpdateProfile: React.FC = () => {
         organizationFounded: {
           name: values?.initiativeName,
           workingSector: values?.mainSector,
-          districtId: values.foundedDistrictName.name,
+          districtId: values.foundedDistrictName.id,
           sectorId: values?.foundedSectorId.id,
           website: values?.foundedWebsite,
         },
         organizationEmployed: {
           name: values?.companyName,
           workingSector: values?.companySector,
-          districtId: values?.companyDistrictName.name,
+          districtId: values?.companyDistrictName.id,
           sectorId: values?.companySectorId.id,
           website: values?.companyWebsite,
         },
@@ -603,15 +601,17 @@ const UpdateProfile: React.FC = () => {
               {tabs.map((tab, index) => (
                 <li
                   key={index}
-                  className={`flex-1 ${index === activeTab
-                    ? "border-b border-blue-700 cursor-pointer"
-                    : "cursor-pointer"
-                    }`}
+                  className={`flex-1 ${
+                    index === activeTab
+                      ? "border-b border-blue-700 cursor-pointer"
+                      : "cursor-pointer"
+                  }`}
                   onClick={() => handleTabClick(index)}
                 >
                   <a
-                    className={`relative flex items-center justify-center gap-2 px-1 py-3 text-gray-500 hover:text-blue-700 font-bold ${index === activeTab ? "text-blue-700" : ""
-                      }`}
+                    className={`relative flex items-center justify-center gap-2 px-1 py-3 text-gray-500 hover:text-blue-700 font-bold ${
+                      index === activeTab ? "text-blue-700" : ""
+                    }`}
                   >
                     {tab.label}
                   </a>
@@ -624,9 +624,6 @@ const UpdateProfile: React.FC = () => {
       </div>
     </div>
   );
-}
-
-
+};
 
 export default UpdateProfile;
-
