@@ -42,11 +42,13 @@ const Personal = ({ user }: { user: User | null }) => {
       </div>
       <div className="field">
         <label>Nearest Landmark:</label>
-        <DisplayField text={user?.nearestLandmark} />
+        <DisplayField
+          text={user?.nearestLandmark ? user?.nearestLandmark : ""}
+        />
       </div>
       <div className="field">
         <label>Track:</label>
-        <DisplayField text={user?.track} />
+        <DisplayField text={user?.track ? user?.track : ""} />
       </div>
     </div>
   );
