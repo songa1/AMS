@@ -3,64 +3,67 @@
 import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
 import relativeTime from "dayjs/plugin/relativeTime";
-
-export const nots = [
-  {
-    id: 2,
-    title: "Welcome to AMS!",
-    description:
-      "<p>Hi Sophie,<br><p>We are glad to welcome you to AMS! You are welcome in the family!</p><p>To get started, <ul><li>Update your profile</li><li>Introduce yourself in the community chat,</li><li>Check Notifications for new updates</li></ul><p>Again, you are most welcome to the community</p><p>Best Regards,<br>The Admin</p>",
-    createdAt: "2020-03-04",
-    isRead: true,
-  },
-  {
-    id: 1,
-    title: "You Need to update your profile!",
-    description:
-      "<p>Hi Sophie,<br><p>We noticed that you have not updated your profile in a long time,so we are reaching out to remind you to update your information.</p><p>Some of the information you might need to update include:</p><ul><li>Your address,</li><li>Your profile picture,</li><li>Your biography,</li></ul><p>Kindly update this information as soon as you can to keep your information up to date!</p><div><a href='/dashboard/update-profile'>Update</a><a href='/dashboard/profile'>Not Updating</a></div><p>We hope you keep having a great time. Move around and chat withfriends!</p><p>Best Regards,<br>The Admin</p>",
-    createdAt: "2024-03-04",
-    isRead: false,
-  },
-];
+import {
+  useNotificationsQuery,
+  useOpenNotificationMutation,
+} from "@/lib/features/notificationSlice";
+import { getUser } from "@/helpers/auth";
 
 function Notifications() {
   dayjs.extend(relativeTime);
-  const [notifications, setNotifications] = useState(nots);
-  const [currentNotification, setCurrentNotification] = useState<number>();
+  const [notifications, setNotifications] = useState<any>([]);
+  const [currentNotification, setCurrentNotification] = useState<string>();
   const [notification, setNotification] = useState<string | null>();
+  const user = getUser();
+
+  const { data, refetch } = useNotificationsQuery(user?.id);
+  const [openNotification] = useOpenNotificationMutation();
+
+  console.log(data);
+
+  const nots = data?.notifications ? data?.notifications : [];
 
   useEffect(() => {
+    if (data) {
+      setNotifications(nots);
+    }
     if (currentNotification) {
       setNotification(
-        notifications.find((noti) => noti.id == currentNotification)
-          ?.description
+        notifications.find((noti: any) => noti.id == currentNotification)
+          ?.message
       );
     }
-  }, [currentNotification]);
+  }, [currentNotification, data, nots]);
+
+  const handleOpenNotification = async (id: string) => {
+    await openNotification({ id: id });
+    refetch();
+    setCurrentNotification(id);
+  };
 
   return (
     <div className="notifications">
       <div className="notifications-left">
         <h1 className="noti-sticky-header">Inbox</h1>
         <ul className="flex flex-col gap-1">
-          {notifications.length > 0 ? (
+          {notifications?.length > 0 ? (
             notifications
               .sort(
-                (a, b) =>
+                (a: any, b: any) =>
                   new Date(b.createdAt).getTime() -
                   new Date(a.createdAt).getTime()
               )
-              .map((noti, index: number) => (
+              .map((noti: any, index: number) => (
                 <li
                   key={index + 1}
                   className="border-b border-gray-200 p-2 px-4 cursor-pointer hover:bg-blue-100"
-                  onClick={() => setCurrentNotification(noti?.id)}
+                  onClick={() => handleOpenNotification(noti?.id)}
                 >
                   <div>
                     <p className="text-xs text-mainBlue">
                       {dayjs(noti?.createdAt).fromNow()}
                     </p>
-                    <p className={`${!noti.isRead ? "font-bold" : ""}`}>
+                    <p className={`${!noti?.opened ? "font-bold" : ""}`}>
                       {noti.title}
                     </p>
                   </div>
@@ -76,7 +79,11 @@ function Notifications() {
       <div className="notifications-right">
         <div className="noti-sticky-header">
           {currentNotification
-            ? "You are required to update your profile"
+            ? `${
+                notifications.find(
+                  (noti: any) => noti.id == currentNotification
+                )?.title
+              }`
             : "No notification selected!"}
         </div>
         {currentNotification && notification && (

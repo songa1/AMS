@@ -124,7 +124,7 @@ function ProfilePage() {
 
   const getUserData = async () => {
     setIsLoading(true);
-    const data = await getUser();
+    const data = getUser();
     setUser(data);
     setIsLoading(false);
   };
