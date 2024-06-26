@@ -5,10 +5,16 @@ import { BiChat, BiEdit, BiLock, BiLogOut, BiUser } from "react-icons/bi";
 import { HiHome } from "react-icons/hi";
 import { ImProfile } from "react-icons/im";
 import { MdMenu } from "react-icons/md";
-import { nots } from "./Notifications";
+import { useUnopenedNotificationsQuery } from "@/lib/features/notificationSlice";
+import { getUser } from "@/helpers/auth";
 
 const Sidebar: React.FC = () => {
-  const notifications = nots.filter((notif) => !notif.isRead);
+  const user = getUser();
+  const { data } = useUnopenedNotificationsQuery(user?.id, {
+    pollingInterval: 30000,
+  });
+  console.log(data?.notifications);
+  const notifications = data?.notifications ? data?.notifications : [];
   return (
     <aside className="top-0 left-0 z-40 w-64 h-full transition-transform -translate-x-full sm:translate-x-0">
       <div className="h-full px-3 py-4 overflow-y-auto bg-mainBlue">
