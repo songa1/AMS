@@ -15,3 +15,5 @@ export const getUser = () => {
   const user: any = Cookies.get(AUTH_STORED_DATA?.USER);
   return user ? JSON.parse(user) : null;
 };
+
+export const token = () => Cookies.get(AUTH_STORED_DATA?.TOKEN);
