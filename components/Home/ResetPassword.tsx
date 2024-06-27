@@ -29,7 +29,7 @@ const ResetPassword = () => {
       cPassword: "",
     },
     validationSchema: Yup.object({
-      password: Yup.string().required("Password is required"),
+      password: Yup.string().min(8).required("Password is required"),
       cPassword: Yup.string()
         .required("Kindly repeat the new password!")
         .oneOf([Yup.ref("password")], "Passwords must match"),

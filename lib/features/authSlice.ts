@@ -13,6 +13,13 @@ export const authSlices = createApi({
         body: credentials,
       }),
     }),
+    logout: builder.mutation({
+      query: (credentials) => ({
+        url: "auth/logout",
+        method: "POST",
+        body: credentials,
+      }),
+    }),
     requestReset: builder.mutation({
       query: (credentials) => ({
         url: "auth/request-link",
@@ -27,11 +34,20 @@ export const authSlices = createApi({
         body: credentials,
       }),
     }),
+    changePassword: builder.mutation({
+      query: (credentials) => ({
+        url: "auth/change-pass",
+        method: "POST",
+        body: credentials,
+      }),
+    }),
   }),
 });
 
 export const {
   useLoginMutation,
+  useLogoutMutation,
   useRequestResetMutation,
   useResetPasswordMutation,
+  useChangePasswordMutation,
 } = authSlices;

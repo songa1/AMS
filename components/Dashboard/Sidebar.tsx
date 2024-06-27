@@ -6,15 +6,29 @@ import { HiHome } from "react-icons/hi";
 import { ImProfile } from "react-icons/im";
 import { MdMenu } from "react-icons/md";
 import { useUnopenedNotificationsQuery } from "@/lib/features/notificationSlice";
-import { getUser } from "@/helpers/auth";
+import { AUTH_STORED_DATA, getUser, token } from "@/helpers/auth";
+import { useLogoutMutation } from "@/lib/features/authSlice";
+import Cookies from "js-cookie";
+import { useRouter } from "next/navigation";
 
 const Sidebar: React.FC = () => {
+  const router = useRouter();
   const user = getUser();
+  const [logout] = useLogoutMutation();
   const { data } = useUnopenedNotificationsQuery(user?.id, {
     pollingInterval: 30000,
   });
   console.log(data?.notifications);
   const notifications = data?.notifications ? data?.notifications : [];
+
+  const handleLogout = async () => {
+    const res = await logout({ userId: user?.id, token }).unwrap();
+    if (res.status == 200) {
+      Cookies.remove(AUTH_STORED_DATA?.TOKEN);
+      Cookies.remove(AUTH_STORED_DATA?.USER);
+      globalThis.location.href = "/";
+    }
+  };
   return (
     <aside className="top-0 left-0 z-40 w-64 h-full transition-transform -translate-x-full sm:translate-x-0">
       <div className="h-full px-3 py-4 overflow-y-auto bg-mainBlue">
@@ -80,7 +94,7 @@ const Sidebar: React.FC = () => {
           </li>
         </ul>
         <ul className="pt-4 mt-4 space-y-2 font-medium border-t border-gray-200">
-          <li>
+          <li onClick={handleLogout}>
             <Link href="/" className="sidebar-menu">
               <BiLogOut />
               <span className="ms-3">Logout</span>
