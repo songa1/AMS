@@ -16,9 +16,11 @@ const acceptedCSVTypes = [
 const FullScreenModal = ({
   isOpen,
   setIsOpen,
+  refetch,
 }: {
   isOpen: boolean;
   setIsOpen: any;
+  refetch: any;
 }) => {
   const [data, setData] = useState<any>([]);
   const [savedData, setSavedData] = useState([]);
@@ -97,6 +99,7 @@ const FullScreenModal = ({
     try {
       const res = await bulkAddUsers({ users: data }).unwrap();
       if (res.status === 201) {
+        refetch();
         setIsOpen(!isOpen);
         show();
       }

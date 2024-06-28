@@ -1,40 +1,42 @@
 "use client";
 
 import React from "react";
-import { BiEnvelope, BiUser } from "react-icons/bi";
+import { BiEnvelope, BiNotification, BiUser } from "react-icons/bi";
 import OneStat from "../Other/OneStat";
 import { MdOutlinePending } from "react-icons/md";
 import { FaMessage } from "react-icons/fa6";
+import { useStatsQuery } from "@/lib/features/statsSlice";
 
 function DashboardHome() {
+  const { data: StatsData } = useStatsQuery("");
   const stats = [
     {
       id: 1,
       icon: <BiUser className="text-mainBlue" size={30} />,
-      number: 234,
+      number: StatsData?.users,
       title: "Users",
       link: "/dashboard/users",
     },
     {
       id: 2,
       icon: <BiEnvelope className="text-mainBlue" size={30} />,
-      number: 234,
+      number: StatsData?.messages,
       title: "Messages",
       link: "/dashboard/chat",
     },
     {
       id: 3,
       icon: <MdOutlinePending className="text-mainBlue" size={30} />,
-      number: 234,
+      number: StatsData?.notificationsUnopened,
       title: "Pending Updates",
       link: "#",
     },
     {
       id: 4,
-      icon: <FaMessage className="text-mainBlue" size={30} />,
-      number: 100,
-      title: "Unread Messages",
-      link: "/dashboard/chat",
+      icon: <BiNotification className="text-mainBlue" size={30} />,
+      number: StatsData?.sentNotifications,
+      title: "Notifications",
+      link: "/dashboard/notifications",
     },
   ];
   return (

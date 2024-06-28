@@ -17,13 +17,18 @@ export const usersSlices = createApi({
 
       query: (userId) => ({
         url: `users/${userId}`,
-        method: 'DELETE',
+        method: "DELETE",
       }),
     }),
     updatedUser: builder.mutation({
-      query: (userId) => ({
-        url: `users/${userId}`,
-        method: 'UPDATE',
+      query: (data) => ({
+        url: `users/${data?.userId}`,
+        method: "PUT",
+        body: {
+          user: data?.user,
+          organizationFounded: data?.organizationFounded,
+          organizationEmployed: data?.organizationEmployed,
+        },
       }),
     }),
     addUser: builder.mutation({
@@ -43,6 +48,11 @@ export const usersSlices = createApi({
   }),
 });
 
-
-export const { useUsersQuery, useGetOneUserQuery, useDeleteUserMutation ,useUpdatedUserMutation ,useAddUserMutation ,useBulkAddUsersMutation } = usersSlices;
-
+export const {
+  useUsersQuery,
+  useGetOneUserQuery,
+  useDeleteUserMutation,
+  useUpdatedUserMutation,
+  useAddUserMutation,
+  useBulkAddUsersMutation,
+} = usersSlices;

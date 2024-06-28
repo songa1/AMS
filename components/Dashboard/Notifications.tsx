@@ -46,8 +46,8 @@ function Notifications() {
       <div className="notifications-left">
         <h1 className="noti-sticky-header">Inbox</h1>
         <ul className="flex flex-col gap-1">
-          {notifications?.length > 0 ? (
-            notifications
+          {notifications ? (
+            [...notifications]
               .sort(
                 (a: any, b: any) =>
                   new Date(b.createdAt).getTime() -

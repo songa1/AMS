@@ -8,6 +8,7 @@ import Loading from "@/app/loading";
 import { getUser } from "@/helpers/auth";
 import DisplayField from "../Other/DisplayField";
 import Link from "next/link";
+import { useGetOneUserQuery } from "@/lib/features/userSlice";
 
 const Personal = ({ user }: { user: User | null }) => {
   return (
@@ -120,7 +121,10 @@ function ProfilePage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [user, setUser] = useState<User | null>(null);
+  const [userData, setUser] = useState<User | null>(null);
+
+  const userProfile = useGetOneUserQuery(userData?.id);
+  const user = userProfile?.data;
 
   const getUserData = async () => {
     setIsLoading(true);
