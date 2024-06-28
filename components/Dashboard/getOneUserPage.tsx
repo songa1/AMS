@@ -179,7 +179,7 @@ function GetUser() {
                 {user?.role?.name}
               </span>
             </h2>
-            <Link href={`update-profile/${id}`}>
+            <Link href={`/dashboard/update-profile/${id}`}>
               <button className="right-1 top-1 z-10 select-none rounded bg-mainBlue py-2 px-4 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md transition-all hover:shadow-md focus:shadow-lg active:shadow-md">
                 Update Profile
               </button>

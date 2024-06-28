@@ -11,10 +11,12 @@ import { Message } from "@/types/message";
 import { getUser } from "@/helpers/auth";
 import { useUsersQuery } from "@/lib/features/userSlice";
 import { User } from "@/types/user";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
 
 function ChatPage() {
   const user = getUser();
-
+  dayjs.extend(relativeTime);
   const [messages, setMessages] = useState<Message[]>([]);
 
   const { data } = useChatsQuery("", { pollingInterval: 500 });
@@ -104,6 +106,9 @@ function ChatPage() {
                       message?.sender?.middleName || ""}
                   </p>
                   <p>{message?.message}</p>
+                  <p className="text-xs text-gray-600">
+                    {dayjs(message?.createdAt).fromNow()}
+                  </p>
                 </div>
               </div>
             );

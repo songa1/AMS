@@ -5,17 +5,21 @@ import { Avatar } from "primereact/avatar";
 import { useRouter } from "next/navigation";
 import SearchInput from "../Other/SearchInput";
 import FullScreenModal from "../Other/FullScreenModal";
-import {  useDeleteUserMutation, useUsersQuery } from "@/lib/features/userSlice";
+import { useDeleteUserMutation, useUsersQuery } from "@/lib/features/userSlice";
 import { User } from "@/types/user";
+import ConfirmModal from "../Other/confirmModal";
 
 const UsersPage = () => {
   const router = useRouter();
   const [searchText, setSearchText] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [users, setUsers] = useState<User[]>([]);
+  const [modal, setModal] = useState(false);
+  const [idToDelete, setIdToDelete] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const { data, isLoading, refetch } = useUsersQuery("");
-  const [deleteUser] = useDeleteUserMutation()
+  const [deleteUser] = useDeleteUserMutation();
 
   console.log(data);
 
@@ -45,9 +49,35 @@ const UsersPage = () => {
 
   const filteredUsers = searchUsers(searchText);
 
+  const handleDeleteUser = async () => {
+    setLoading(true);
+    const res = await deleteUser(idToDelete).unwrap();
+    if (res.message) {
+      refetch();
+      setModal(false);
+      setLoading(false);
+    } else {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="container mx-auto p-4">
-      <FullScreenModal setIsOpen={setIsOpen} isOpen={isOpen} />
+      <FullScreenModal
+        refetch={refetch}
+        setIsOpen={setIsOpen}
+        isOpen={isOpen}
+      />
+      {modal && (
+        <ConfirmModal
+          cancelText="Cancel"
+          confirmText={loading ? "Deleting..." : "Confirm"}
+          title="Deleting a user"
+          description="Are you sure you want to delete a user?"
+          closeModal={() => setModal(false)}
+          action={handleDeleteUser}
+        />
+      )}
       <div className="flex justify-between items-center my-2">
         <SearchInput
           value={searchText}
@@ -103,17 +133,18 @@ const UsersPage = () => {
                 </button>
                 <button
                   className=" bg-green-400 text-xs p-1 rounded"
-                  onClick={() => router.push("update-profile/" + user.id)} 
+                  onClick={() => router.push("update-profile/" + user.id)}
                 >
                   Edit
                 </button>
-                <button className=" bg-red-600 text-xs p-1 rounded" onClick={async (e) => {
-                  e.preventDefault();
-                  const res = await deleteUser(user?.id).unwrap();
-                  if (res.message) {
-                    refetch()
-                  }
-                }}>
+                <button
+                  className=" bg-red-600 text-xs p-1 rounded"
+                  onClick={async (e) => {
+                    e.preventDefault();
+                    setIdToDelete(user?.id);
+                    setModal(true);
+                  }}
+                >
                   Delete
                 </button>
               </td>
