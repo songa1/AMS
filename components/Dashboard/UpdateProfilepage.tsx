@@ -382,15 +382,14 @@ const Employment = ({
 
 const UpdateProfile: React.FC = () => {
   const router = useRouter();
-  const { id } = useParams();
   const [activeTab, setActiveTab] = useState<number>(0);
   const [genders, setGenders] = useState<any[]>([]);
   const [cohorts, setCohorts] = useState<any[]>([]);
   const [districts, setDistricts] = useState<any[]>([]);
   const [sectors, setSectors] = useState<any[]>([]);
-  const [user, setUser] = useState<User>(getUser());
+  const [userData, setUser] = useState<User>(getUser());
   const [selectedDistrict, setSelectedDistrict] = useState<any | null>(
-    user?.residentDistrict?.id
+    userData?.residentDistrict?.id
   );
   const [error, setError] = useState<string>("");
   const [success, setSuccess] = useState<string>("");
@@ -398,6 +397,8 @@ const UpdateProfile: React.FC = () => {
 
   const [updateUser] = useUpdatedUserMutation();
 
+  const { data: userProfile, refetch } = useGetOneUserQuery(userData?.id);
+  const user = userProfile;
   const { data: GenderData } = useGenderQuery("");
   const { data: DistrictData } = useDistrictsQuery("");
   const { data: CohortsData } = useCohortsQuery("");
@@ -475,39 +476,43 @@ const UpdateProfile: React.FC = () => {
     const values: any = formik.values;
     try {
       const res = await updateUser({
+        userId: user?.id,
         user: {
-          firstName: values.firstName,
-          middleName: values.middleName,
-          lastName: values.lastName,
-          email: values.email,
-          phoneNumber: values.phoneNumber,
-          whatsappNumber: values.whatsAppNumber,
-          genderName: values.gender.name,
-          nearestLandmark: values.nearlestLandmark,
+          firstName: values?.firstName,
+          middleName: values?.middleName,
+          lastName: values?.lastName,
+          email: values?.email,
+          phoneNumber: values?.phoneNumber,
+          whatsappNumber: values?.whatsAppNumber,
+          genderName: values?.gender?.name,
+          nearestLandmark: values?.nearlestLandmark,
           cohortId: values?.cohortId?.id,
-          track: values.track,
-          residentDistrictId: values?.districtName.id,
-          residentSectorId: values?.sectorId.id,
+          track: values?.track,
+          residentDistrictId: values?.districtName?.id,
+          residentSectorId: values?.sectorId?.id,
           positionInFounded: values?.foundedPosition,
           positionInEmployed: values?.companyPosition,
         },
         organizationFounded: {
+          id: user?.organizationFounded?.id,
           name: values?.initiativeName,
           workingSector: values?.mainSector,
-          districtId: values.foundedDistrictName.id,
-          sectorId: values?.foundedSectorId.id,
+          districtId: values?.foundedDistrictName?.name,
+          sectorId: values?.foundedSectorId?.id,
           website: values?.foundedWebsite,
         },
         organizationEmployed: {
+          id: user?.organizationEmployed?.id,
           name: values?.companyName,
           workingSector: values?.companySector,
-          districtId: values?.companyDistrictName.id,
-          sectorId: values?.companySectorId.id,
+          districtId: values?.companyDistrictName?.name,
+          sectorId: values?.companySectorId?.id,
           website: values?.companyWebsite,
         },
       }).unwrap();
       if (res.message) {
         formik.resetForm();
+        refetch();
         setSuccess("User updated successfully!");
       }
     } catch (error: any) {

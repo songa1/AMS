@@ -18,8 +18,9 @@ const Sidebar: React.FC = () => {
   const { data } = useUnopenedNotificationsQuery(user?.id, {
     pollingInterval: 30000,
   });
-  console.log(data?.notifications);
+
   const notifications = data?.notifications ? data?.notifications : [];
+  const isAdmin = user?.role?.name == "ADMIN";
 
   const handleLogout = async () => {
     const res = await logout({ userId: user?.id, token }).unwrap();
@@ -39,12 +40,14 @@ const Sidebar: React.FC = () => {
           <h1 className="text-center font-black text-white text-xl">AMS</h1>
         </div>
         <ul className="space-y-2 font-medium">
-          <li>
-            <Link href="/dashboard" className="sidebar-menu">
-              <HiHome />
-              <span className="ms-3">Home</span>
-            </Link>
-          </li>
+          {isAdmin && (
+            <li>
+              <Link href="/dashboard" className="sidebar-menu">
+                <HiHome />
+                <span className="ms-3">Home</span>
+              </Link>
+            </li>
+          )}
           <li>
             <Link href="/dashboard/profile" className="sidebar-menu">
               <ImProfile />
@@ -59,12 +62,14 @@ const Sidebar: React.FC = () => {
               </span>
             </Link>
           </li>
-          <li>
-            <Link href="/dashboard/users" className="sidebar-menu">
-              <BiUser />
-              <span className="flex-1 ms-3 whitespace-nowrap">Users</span>
-            </Link>
-          </li>
+          {isAdmin && (
+            <li>
+              <Link href="/dashboard/users" className="sidebar-menu">
+                <BiUser />
+                <span className="flex-1 ms-3 whitespace-nowrap">Users</span>
+              </Link>
+            </li>
+          )}
           <li>
             <Link href="/dashboard/chat" className="sidebar-menu">
               <BiChat />

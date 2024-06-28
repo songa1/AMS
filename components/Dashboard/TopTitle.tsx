@@ -17,7 +17,7 @@ function TopTitle({ title }: { title: string }) {
             <h2 className="text-md font-bold">{user?.firstName}</h2>
             <GoDotFill className="text-mainBlue" />
           </div>
-          <p className="text-xs text-mainBlue">Admin</p>
+          <p className="text-xs text-mainBlue">{user?.role?.name}</p>
         </div>
         <Image
           src="/profile.jpg"

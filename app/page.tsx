@@ -39,7 +39,11 @@ const LoginPage = () => {
           Cookies.set(AUTH_STORED_DATA?.USER, JSON.stringify(result?.user), {
             expires: 7,
           });
-          router.push("/dashboard");
+          if (result?.user?.role?.name == "ADMIN") {
+            router.push("/dashboard");
+          } else {
+            router.push("/dashboard/profile");
+          }
         }
       } catch (err: any) {
         console.error("Failed to login:", err);

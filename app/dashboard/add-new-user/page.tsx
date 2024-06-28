@@ -1,11 +1,14 @@
 import NewProfile from "@/components/Dashboard/AddNewUserPage";
 import TopTitle from "@/components/Dashboard/TopTitle";
+import { OnlyAdmin } from "@/components/Other/AccessDashboard";
 
 function page() {
   return (
     <div>
       <TopTitle title="Add New User" />
-      <NewProfile/>
+      <OnlyAdmin>
+        <NewProfile />
+      </OnlyAdmin>
     </div>
   );
 }

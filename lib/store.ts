@@ -4,6 +4,7 @@ import { usersSlices } from "./features/userSlice";
 import { otherSlices } from "./features/otherSlice";
 import { chatSlices } from "./features/chatSlice";
 import { notificationSlices } from "./features/notificationSlice";
+import { statSlice } from "./features/statsSlice";
 
 export const makeStore = () => {
   return configureStore({
@@ -13,6 +14,7 @@ export const makeStore = () => {
       [otherSlices.reducerPath]: otherSlices.reducer,
       [chatSlices.reducerPath]: chatSlices.reducer,
       [notificationSlices.reducerPath]: notificationSlices.reducer,
+      [statSlice.reducerPath]: statSlice.reducer,
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware().concat([
@@ -21,6 +23,7 @@ export const makeStore = () => {
         otherSlices.middleware,
         chatSlices.middleware,
         notificationSlices.middleware,
+        statSlice.middleware,
       ]),
   });
 };

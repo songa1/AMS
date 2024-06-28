@@ -23,6 +23,7 @@ export interface User {
   organizationEmployed: organization;
   positionInEmployed: string | null;
   password: string | null;
+  role: Role;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -39,6 +40,11 @@ export interface organization {
 }
 
 export interface cohort {
+  id: string;
+  name: string;
+}
+
+export interface Role {
   id: string;
   name: string;
 }
