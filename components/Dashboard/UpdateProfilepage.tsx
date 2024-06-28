@@ -436,30 +436,52 @@ const UpdateProfile: React.FC = () => {
 
   const formik = useFormik({
     initialValues: {
-      firstName: user?.firstName,
-      middleName: user?.middleName,
-      lastName: user?.lastName,
-      email: user?.email,
-      gender: user?.gender,
-      phoneNumber: user?.phoneNumber,
-      districtName: user?.residentDistrict,
-      sectorId: user?.residentSector,
-      whatsAppNumber: user?.whatsappNumber,
-      nearlestLandmark: user?.nearestLandmark,
-      track: user?.track,
-      cohortId: user?.cohort,
-      initiativeName: user?.organizationFounded?.name,
-      mainSector: user?.organizationFounded?.workingSector,
-      foundedPosition: user?.positionInFounded,
-      foundedDistrictName: user?.organizationFounded?.district,
-      foundedSectorId: user?.organizationFounded?.sector,
-      foundedWebsite: user?.organizationFounded?.website,
-      companyName: user?.organizationEmployed?.name,
-      companySector: user?.organizationEmployed?.workingSector,
-      companyPosition: user?.positionInEmployed,
-      companyWebsite: user?.organizationEmployed?.website,
-      companyDistrictName: user?.organizationEmployed?.district,
-      companySectorId: user?.organizationEmployed?.sector,
+      firstName: user?.firstName ? user?.firstName : "",
+      middleName: user?.middleName ? user?.middleName : "",
+      lastName: user?.lastName ? user?.lastName : "",
+      email: user?.email ? user?.email : "",
+      gender: user?.gender ? user?.gender : { name: "" },
+      phoneNumber: user?.phoneNumber ? user?.phoneNumber : "",
+      districtName: user?.residentDistrict
+        ? user?.residentDistrict
+        : { id: "" },
+      sectorId: user?.residentSector ? user?.residentSector : { id: "" },
+      whatsAppNumber: user?.whatsappNumber ? user?.whatsappNumber : "",
+      nearlestLandmark: user?.nearestLandmark ? user?.nearestLandmark : "",
+      track: user?.track ? user?.track : "",
+      cohortId: user?.cohort ? user?.cohort : { id: "" },
+      initiativeName: user?.organizationFounded?.name
+        ? user?.organizationFounded?.name
+        : "",
+      mainSector: user?.organizationFounded?.workingSector
+        ? user?.organizationFounded?.workingSector
+        : "",
+      foundedPosition: user?.positionInFounded ? user?.positionInFounded : "",
+      foundedDistrictName: user?.organizationFounded?.district
+        ? user?.organizationFounded?.district
+        : { name: "" },
+      foundedSectorId: user?.organizationFounded?.sector
+        ? user?.organizationFounded?.sector
+        : { id: "" },
+      foundedWebsite: user?.organizationFounded?.website
+        ? user?.organizationFounded?.website
+        : "",
+      companyName: user?.organizationEmployed?.name
+        ? user?.organizationEmployed?.name
+        : "",
+      companySector: user?.organizationEmployed?.workingSector
+        ? user?.organizationEmployed?.workingSector
+        : "",
+      companyPosition: user?.positionInEmployed ? user?.positionInEmployed : "",
+      companyWebsite: user?.organizationEmployed?.website
+        ? user?.organizationEmployed?.website
+        : "",
+      companyDistrictName: user?.organizationEmployed?.district
+        ? user?.organizationEmployed?.district
+        : { name: "" },
+      companySectorId: user?.organizationEmployed?.sector
+        ? user?.organizationEmployed?.sector
+        : { id: "" },
     },
     validationSchema: Yup.object({
       email: Yup.string().email("Invalid email").required("Email is required"),
