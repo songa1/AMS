@@ -81,38 +81,44 @@ function ChatPage() {
         className={`h-[70vh] p-2 rounded-xl w-full content-end overflow-scroll my-scrollable-div no-scrollbar`}
       >
         {messages &&
-          messages.map((message) => {
-            return (
-              <div
-                key={message?.id}
-                className={`flex flex-1 gap-1 w-full ${
-                  message?.senderId === user?.id
-                    ? "sentContainer"
-                    : "receivedContainer"
-                }`}
-              >
-                <Avatar
-                  icon={<BiUser />}
-                  image={message?.senderId === user?.id ? user?.picture : ""}
-                />
+          [...messages]
+            .sort(
+              (a, b) =>
+                new Date(a.createdAt).getTime() -
+                new Date(b.createdAt).getTime()
+            )
+            .map((message) => {
+              return (
                 <div
-                  className={`message ${
-                    message?.senderId === user?.id ? "sent" : "received"
+                  key={message?.id}
+                  className={`flex flex-1 gap-1 w-full ${
+                    message?.senderId === user?.id
+                      ? "sentContainer"
+                      : "receivedContainer"
                   }`}
                 >
-                  <p className="text-xs font-bold">
-                    {message?.sender?.firstName +
-                      " " +
-                      message?.sender?.middleName || ""}
-                  </p>
-                  <p>{message?.message}</p>
-                  <p className="text-xs text-gray-600">
-                    {dayjs(message?.createdAt).fromNow()}
-                  </p>
+                  <Avatar
+                    icon={<BiUser />}
+                    image={message?.senderId === user?.id ? user?.picture : ""}
+                  />
+                  <div
+                    className={`message ${
+                      message?.senderId === user?.id ? "sent" : "received"
+                    }`}
+                  >
+                    <p className="text-xs font-bold">
+                      {message?.sender?.firstName +
+                        " " +
+                        message?.sender?.middleName || ""}
+                    </p>
+                    <p>{message?.message}</p>
+                    <p className="text-xs text-gray-600">
+                      {dayjs(message?.createdAt).fromNow()}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
         {messages.length === 0 && (
           <div className="flex h-full w-full justify-center items-center">
             No messages yet, send a message to start the conversation!
