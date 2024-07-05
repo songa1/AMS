@@ -516,7 +516,7 @@ const UpdateProfile: React.FC = () => {
           positionInEmployed: values?.companyPosition,
         },
         organizationFounded: {
-          id: user?.organizationFounded?.id,
+          id: user?.organizationFounded?.id || "",
           name: values?.initiativeName,
           workingSector: values?.mainSector,
           districtId: values?.foundedDistrictName?.name,
@@ -524,7 +524,7 @@ const UpdateProfile: React.FC = () => {
           website: values?.foundedWebsite,
         },
         organizationEmployed: {
-          id: user?.organizationEmployed?.id,
+          id: user?.organizationEmployed?.id || "",
           name: values?.companyName,
           workingSector: values?.companySector,
           districtId: values?.companyDistrictName?.name,
