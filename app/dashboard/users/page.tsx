@@ -6,9 +6,7 @@ function page() {
   return (
     <div>
       <TopTitle title="Users" />
-      <OnlyAdmin>
-        <UsersPage />
-      </OnlyAdmin>
+      <UsersPage />
     </div>
   );
 }

@@ -6,29 +6,51 @@ import { BiUser } from "react-icons/bi";
 import ChatInput from "../Other/ChatInput";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { useAddMessageMutation, useChatsQuery } from "@/lib/features/chatSlice";
+import {
+  useAddMessageMutation,
+  useChatsQuery,
+  usePrivateMessagesQuery,
+} from "@/lib/features/chatSlice";
 import { Message } from "@/types/message";
 import { getUser } from "@/helpers/auth";
 import { useUsersQuery } from "@/lib/features/userSlice";
 import { User } from "@/types/user";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import { useParams } from "next/navigation";
 
 function ChatPage() {
   const user = getUser();
   dayjs.extend(relativeTime);
-  const [messages, setMessages] = useState<Message[]>([]);
+  // const [messages, setMessages] = useState<Message[]>([]);
+  const { username } = useParams();
 
-  const { data } = useChatsQuery("", { pollingInterval: 500 });
+  const { data: chatsData } = useChatsQuery("", {
+    skip: !!username,
+    pollingInterval: 500,
+  });
+
+  const { data: privateChatsData } = usePrivateMessagesQuery(username, {
+    skip: !username,
+    pollingInterval: 500,
+  });
+
   const [addMessage] = useAddMessageMutation();
   const { data: UsersQuery } = useUsersQuery("");
-  console.log(UsersQuery);
 
-  useEffect(() => {
-    if (data) {
-      setMessages(data?.data);
-    }
-  }, [data]);
+  // useEffect(() => {
+  //   if (chatsData && !username) {
+  //     setMessages(chatsData?.data);
+  //   }
+  // }, [chatsData, username]);
+
+  // useEffect(() => {
+  //   if (privateChatsData && username) {
+  //     setMessages(privateChatsData?.data);
+  //   }
+  // }, [privateChatsData, username]);
+
+  const messages = username ? privateChatsData : chatsData;
 
   const messagesEndRef: any = useRef(null);
 
@@ -44,6 +66,7 @@ function ChatPage() {
     initialValues: {
       message: "",
       senderId: user?.id,
+      receiverId: username ? username : "",
     },
     validationSchema: Yup.object({
       message: Yup.string().required("Message is required"),
@@ -67,12 +90,19 @@ function ChatPage() {
       >
         <Avatar icon={<BiUser />} />
         <div className="flex flex-col">
-          <h2 className="font-bold text-mainBlue">Community Chat</h2>
+          <h2 className="font-bold text-mainBlue">
+            {username
+              ? UsersQuery?.data.find((user: User) => user?.id == username)
+                  ?.firstName
+              : "Community Chat"}
+          </h2>
           <p className="text-xs">
-            {UsersQuery?.data
-              .slice(0, 2)
-              .map((user: User) => user?.firstName + ", ")}
-            {UsersQuery?.data.length > 2 &&
+            {!username &&
+              UsersQuery?.data
+                .slice(0, 2)
+                .map((user: User) => user?.firstName + ", ")}
+            {!username &&
+              UsersQuery?.data.length > 2 &&
               " and " + UsersQuery?.data.length + " others"}
           </p>
         </div>
@@ -119,7 +149,7 @@ function ChatPage() {
                 </div>
               );
             })}
-        {messages.length === 0 && (
+        {messages && messages.length === 0 && (
           <div className="flex h-full w-full justify-center items-center">
             No messages yet, send a message to start the conversation!
           </div>

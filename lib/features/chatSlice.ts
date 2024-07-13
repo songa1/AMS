@@ -16,7 +16,18 @@ export const chatSlices = createApi({
         body: credentials,
       }),
     }),
+    privateChats: builder.query({
+      query: (id) => `chat/chats/${id}`,
+    }),
+    privateMessages: builder.query({
+      query: (id) => `chat/${id}`,
+    }),
   }),
 });
 
-export const { useAddMessageMutation, useChatsQuery } = chatSlices;
+export const {
+  useAddMessageMutation,
+  useChatsQuery,
+  usePrivateChatsQuery,
+  usePrivateMessagesQuery,
+} = chatSlices;

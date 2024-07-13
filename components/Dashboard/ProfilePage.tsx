@@ -30,11 +30,11 @@ const Personal = ({ user }: { user: User | null }) => {
         <DisplayField text={user?.genderName} />
       </div>
       <div className="field">
-        <label>District:</label>
+        <label>Resident District:</label>
         <DisplayField text={user?.residentDistrict?.name} />
       </div>
       <div className="field">
-        <label>Sector:</label>
+        <label>Resident Sector:</label>
         <DisplayField text={user?.residentSector?.name} />
       </div>
       <div className="field">

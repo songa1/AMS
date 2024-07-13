@@ -41,7 +41,7 @@ function DashboardHome() {
   ];
   return (
     <div>
-      <div className="grid justify-between items-center gap-5 grid-cols-4">
+      <div className="grid justify-between items-center gap-5 md:grid-cols-4 sm:grid-cols-3 xs:grid-cols-1">
         {stats &&
           stats.map((stat) => (
             <OneStat

@@ -87,7 +87,7 @@ const Sidebar: React.FC = () => {
     },
     {
       id: 5,
-      title: "Community Chat",
+      title: "Messages",
       icon: <BiChat />,
       link: "/dashboard/chat",
       show: !isAdmin ? false : true,

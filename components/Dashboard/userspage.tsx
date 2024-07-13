@@ -8,6 +8,17 @@ import FullScreenModal from "../Other/FullScreenModal";
 import { useDeleteUserMutation, useUsersQuery } from "@/lib/features/userSlice";
 import { User } from "@/types/user";
 import ConfirmModal from "../Other/confirmModal";
+import {
+  BiDownload,
+  BiEdit,
+  BiExport,
+  BiMessage,
+  BiUpload,
+} from "react-icons/bi";
+import { CgAdd } from "react-icons/cg";
+import { BsEye } from "react-icons/bs";
+import { FiDelete } from "react-icons/fi";
+import { getUser } from "@/helpers/auth";
 
 const UsersPage = () => {
   const router = useRouter();
@@ -20,6 +31,10 @@ const UsersPage = () => {
 
   const { data, isLoading, refetch } = useUsersQuery("");
   const [deleteUser] = useDeleteUserMutation();
+
+  const user = getUser();
+
+  const isAdmin = user?.role?.name == "ADMIN";
 
   console.log(data);
 
@@ -90,14 +105,20 @@ const UsersPage = () => {
             type="submit"
             onClick={() => setIsOpen(!isOpen)}
           >
-            Upload Users
+            <BiUpload />
           </button>
           <button
             className=" right-1 top-1 select-none rounded bg-mainBlue py-2 px-4 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md transition-all hover:shadow-md focus:shadow-lg active:shadow-md"
             type="submit"
             onClick={() => router.push("add-new-user")}
           >
-            Add a New User
+            <CgAdd />
+          </button>
+          <button
+            className=" right-1 top-1 select-none rounded bg-mainBlue py-2 px-4 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md transition-all hover:shadow-md focus:shadow-lg active:shadow-md"
+            type="submit"
+          >
+            <BiDownload />
           </button>
         </div>
       </div>
@@ -108,44 +129,65 @@ const UsersPage = () => {
             <th className="py-2 px-4 border-b">Name</th>
             <th className="py-2 px-4 border-b">Email</th>
             <th className="py-2 px-4 border-b">Phone</th>
-            <th className="py-2 px-4 border-b">Gender</th>
+            {isAdmin && <th className="py-2 px-4 border-b">Gender</th>}
             <th className="py-2 px-4 border-b">Actions</th>
           </tr>
         </thead>
         <tbody>
           {filteredUsers.map((user) => (
             <tr key={user.id}>
-              <td className="py-2 px-4 border-b">
+              <td className="py-2 px-4 border-b text-center">
                 <Avatar image="/profile.jpg" shape="circle" />
               </td>
-              <td className="py-2 px-4 border-b">
+              <td className="py-2 px-4 border-b text-center">
                 {user.firstName + " " + user.lastName}
               </td>
-              <td className="py-2 px-4 border-b">{user.email}</td>
-              <td className="py-2 px-4 border-b">{user.phoneNumber}</td>
-              <td className="py-2 px-4 border-b">{user.genderName}</td>
-              <td className="py-2 px-4 flex gap-1 mt-1">
+              <td className="py-2 px-4 border-b text-center">{user.email}</td>
+              <td className="py-2 px-4 border-b text-center">
+                {user.phoneNumber}
+              </td>
+              {isAdmin && (
+                <td className="py-2 px-4 border-b text-center">
+                  {user.genderName}
+                </td>
+              )}
+              <td className="py-2 px-4 flex items-center justify-center gap-1 mt-1 text-white">
+                {isAdmin && (
+                  <button
+                    className=" bg-mainBlue text-xs p-1  rounded"
+                    onClick={() => router.push("users/" + user.id)}
+                  >
+                    <BsEye />
+                  </button>
+                )}
+                {isAdmin && (
+                  <button
+                    className=" bg-green-400 text-xs p-1 rounded"
+                    onClick={() => router.push("update-profile/" + user.id)}
+                  >
+                    <BiEdit />
+                  </button>
+                )}
+                {isAdmin && (
+                  <button
+                    className=" bg-red-600 text-xs p-1 rounded"
+                    onClick={async (e) => {
+                      e.preventDefault();
+                      setIdToDelete(user?.id);
+                      setModal(true);
+                    }}
+                  >
+                    <FiDelete />
+                  </button>
+                )}
                 <button
-                  className=" bg-mainBlue text-xs p-1  rounded"
-                  onClick={() => router.push("users/" + user.id)}
-                >
-                  View
-                </button>
-                <button
-                  className=" bg-green-400 text-xs p-1 rounded"
-                  onClick={() => router.push("update-profile/" + user.id)}
-                >
-                  Edit
-                </button>
-                <button
-                  className=" bg-red-600 text-xs p-1 rounded"
+                  className=" bg-gray-600 text-xs p-1 rounded"
                   onClick={async (e) => {
                     e.preventDefault();
-                    setIdToDelete(user?.id);
-                    setModal(true);
+                    router.push(`/dashboard/chat/${user?.id}`);
                   }}
                 >
-                  Delete
+                  <BiMessage />
                 </button>
               </td>
             </tr>

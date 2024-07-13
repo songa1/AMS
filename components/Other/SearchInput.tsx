@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { BiSearch } from "react-icons/bi";
 
 function SearchInput({
   value,
@@ -18,7 +19,7 @@ function SearchInput({
         type="submit"
         onClick={onSubmit}
       >
-        Search
+        <BiSearch />
       </button>
       <input
         type="text"

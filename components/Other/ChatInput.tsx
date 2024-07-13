@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { BiSend } from "react-icons/bi";
 
 function ChatInput({
   value,
@@ -21,7 +22,7 @@ function ChatInput({
           onSubmit();
         }}
       >
-        Send
+        <BiSend />
       </button>
       <input
         type="text"
