@@ -19,8 +19,6 @@ function IndividualChatPage() {
 
   const { data } = usePrivateChatsQuery(user?.id);
 
-  console.log(data);
-
   useEffect(() => {
     if (data) {
       setChats(data?.data);
