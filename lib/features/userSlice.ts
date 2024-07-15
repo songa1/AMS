@@ -45,6 +45,13 @@ export const usersSlices = createApi({
         body: credentials,
       }),
     }),
+    uploadPicture: builder.mutation({
+      query: (credentials) => ({
+        url: "upload/image",
+        method: "POST",
+        body: credentials,
+      }),
+    }),
   }),
 });
 
@@ -55,4 +62,5 @@ export const {
   useUpdatedUserMutation,
   useAddUserMutation,
   useBulkAddUsersMutation,
+  useUploadPictureMutation,
 } = usersSlices;

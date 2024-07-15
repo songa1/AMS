@@ -27,14 +27,14 @@ function ChatPage() {
 
   const { data: chatsData } = useChatsQuery("", {
     skip: !!username,
-    // pollingInterval: 500,
+    pollingInterval: 500,
   });
 
   const { data: privateChatsData } = usePrivateMessagesQuery(
     { id: username, oid: user?.id },
     {
       skip: !username,
-      // pollingInterval: 500,
+      pollingInterval: 500,
     }
   );
 
