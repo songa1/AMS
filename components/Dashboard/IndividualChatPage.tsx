@@ -15,15 +15,30 @@ function IndividualChatPage() {
   const user = getUser();
   const [chats, setChats] = useState<Message[]>([]);
 
-  const { username } = useParams();
-
   const { data } = usePrivateChatsQuery(user?.id);
 
   useEffect(() => {
     if (data) {
-      setChats(data?.data);
+      const chatMap = new Map();
+
+      const sortedChats = [...data?.data].sort(
+        (a: Message, b: Message) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+
+      sortedChats.forEach((chat: Message) => {
+        const otherUserId =
+          chat.senderId === user.id ? chat.receiverId : chat.senderId;
+        if (!chatMap.has(otherUserId)) {
+          chatMap.set(otherUserId, chat);
+        }
+      });
+
+      setChats(Array.from(chatMap.values()));
     }
-  }, [data]);
+  }, [data, user.id]);
+
+  console.log(chats);
 
   return (
     <div className="grid grid-cols-4 gap-2">
@@ -42,7 +57,7 @@ function IndividualChatPage() {
                 <p className="font-bold">Community Chat</p>
               </div>
             </li>
-            {chats ? (
+            {chats.length > 0 ? (
               [...chats]
                 .sort(
                   (a: any, b: any) =>
@@ -58,7 +73,11 @@ function IndividualChatPage() {
                       <p className="text-xs text-mainBlue">
                         {dayjs(noti?.createdAt).fromNow()}
                       </p>
-                      <p className="">{noti?.receiver?.firstName}</p>
+                      <p className="">
+                        {`${noti?.receiver?.firstName} ${
+                          noti?.receiver?.id == user?.id ? "(You)" : ""
+                        }`}{" "}
+                      </p>
                     </div>
                   </li>
                 ))

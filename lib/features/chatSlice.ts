@@ -17,7 +17,7 @@ export const chatSlices = createApi({
       }),
     }),
     privateChats: builder.query({
-      query: (id) => `chat/chats/${id}`,
+      query: (id) => `chat/${id}`,
     }),
     privateMessages: builder.query({
       query: (data) => `chat/${data?.id}/${data?.oid}`,
