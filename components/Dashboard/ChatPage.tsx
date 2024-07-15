@@ -27,13 +27,16 @@ function ChatPage() {
 
   const { data: chatsData } = useChatsQuery("", {
     skip: !!username,
-    pollingInterval: 500,
+    // pollingInterval: 500,
   });
 
-  const { data: privateChatsData } = usePrivateMessagesQuery(username, {
-    skip: !username,
-    pollingInterval: 500,
-  });
+  const { data: privateChatsData } = usePrivateMessagesQuery(
+    { id: username, oid: user?.id },
+    {
+      skip: !username,
+      // pollingInterval: 500,
+    }
+  );
 
   const [addMessage] = useAddMessageMutation();
   const { data: UsersQuery } = useUsersQuery("");
@@ -50,7 +53,7 @@ function ChatPage() {
   //   }
   // }, [privateChatsData, username]);
 
-  const messages = username ? privateChatsData : chatsData;
+  const messages = username ? privateChatsData?.data : chatsData?.data;
 
   const messagesEndRef: any = useRef(null);
 
