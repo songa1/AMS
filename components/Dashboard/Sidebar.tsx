@@ -18,11 +18,16 @@ import { useLogoutMutation } from "@/lib/features/authSlice";
 import Cookies from "js-cookie";
 import { usePathname, useRouter } from "next/navigation";
 
-const Sidebar: React.FC = () => {
+const Sidebar = ({
+  titles,
+  setTitles,
+}: {
+  titles: boolean;
+  setTitles: any;
+}) => {
   const router = useRouter();
   const user = getUser();
   const link = usePathname();
-  const [titles, setTitles] = useState(true);
   const isMobile = typeof window !== "undefined" && window?.innerWidth <= 768;
 
   const [logout] = useLogoutMutation();
@@ -34,7 +39,7 @@ const Sidebar: React.FC = () => {
     if (isMobile) {
       setTitles(false);
     }
-  }, [titles, isMobile]);
+  }, [titles, setTitles, isMobile]);
 
   const handleToggleTitles = () => {
     setTitles(!titles);
@@ -112,7 +117,11 @@ const Sidebar: React.FC = () => {
   ];
 
   return (
-    <aside className="top-0 left-0 z-40 h-full bg-mainBlue">
+    <aside
+      className={`top-0 left-0 z-40 h-full bg-mainBlue ${
+        !titles ? "w-16" : "w-60"
+      } fixed top-0 bottom-0 left-0`}
+    >
       <div className="h-full px-3 py-4 overflow-y-auto h-full">
         <div className="border-b-4 border-b-white flex justify-between items-center mb-2 py-3">
           <div

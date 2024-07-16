@@ -64,10 +64,11 @@ function IndividualChatPage() {
                     new Date(b.createdAt).getTime() -
                     new Date(a.createdAt).getTime()
                 )
-                .map((noti: any, index: number) => (
+                .map((noti: Message, index: number) => (
                   <li
                     key={index + 1}
                     className="border-b border-gray-200 p-2 px-4 cursor-pointer hover:bg-blue-100"
+                    onClick={() => router.push(`/dashboard/chat/${noti?.id}`)}
                   >
                     <div>
                       <p className="text-xs text-mainBlue">

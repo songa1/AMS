@@ -18,8 +18,20 @@ export const otherSlices = createApi({
     sectorsByDistrict: builder.query({
       query: (districtName) => `data/district/sector/${districtName}`,
     }),
+    workingSector: builder.query({
+      query: () => `data/working-sectors`,
+    }),
+    tracks: builder.query({
+      query: () => `data/tracks`,
+    }),
   }),
 });
 
-export const { useGenderQuery, useDistrictsQuery, useSectorsByDistrictQuery, useCohortsQuery } =
-  otherSlices;
+export const {
+  useGenderQuery,
+  useDistrictsQuery,
+  useSectorsByDistrictQuery,
+  useCohortsQuery,
+  useWorkingSectorQuery,
+  useTracksQuery,
+} = otherSlices;

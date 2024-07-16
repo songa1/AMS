@@ -3,18 +3,26 @@
 import { useFormik } from "formik";
 import { useRouter } from "next/navigation";
 import { InputText } from "primereact/inputtext";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import * as Yup from "yup";
-import { User } from "@/types/user";
 import { Dropdown } from "primereact/dropdown";
 import {
   useCohortsQuery,
   useDistrictsQuery,
   useGenderQuery,
   useSectorsByDistrictQuery,
+  useTracksQuery,
+  useWorkingSectorQuery,
 } from "@/lib/features/otherSlice";
-import {useAddUserMutation  } from "@/lib/features/userSlice";
+import {
+  useAddUserMutation,
+  useUploadPictureMutation,
+} from "@/lib/features/userSlice";
 import Loading from "@/app/loading";
+import Button from "../Other/Button";
+import { FileUpload } from "primereact/fileupload";
+import { getUser } from "@/helpers/auth";
+import { Toast } from "primereact/toast";
 
 const Personal = ({
   formik,
@@ -23,6 +31,7 @@ const Personal = ({
   districts,
   genders,
   setSelectedDistrict,
+  tracks,
 }: any) => {
   return (
     <div className="grid grid-cols-2 gap-3">
@@ -178,13 +187,15 @@ const Personal = ({
       </div>
       <div className="field">
         <label>Track:</label>
-        <InputText
+        <Dropdown
           variant="filled"
           className="w-full p-3"
           type="text"
-          placeholder="What's your track?"
+          placeholder="Select a track"
           value={formik.values.track}
+          options={tracks}
           onChange={(e) => formik.setFieldValue("track", e.target.value)}
+          optionLabel="name"
           required
         />
       </div>
@@ -192,7 +203,13 @@ const Personal = ({
   );
 };
 
-const Founded = ({ formik, setSelectedDistrict, districts, sectors }: any) => (
+const Founded = ({
+  formik,
+  setSelectedDistrict,
+  districts,
+  sectors,
+  workingSectors,
+}: any) => (
   <div className="grid grid-cols-2 gap-3">
     <div className="field">
       <label>Your Initiative Name:</label>
@@ -207,14 +224,16 @@ const Founded = ({ formik, setSelectedDistrict, districts, sectors }: any) => (
       />
     </div>
     <div className="field">
-      <label>Main Sector:</label>
-      <InputText
+      <label>Working Sector:</label>
+      <Dropdown
         variant="filled"
         className="w-full p-3"
         type="text"
-        placeholder="What's your initiative's sector?"
-        value={formik.values.mainSector}
-        onChange={(e) => formik.setFieldValue("mainSector", e.target.value)}
+        placeholder="Select a working sector"
+        value={formik.values.workingSector}
+        options={workingSectors}
+        onChange={(e) => formik.setFieldValue("workingSector", e.target.value)}
+        optionLabel="name"
         required
       />
     </div>
@@ -286,6 +305,7 @@ const Employment = ({
   setSelectedDistrict,
   districts,
   sectors,
+  workingSectors,
 }: any) => (
   <div className="grid grid-cols-2 gap-3">
     <div className="field">
@@ -301,14 +321,16 @@ const Employment = ({
       />
     </div>
     <div className="field">
-      <label>Company Sector:</label>
-      <InputText
+      <label>Working Sector:</label>
+      <Dropdown
         variant="filled"
         className="w-full p-3"
         type="text"
-        placeholder="What's your company's category?"
+        placeholder="Select a working sector"
         value={formik.values.companySector}
+        options={workingSectors}
         onChange={(e) => formik.setFieldValue("companySector", e.target.value)}
+        optionLabel="name"
         required
       />
     </div>
@@ -377,15 +399,22 @@ const Employment = ({
 
 function NewProfile() {
   const router = useRouter();
+  const user = getUser();
+  const toast: any = useRef(null);
   const [activeTab, setActiveTab] = useState(0);
   const [genders, setGenders] = useState([]);
   const [cohorts, setCohorts] = useState([]);
   const [districts, setDistricts] = useState([]);
   const [sectors, setSectors] = useState([]);
+  const [tracks, setTracks] = useState([]);
+  const [workingSectors, setWorkingSectors] = useState([]);
   const [selectedDistrict, setSelectedDistrict] = useState(null);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [imageData, setImageData] = useState<any>(null);
+  const [uploadSuccess, setUploadSuccess] = useState(false);
 
   const [addUser] = useAddUserMutation();
   const { data: GenderData } = useGenderQuery("");
@@ -394,6 +423,24 @@ function NewProfile() {
   const { data: SectorsData } = useSectorsByDistrictQuery(selectedDistrict, {
     skip: !selectedDistrict,
   });
+
+  const { data: WorkingSectorsData } = useWorkingSectorQuery("");
+
+  const { data: TracksData } = useTracksQuery("");
+
+  const [uploadPicture] = useUploadPictureMutation();
+
+  useEffect(() => {
+    if (WorkingSectorsData) {
+      setWorkingSectors(WorkingSectorsData?.data);
+    }
+  }, [WorkingSectorsData]);
+
+  useEffect(() => {
+    if (TracksData) {
+      setTracks(TracksData?.data);
+    }
+  }, [TracksData]);
 
   useEffect(() => {
     if (GenderData) {
@@ -449,6 +496,7 @@ function NewProfile() {
       companyWebsite: "",
       companyDistrictName: "",
       companySectorId: "",
+      profileImageId: "",
     },
     validationSchema: Yup.object({
       name: Yup.string().required("name  is required"),
@@ -476,22 +524,23 @@ function NewProfile() {
           genderName: values.gender.name,
           nearestLandmark: values.nearlestLandmark,
           cohortId: values?.cohortId?.id,
-          track: values.track,
+          track: values?.track?.id,
           residentDistrictId: values?.districtName.id,
           residentSectorId: values?.sectorId.id,
           positionInFounded: values?.foundedPosition,
           positionInEmployed: values?.companyPosition,
+          profileImageId: values?.profileImageId,
         },
         organizationFounded: {
           name: values?.initiativeName,
-          workingSector: values?.mainSector,
+          workingSector: values?.mainSector?.id,
           districtId: values.foundedDistrictName.name,
           sectorId: values?.foundedSectorId.id,
           website: values?.foundedWebsite,
         },
         organizationEmployed: {
           name: values?.companyName,
-          workingSector: values?.companySector,
+          workingSector: values?.companySector?.id,
           districtId: values?.companyDistrictName.name,
           sectorId: values?.companySectorId.id,
           website: values?.companyWebsite,
@@ -526,6 +575,7 @@ function NewProfile() {
           districts={districts}
           genders={genders}
           setSelectedDistrict={setSelectedDistrict}
+          tracks={tracks}
         />
       ),
     },
@@ -537,6 +587,7 @@ function NewProfile() {
           setSelectedDistrict={setSelectedDistrict}
           districts={districts}
           sectors={sectors}
+          workingSectors={workingSectors}
         />
       ),
     },
@@ -548,6 +599,7 @@ function NewProfile() {
           setSelectedDistrict={setSelectedDistrict}
           districts={districts}
           sectors={sectors}
+          workingSectors={workingSectors}
         />
       ),
     },
@@ -557,13 +609,50 @@ function NewProfile() {
     return <Loading />;
   }
 
+  const handlePreview = async (e: any) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImageData(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleFileUpload = async (e: any) => {
+    if (imageData) {
+      try {
+        const formData = new FormData();
+        formData.append("profileImage", imageData);
+        formData.append("userId", user?.id);
+
+        const data = await uploadPicture(formData).unwrap();
+
+        if (data?.image) {
+          toast.current.show({
+            severity: "info",
+            summary: "Success",
+            detail: "Image uploaded successfully!",
+          });
+          formik.setFieldValue("profileImageId", data?.image?.id);
+          setUploadSuccess(true);
+        }
+      } catch (error: any) {
+        toast.current.show({
+          severity: "error",
+          summary: "Error",
+          detail: error?.error,
+        });
+      }
+    }
+  };
+
   return (
     <div className="">
+      <Toast ref={toast}></Toast>
       <div className="w-full">
-        <img
-          src="/kigali.jpg"
-          className="w-full h-40 object-cover rounded-t-xl"
-        />
         {error && (
           <p className="bg-red-500 text-white rounded-md text-center p-2 w-full my-3">
             {error}
@@ -575,8 +664,37 @@ function NewProfile() {
           </p>
         )}
         <div className="relative">
-          <div className="grid grid-cols-4 items-center justify-end p-2">
-            <div className="col-span-3"></div>
+          <div className="flex items-start justify-between p-2">
+            <div>
+              <div>
+                <label>Profile Picture:</label>
+                <input type="file" onChange={handlePreview} />
+              </div>
+              {imagePreview && (
+                <img
+                  src={imagePreview}
+                  alt="Image Preview"
+                  className="mt-4 h-40 rounded-md w-40 object-cover"
+                />
+              )}
+              {imagePreview && (
+                <div className="flex gap-1 items-center my-1">
+                  {!uploadSuccess && (
+                    <Button onClick={handleFileUpload} title="Upload" />
+                  )}
+                  <Button
+                    onClick={() => {
+                      setImagePreview(null);
+                      setImageData(null);
+                      setUploadSuccess(false);
+                      if (formik.values.profileImageId)
+                        formik.setFieldValue("profileImageId", "");
+                    }}
+                    title="Clear"
+                  />
+                </div>
+              )}
+            </div>
             <button
               className="right-1 top-1 z-10 select-none rounded bg-mainBlue py-2 px-4 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md transition-all hover:shadow-md focus:shadow-lg active:shadow-md"
               type="submit"
@@ -618,7 +736,3 @@ function NewProfile() {
 }
 
 export default NewProfile;
-
-function setUsers(arg0: (prevUsers: any) => User[]) {
-  throw new Error("Function not implemented.");
-}
