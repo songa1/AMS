@@ -5,13 +5,14 @@ import { useRouter } from "next/navigation";
 import { InputText } from "primereact/inputtext";
 import React, { useEffect, useRef, useState } from "react";
 import * as Yup from "yup";
-import { User } from "@/types/user";
 import { Dropdown } from "primereact/dropdown";
 import {
   useCohortsQuery,
   useDistrictsQuery,
   useGenderQuery,
   useSectorsByDistrictQuery,
+  useTracksQuery,
+  useWorkingSectorQuery,
 } from "@/lib/features/otherSlice";
 import {
   useAddUserMutation,
@@ -30,6 +31,7 @@ const Personal = ({
   districts,
   genders,
   setSelectedDistrict,
+  tracks,
 }: any) => {
   return (
     <div className="grid grid-cols-2 gap-3">
@@ -185,13 +187,15 @@ const Personal = ({
       </div>
       <div className="field">
         <label>Track:</label>
-        <InputText
+        <Dropdown
           variant="filled"
           className="w-full p-3"
           type="text"
-          placeholder="What's your track?"
+          placeholder="Select a track"
           value={formik.values.track}
+          options={tracks}
           onChange={(e) => formik.setFieldValue("track", e.target.value)}
+          optionLabel="name"
           required
         />
       </div>
@@ -199,7 +203,13 @@ const Personal = ({
   );
 };
 
-const Founded = ({ formik, setSelectedDistrict, districts, sectors }: any) => (
+const Founded = ({
+  formik,
+  setSelectedDistrict,
+  districts,
+  sectors,
+  workingSectors,
+}: any) => (
   <div className="grid grid-cols-2 gap-3">
     <div className="field">
       <label>Your Initiative Name:</label>
@@ -214,14 +224,16 @@ const Founded = ({ formik, setSelectedDistrict, districts, sectors }: any) => (
       />
     </div>
     <div className="field">
-      <label>Main Sector:</label>
-      <InputText
+      <label>Working Sector:</label>
+      <Dropdown
         variant="filled"
         className="w-full p-3"
         type="text"
-        placeholder="What's your initiative's sector?"
-        value={formik.values.mainSector}
-        onChange={(e) => formik.setFieldValue("mainSector", e.target.value)}
+        placeholder="Select a working sector"
+        value={formik.values.workingSector}
+        options={workingSectors}
+        onChange={(e) => formik.setFieldValue("workingSector", e.target.value)}
+        optionLabel="name"
         required
       />
     </div>
@@ -293,6 +305,7 @@ const Employment = ({
   setSelectedDistrict,
   districts,
   sectors,
+  workingSectors,
 }: any) => (
   <div className="grid grid-cols-2 gap-3">
     <div className="field">
@@ -308,14 +321,16 @@ const Employment = ({
       />
     </div>
     <div className="field">
-      <label>Company Sector:</label>
-      <InputText
+      <label>Working Sector:</label>
+      <Dropdown
         variant="filled"
         className="w-full p-3"
         type="text"
-        placeholder="What's your company's category?"
+        placeholder="Select a working sector"
         value={formik.values.companySector}
+        options={workingSectors}
         onChange={(e) => formik.setFieldValue("companySector", e.target.value)}
+        optionLabel="name"
         required
       />
     </div>
@@ -391,12 +406,15 @@ function NewProfile() {
   const [cohorts, setCohorts] = useState([]);
   const [districts, setDistricts] = useState([]);
   const [sectors, setSectors] = useState([]);
+  const [tracks, setTracks] = useState([]);
+  const [workingSectors, setWorkingSectors] = useState([]);
   const [selectedDistrict, setSelectedDistrict] = useState(null);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [imageData, setImageData] = useState<any>(null);
+  const [uploadSuccess, setUploadSuccess] = useState(false);
 
   const [addUser] = useAddUserMutation();
   const { data: GenderData } = useGenderQuery("");
@@ -406,7 +424,23 @@ function NewProfile() {
     skip: !selectedDistrict,
   });
 
+  const { data: WorkingSectorsData } = useWorkingSectorQuery("");
+
+  const { data: TracksData } = useTracksQuery("");
+
   const [uploadPicture] = useUploadPictureMutation();
+
+  useEffect(() => {
+    if (WorkingSectorsData) {
+      setWorkingSectors(WorkingSectorsData?.data);
+    }
+  }, [WorkingSectorsData]);
+
+  useEffect(() => {
+    if (TracksData) {
+      setTracks(TracksData?.data);
+    }
+  }, [TracksData]);
 
   useEffect(() => {
     if (GenderData) {
@@ -490,7 +524,7 @@ function NewProfile() {
           genderName: values.gender.name,
           nearestLandmark: values.nearlestLandmark,
           cohortId: values?.cohortId?.id,
-          track: values.track,
+          track: values?.track?.id,
           residentDistrictId: values?.districtName.id,
           residentSectorId: values?.sectorId.id,
           positionInFounded: values?.foundedPosition,
@@ -499,14 +533,14 @@ function NewProfile() {
         },
         organizationFounded: {
           name: values?.initiativeName,
-          workingSector: values?.mainSector,
+          workingSector: values?.mainSector?.id,
           districtId: values.foundedDistrictName.name,
           sectorId: values?.foundedSectorId.id,
           website: values?.foundedWebsite,
         },
         organizationEmployed: {
           name: values?.companyName,
-          workingSector: values?.companySector,
+          workingSector: values?.companySector?.id,
           districtId: values?.companyDistrictName.name,
           sectorId: values?.companySectorId.id,
           website: values?.companyWebsite,
@@ -541,6 +575,7 @@ function NewProfile() {
           districts={districts}
           genders={genders}
           setSelectedDistrict={setSelectedDistrict}
+          tracks={tracks}
         />
       ),
     },
@@ -552,6 +587,7 @@ function NewProfile() {
           setSelectedDistrict={setSelectedDistrict}
           districts={districts}
           sectors={sectors}
+          workingSectors={workingSectors}
         />
       ),
     },
@@ -563,6 +599,7 @@ function NewProfile() {
           setSelectedDistrict={setSelectedDistrict}
           districts={districts}
           sectors={sectors}
+          workingSectors={workingSectors}
         />
       ),
     },
@@ -573,7 +610,7 @@ function NewProfile() {
   }
 
   const handlePreview = async (e: any) => {
-    const file = e.files[0];
+    const file = e.target.files[0];
     if (file) {
       setImageData(file);
       const reader = new FileReader();
@@ -600,6 +637,7 @@ function NewProfile() {
             detail: "Image uploaded successfully!",
           });
           formik.setFieldValue("profileImageId", data?.image?.id);
+          setUploadSuccess(true);
         }
       } catch (error: any) {
         toast.current.show({
@@ -628,15 +666,10 @@ function NewProfile() {
         <div className="relative">
           <div className="flex items-start justify-between p-2">
             <div>
-              <FileUpload
-                mode="basic"
-                name="demo[]"
-                accept="image/*"
-                maxFileSize={1000000}
-                onSelect={handlePreview}
-                auto
-                chooseLabel="Profile Picture"
-              />
+              <div>
+                <label>Profile Picture:</label>
+                <input type="file" onChange={handlePreview} />
+              </div>
               {imagePreview && (
                 <img
                   src={imagePreview}
@@ -646,11 +679,16 @@ function NewProfile() {
               )}
               {imagePreview && (
                 <div className="flex gap-1 items-center my-1">
-                  <Button onClick={handleFileUpload} title="Upload" />
+                  {!uploadSuccess && (
+                    <Button onClick={handleFileUpload} title="Upload" />
+                  )}
                   <Button
                     onClick={() => {
                       setImagePreview(null);
                       setImageData(null);
+                      setUploadSuccess(false);
+                      if (formik.values.profileImageId)
+                        formik.setFieldValue("profileImageId", "");
                     }}
                     title="Clear"
                   />
