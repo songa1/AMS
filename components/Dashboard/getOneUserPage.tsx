@@ -48,7 +48,7 @@ const Personal = ({ user }: { user: User | null }) => {
       </div>
       <div className="field">
         <label>Track:</label>
-        <DisplayField text={user?.track ? user?.track : ""} />
+        <DisplayField text={user?.track ? user?.track?.name : ""} />
       </div>
     </div>
   );
@@ -62,7 +62,7 @@ const Founded = ({ user }: { user: User | null }) => (
     </div>
     <div className="field">
       <label>Main Sector:</label>
-      <DisplayField text={user?.organizationFounded?.workingSector} />
+      <DisplayField text={user?.organizationFounded?.workingSector?.name} />
     </div>
     <div className="field">
       <label>Your Position:</label>
@@ -93,7 +93,7 @@ const Employment = ({ user }: { user: User | null }) => (
     </div>
     <div className="field">
       <label>Company Sector:</label>
-      <DisplayField text={user?.organizationEmployed?.workingSector} />
+      <DisplayField text={user?.organizationEmployed?.workingSector?.name} />
     </div>
     <div className="field">
       <label>Your Position:</label>
