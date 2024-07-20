@@ -14,8 +14,9 @@ export interface User {
   residentSector: residentSector;
   cohortId: number | null;
   cohort: cohort;
+  bio: string;
   gender: gender;
-  track: string | null;
+  track: Track | null;
   organizationFoundedId: number | null;
   organizationFounded: organization;
   positionInFounded: string | null;
@@ -24,6 +25,7 @@ export interface User {
   positionInEmployed: string | null;
   password: string | null;
   role: Role;
+  profileImage: ProfileImage;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -31,7 +33,7 @@ export interface User {
 export interface organization {
   id: string;
   name: string;
-  workingSector: string;
+  workingSector: WorkingSector;
   districtId: string;
   district: residentDistrict;
   sectorId: string;
@@ -60,6 +62,22 @@ export interface residentDistrict {
 }
 
 export interface residentSector {
+  id: string;
+  name: string;
+}
+
+export interface ProfileImage {
+  id: string;
+  link: string;
+  name: string;
+}
+
+export interface Track {
+  id: string;
+  name: string;
+}
+
+export interface WorkingSector {
   id: string;
   name: string;
 }

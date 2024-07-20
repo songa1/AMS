@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { User } from "@/types/user";
 
@@ -49,7 +49,7 @@ const Personal = ({ user }: { user: User | null }) => {
       </div>
       <div className="field">
         <label>Track:</label>
-        <DisplayField text={user?.track ? user?.track : ""} />
+        <DisplayField text={user?.track ? user?.track?.name : ""} />
       </div>
     </div>
   );
@@ -63,7 +63,7 @@ const Founded = ({ user }: { user: User | null }) => (
     </div>
     <div className="field">
       <label>Main Sector:</label>
-      <DisplayField text={user?.organizationFounded?.workingSector} />
+      <DisplayField text={user?.organizationFounded?.workingSector?.name} />
     </div>
     <div className="field">
       <label>Your Position:</label>
@@ -94,7 +94,7 @@ const Employment = ({ user }: { user: User | null }) => (
     </div>
     <div className="field">
       <label>Company Sector:</label>
-      <DisplayField text={user?.organizationEmployed?.workingSector} />
+      <DisplayField text={user?.organizationEmployed?.workingSector?.name} />
     </div>
     <div className="field">
       <label>Your Position:</label>
@@ -117,6 +117,7 @@ const Employment = ({ user }: { user: User | null }) => (
 
 function ProfilePage() {
   const router = useRouter();
+  const { id } = useParams();
   const [activeTab, setActiveTab] = useState(0);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -124,7 +125,7 @@ function ProfilePage() {
   const [userData, setUser] = useState<User | null>(null);
 
   const userProfile = useGetOneUserQuery(userData?.id);
-  const user = userProfile?.data;
+  const user: User = userProfile?.data;
 
   const getUserData = async () => {
     setIsLoading(true);
@@ -156,17 +157,38 @@ function ProfilePage() {
     },
   ];
 
-  if (isLoading && !user) {
+  if (isLoading || !user) {
     return <Loading />;
   }
 
   return (
     <div className="">
       <div className="w-full">
-        <img
-          src="/kigali.jpg"
-          className="w-full h-40 object-cover rounded-t-xl"
-        />
+        <div className="flex gap-3 items-center">
+          <img
+            src={`${
+              user?.profileImage?.link
+                ? user?.profileImage?.link
+                : "/placeholder.svg"
+            }`}
+            className="w-48 h-48 object-cover rounded-full"
+          />
+          <div className="flex flex-col gap-3">
+            <h2 className="font-bold text-2xl">
+              {user
+                ? `${user?.firstName || ""} ${user?.middleName || ""} ${
+                    user?.lastName || ""
+                  }`
+                : ""}
+            </h2>
+            <p>{user?.bio}</p>
+            <Link href="/dashboard/update-profile">
+              <button className="right-1 top-1 z-10 select-none rounded bg-mainBlue py-2 px-4 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md transition-all hover:shadow-md focus:shadow-lg active:shadow-md">
+                Update Profile
+              </button>
+            </Link>
+          </div>
+        </div>
         {error && (
           <p className="bg-red-500 text-white rounded-md text-center p-2 w-full my-3">
             {error}
@@ -177,24 +199,6 @@ function ProfilePage() {
             {success}
           </p>
         )}
-        <div className="relative">
-          <div className="flex items-center justify-between p-2 py-2">
-            <h2 className="font-bold text-2xl">
-              {user?.firstName && user?.middleName && user?.lastName
-                ? user?.firstName +
-                  " " +
-                  user?.middleName +
-                  " " +
-                  user?.lastName
-                : ""}
-            </h2>
-            <Link href="update-profile">
-              <button className="right-1 top-1 z-10 select-none rounded bg-mainBlue py-2 px-4 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md transition-all hover:shadow-md focus:shadow-lg active:shadow-md">
-                Update Profile
-              </button>
-            </Link>
-          </div>
-        </div>
         <div className="p-5 text-justify">
           <div className="my-2">
             <ul className="-mb-px flex items-center gap-4 text-sm font-medium">

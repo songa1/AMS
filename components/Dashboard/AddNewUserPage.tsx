@@ -230,9 +230,9 @@ const Founded = ({
         className="w-full p-3"
         type="text"
         placeholder="Select a working sector"
-        value={formik.values.workingSector}
+        value={formik.values.mainSector}
         options={workingSectors}
-        onChange={(e) => formik.setFieldValue("workingSector", e.target.value)}
+        onChange={(e) => formik.setFieldValue("mainSector", e.target.value)}
         optionLabel="name"
         required
       />
