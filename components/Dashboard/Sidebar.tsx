@@ -87,7 +87,7 @@ const Sidebar = ({
       title: "Users",
       icon: <BiUser />,
       link: "/dashboard/users",
-      show: !isAdmin ? false : true,
+      show: true,
       count: 0,
     },
     {
@@ -95,7 +95,7 @@ const Sidebar = ({
       title: "Messages",
       icon: <BiChat />,
       link: "/dashboard/chat",
-      show: !isAdmin ? false : true,
+      show: true,
       count: 0,
     },
     {
@@ -103,7 +103,7 @@ const Sidebar = ({
       title: "Notifications",
       icon: <BiBell />,
       link: "/dashboard/notifications",
-      show: !isAdmin ? false : true,
+      show: true,
       count: notifications.length,
     },
     {

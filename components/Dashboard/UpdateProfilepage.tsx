@@ -3,7 +3,7 @@
 import { useFormik } from "formik";
 import { useParams, useRouter } from "next/navigation";
 import { InputText } from "primereact/inputtext";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import * as Yup from "yup";
 import { User } from "@/types/user";
 import { Dropdown } from "primereact/dropdown";
@@ -12,14 +12,18 @@ import {
   useDistrictsQuery,
   useGenderQuery,
   useSectorsByDistrictQuery,
+  useTracksQuery,
+  useWorkingSectorQuery,
 } from "@/lib/features/otherSlice";
 import {
   useGetOneUserQuery,
   useUpdatedUserMutation,
-  useUsersQuery,
+  useUploadPictureMutation,
 } from "@/lib/features/userSlice";
 import Loading from "@/app/loading";
 import { getUser } from "@/helpers/auth";
+import Button from "../Other/Button";
+import { Toast } from "primereact/toast";
 
 const Personal = ({
   formik,
@@ -28,45 +32,10 @@ const Personal = ({
   districts,
   genders,
   setSelectedDistrict,
+  tracks,
 }: any) => {
   return (
     <div className="grid grid-cols-2 gap-3">
-      <div className="field">
-        <label>First Name:</label>
-        <InputText
-          variant="filled"
-          className="w-full p-3"
-          type="text"
-          placeholder="First Name"
-          value={formik.values.firstName}
-          onChange={(e) => formik.setFieldValue("firstName", e.target.value)}
-          required
-        />
-      </div>
-      <div className="field">
-        <label>Middle Name:</label>
-        <InputText
-          variant="filled"
-          className="w-full p-3"
-          type="text"
-          placeholder="Middle Name"
-          value={formik.values.middleName}
-          onChange={(e) => formik.setFieldValue("middleName", e.target.value)}
-          required
-        />
-      </div>
-      <div className="field">
-        <label>Last Name:</label>
-        <InputText
-          variant="filled"
-          className="w-full p-3"
-          type="text"
-          placeholder="Last Name"
-          value={formik.values.lastName}
-          onChange={(e) => formik.setFieldValue("lastName", e.target.value)}
-          required
-        />
-      </div>
       <div className="field">
         <label>Email:</label>
         <InputText
@@ -183,13 +152,15 @@ const Personal = ({
       </div>
       <div className="field">
         <label>Track:</label>
-        <InputText
+        <Dropdown
           variant="filled"
           className="w-full p-3"
           type="text"
-          placeholder="What's your track?"
+          placeholder="Select a track"
           value={formik.values.track}
+          options={tracks}
           onChange={(e) => formik.setFieldValue("track", e.target.value)}
+          optionLabel="name"
           required
         />
       </div>
@@ -197,7 +168,13 @@ const Personal = ({
   );
 };
 
-const Founded = ({ formik, setSelectedDistrict, districts, sectors }: any) => (
+const Founded = ({
+  formik,
+  setSelectedDistrict,
+  districts,
+  sectors,
+  workingSectors,
+}: any) => (
   <div className="grid grid-cols-2 gap-3">
     <div className="field">
       <label>Your Initiative Name:</label>
@@ -212,14 +189,16 @@ const Founded = ({ formik, setSelectedDistrict, districts, sectors }: any) => (
       />
     </div>
     <div className="field">
-      <label>Main Sector:</label>
-      <InputText
+      <label>Working Sector:</label>
+      <Dropdown
         variant="filled"
         className="w-full p-3"
         type="text"
-        placeholder="What's your initiative's sector?"
+        placeholder="Select a working sector"
         value={formik.values.mainSector}
+        options={workingSectors}
         onChange={(e) => formik.setFieldValue("mainSector", e.target.value)}
+        optionLabel="name"
         required
       />
     </div>
@@ -291,6 +270,7 @@ const Employment = ({
   setSelectedDistrict,
   districts,
   sectors,
+  workingSectors,
 }: any) => (
   <div className="grid grid-cols-2 gap-3">
     <div className="field">
@@ -306,14 +286,16 @@ const Employment = ({
       />
     </div>
     <div className="field">
-      <label>Company Sector:</label>
-      <InputText
+      <label>Working Sector:</label>
+      <Dropdown
         variant="filled"
         className="w-full p-3"
         type="text"
-        placeholder="What's your company's category?"
+        placeholder="Select a working sector"
         value={formik.values.companySector}
+        options={workingSectors}
         onChange={(e) => formik.setFieldValue("companySector", e.target.value)}
+        optionLabel="name"
         required
       />
     </div>
@@ -382,6 +364,8 @@ const Employment = ({
 
 const UpdateProfile: React.FC = () => {
   const router = useRouter();
+  const toast: any = useRef(null);
+
   const [activeTab, setActiveTab] = useState<number>(0);
   const [genders, setGenders] = useState<any[]>([]);
   const [cohorts, setCohorts] = useState<any[]>([]);
@@ -394,9 +378,18 @@ const UpdateProfile: React.FC = () => {
   const [error, setError] = useState<string>("");
   const [success, setSuccess] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [tracks, setTracks] = useState([]);
+  const [workingSectors, setWorkingSectors] = useState([]);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [imageData, setImageData] = useState<any>(null);
+  const [uploadSuccess, setUploadSuccess] = useState(false);
 
   const [updateUser] = useUpdatedUserMutation();
+  const [uploadPicture] = useUploadPictureMutation();
 
+  const { data: WorkingSectorsData } = useWorkingSectorQuery("");
+
+  const { data: TracksData } = useTracksQuery("");
   const { data: userProfile, refetch } = useGetOneUserQuery(userData?.id);
   const user = userProfile;
   const { data: GenderData } = useGenderQuery("");
@@ -430,12 +423,25 @@ const UpdateProfile: React.FC = () => {
     }
   }, [DistrictData]);
 
+  useEffect(() => {
+    if (WorkingSectorsData) {
+      setWorkingSectors(WorkingSectorsData?.data);
+    }
+  }, [WorkingSectorsData]);
+
+  useEffect(() => {
+    if (TracksData) {
+      setTracks(TracksData?.data);
+    }
+  }, [TracksData]);
+
   const handleTabClick = (index: number) => {
     setActiveTab(index);
   };
 
   const formik = useFormik({
     initialValues: {
+      bio: user?.bio ? user?.bio : "",
       firstName: user?.firstName ? user?.firstName : "",
       middleName: user?.middleName ? user?.middleName : "",
       lastName: user?.lastName ? user?.lastName : "",
@@ -482,6 +488,7 @@ const UpdateProfile: React.FC = () => {
       companySectorId: user?.organizationEmployed?.sector
         ? user?.organizationEmployed?.sector
         : { id: "" },
+      profileImageId: "",
     },
     validationSchema: Yup.object({
       email: Yup.string().email("Invalid email").required("Email is required"),
@@ -509,16 +516,18 @@ const UpdateProfile: React.FC = () => {
           genderName: values?.gender?.name,
           nearestLandmark: values?.nearlestLandmark,
           cohortId: values?.cohortId?.id,
-          track: values?.track,
+          track: values?.track?.id,
           residentDistrictId: values?.districtName?.id,
           residentSectorId: values?.sectorId?.id,
           positionInFounded: values?.foundedPosition,
           positionInEmployed: values?.companyPosition,
+          bio: values?.bio,
+          profileImageId: values?.profileImageId,
         },
         organizationFounded: {
           id: user?.organizationFounded?.id || "",
           name: values?.initiativeName,
-          workingSector: values?.mainSector,
+          workingSector: values?.mainSector?.id,
           districtId: values?.foundedDistrictName?.name,
           sectorId: values?.foundedSectorId?.id,
           website: values?.foundedWebsite,
@@ -526,7 +535,7 @@ const UpdateProfile: React.FC = () => {
         organizationEmployed: {
           id: user?.organizationEmployed?.id || "",
           name: values?.companyName,
-          workingSector: values?.companySector,
+          workingSector: values?.companySector?.id,
           districtId: values?.companyDistrictName?.name,
           sectorId: values?.companySectorId?.id,
           website: values?.companyWebsite,
@@ -562,6 +571,7 @@ const UpdateProfile: React.FC = () => {
           districts={districts}
           genders={genders}
           setSelectedDistrict={setSelectedDistrict}
+          tracks={tracks}
         />
       ),
     },
@@ -573,6 +583,7 @@ const UpdateProfile: React.FC = () => {
           setSelectedDistrict={setSelectedDistrict}
           districts={districts}
           sectors={sectors}
+          workingSectors={workingSectors}
         />
       ),
     },
@@ -584,6 +595,7 @@ const UpdateProfile: React.FC = () => {
           setSelectedDistrict={setSelectedDistrict}
           districts={districts}
           sectors={sectors}
+          workingSectors={workingSectors}
         />
       ),
     },
@@ -593,13 +605,138 @@ const UpdateProfile: React.FC = () => {
     return <Loading />;
   }
 
+  const handlePreview = async (e: any) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImageData(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleFileUpload = async (e: any) => {
+    if (imageData) {
+      try {
+        const formData = new FormData();
+        formData.append("profileImage", imageData);
+        formData.append("userId", user?.id);
+
+        const data = await uploadPicture(formData).unwrap();
+
+        if (data?.image) {
+          toast.current.show({
+            severity: "info",
+            summary: "Success",
+            detail: "Image uploaded successfully!",
+          });
+          formik.setFieldValue("profileImageId", data?.image?.id);
+          setUploadSuccess(true);
+        }
+      } catch (error: any) {
+        toast.current.show({
+          severity: "error",
+          summary: "Error",
+          detail: error?.error,
+        });
+      }
+    }
+  };
+
   return (
     <div className="">
+      <Toast ref={toast}></Toast>
+
       <div className="w-full">
-        <img
-          src="/kigali.jpg"
-          className="w-full h-40 object-cover rounded-t-xl"
-        />
+        <div className="grid grid-cols-4 items-center justify-end p-2">
+          <div className="col-span-3"></div>
+          <button
+            className="right-1 top-1 z-10 select-none rounded bg-mainBlue py-2 px-4 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md transition-all hover:shadow-md focus:shadow-lg active:shadow-md"
+            type="submit"
+            onClick={() => handleSubmit()}
+          >
+            Save
+          </button>
+        </div>
+        <div className="flex gap-3 items-center">
+          <img
+            src={
+              imagePreview
+                ? imagePreview
+                : user?.profileImage?.link
+                ? user.profileImage.link
+                : "/placeholder.svg"
+            }
+            className="w-48 h-48 object-cover rounded-full"
+          />
+          <div className="flex flex-col gap-3">
+            <div className="flex items-center justify-between gap-2">
+              <InputText
+                variant="filled"
+                className="w-full p-3"
+                type="text"
+                placeholder="First Name"
+                value={formik.values.firstName}
+                onChange={(e) =>
+                  formik.setFieldValue("firstName", e.target.value)
+                }
+              />
+              <InputText
+                variant="filled"
+                className="w-full p-3"
+                type="text"
+                placeholder="Middle Name"
+                value={formik.values.middleName}
+                onChange={(e) =>
+                  formik.setFieldValue("middleName", e.target.value)
+                }
+              />
+              <InputText
+                variant="filled"
+                className="w-full p-3"
+                type="text"
+                placeholder="Last Name"
+                value={formik.values.lastName}
+                onChange={(e) =>
+                  formik.setFieldValue("lastName", e.target.value)
+                }
+              />
+            </div>
+            <InputText
+              variant="filled"
+              className="w-full p-3"
+              type="text"
+              placeholder="Biography"
+              value={formik.values.bio}
+              onChange={(e) => formik.setFieldValue("bio", e.target.value)}
+            />
+            <div>
+              <div>
+                <label>Profile Picture:</label>
+                <input type="file" onChange={handlePreview} />
+              </div>
+              {imagePreview && (
+                <div className="flex gap-1 items-center my-1">
+                  {!uploadSuccess && (
+                    <Button onClick={handleFileUpload} title="Upload" />
+                  )}
+                  <Button
+                    onClick={() => {
+                      setImagePreview(null);
+                      setImageData(null);
+                      setUploadSuccess(false);
+                      if (formik.values.profileImageId)
+                        formik.setFieldValue("profileImageId", "");
+                    }}
+                    title="Clear"
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
         {error && (
           <p className="bg-red-500 text-white rounded-md text-center p-2 w-full my-3">
             {error}
@@ -610,18 +747,6 @@ const UpdateProfile: React.FC = () => {
             {success}
           </p>
         )}
-        <div className="relative">
-          <div className="grid grid-cols-4 items-center justify-end p-2">
-            <div className="col-span-3"></div>
-            <button
-              className="right-1 top-1 z-10 select-none rounded bg-mainBlue py-2 px-4 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md transition-all hover:shadow-md focus:shadow-lg active:shadow-md"
-              type="submit"
-              onClick={() => handleSubmit()}
-            >
-              Save
-            </button>
-          </div>
-        </div>
         <div className="p-5 text-justify">
           <div className="my-5">
             <ul className="-mb-px flex items-center gap-4 text-sm font-medium">
