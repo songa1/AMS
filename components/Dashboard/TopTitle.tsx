@@ -20,7 +20,11 @@ function TopTitle({ title }: { title: string }) {
           <p className="text-xs text-mainBlue">{user?.role?.name}</p>
         </div>
         <Image
-          src="/profile.jpg"
+          src={
+            user?.profileImage?.link
+              ? user?.profileImage?.link
+              : "/placeholder.png"
+          }
           width={50}
           height={50}
           className="rounded-full object-cover"

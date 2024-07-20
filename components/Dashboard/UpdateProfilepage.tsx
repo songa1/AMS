@@ -3,7 +3,7 @@
 import { useFormik } from "formik";
 import { useParams, useRouter } from "next/navigation";
 import { InputText } from "primereact/inputtext";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import * as Yup from "yup";
 import { User } from "@/types/user";
 import { Dropdown } from "primereact/dropdown";
@@ -18,9 +18,12 @@ import {
 import {
   useGetOneUserQuery,
   useUpdatedUserMutation,
+  useUploadPictureMutation,
 } from "@/lib/features/userSlice";
 import Loading from "@/app/loading";
 import { getUser } from "@/helpers/auth";
+import Button from "../Other/Button";
+import { Toast } from "primereact/toast";
 
 const Personal = ({
   formik,
@@ -361,6 +364,8 @@ const Employment = ({
 
 const UpdateProfile: React.FC = () => {
   const router = useRouter();
+  const toast: any = useRef(null);
+
   const [activeTab, setActiveTab] = useState<number>(0);
   const [genders, setGenders] = useState<any[]>([]);
   const [cohorts, setCohorts] = useState<any[]>([]);
@@ -375,8 +380,12 @@ const UpdateProfile: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [tracks, setTracks] = useState([]);
   const [workingSectors, setWorkingSectors] = useState([]);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [imageData, setImageData] = useState<any>(null);
+  const [uploadSuccess, setUploadSuccess] = useState(false);
 
   const [updateUser] = useUpdatedUserMutation();
+  const [uploadPicture] = useUploadPictureMutation();
 
   const { data: WorkingSectorsData } = useWorkingSectorQuery("");
 
@@ -432,7 +441,7 @@ const UpdateProfile: React.FC = () => {
 
   const formik = useFormik({
     initialValues: {
-      bio: user?.bio || "",
+      bio: user?.bio ? user?.bio : "",
       firstName: user?.firstName ? user?.firstName : "",
       middleName: user?.middleName ? user?.middleName : "",
       lastName: user?.lastName ? user?.lastName : "",
@@ -479,6 +488,7 @@ const UpdateProfile: React.FC = () => {
       companySectorId: user?.organizationEmployed?.sector
         ? user?.organizationEmployed?.sector
         : { id: "" },
+      profileImageId: "",
     },
     validationSchema: Yup.object({
       email: Yup.string().email("Invalid email").required("Email is required"),
@@ -512,6 +522,7 @@ const UpdateProfile: React.FC = () => {
           positionInFounded: values?.foundedPosition,
           positionInEmployed: values?.companyPosition,
           bio: values?.bio,
+          profileImageId: values?.profileImageId,
         },
         organizationFounded: {
           id: user?.organizationFounded?.id || "",
@@ -594,8 +605,50 @@ const UpdateProfile: React.FC = () => {
     return <Loading />;
   }
 
+  const handlePreview = async (e: any) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImageData(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleFileUpload = async (e: any) => {
+    if (imageData) {
+      try {
+        const formData = new FormData();
+        formData.append("profileImage", imageData);
+        formData.append("userId", user?.id);
+
+        const data = await uploadPicture(formData).unwrap();
+
+        if (data?.image) {
+          toast.current.show({
+            severity: "info",
+            summary: "Success",
+            detail: "Image uploaded successfully!",
+          });
+          formik.setFieldValue("profileImageId", data?.image?.id);
+          setUploadSuccess(true);
+        }
+      } catch (error: any) {
+        toast.current.show({
+          severity: "error",
+          summary: "Error",
+          detail: error?.error,
+        });
+      }
+    }
+  };
+
   return (
     <div className="">
+      <Toast ref={toast}></Toast>
+
       <div className="w-full">
         <div className="grid grid-cols-4 items-center justify-end p-2">
           <div className="col-span-3"></div>
@@ -609,11 +662,13 @@ const UpdateProfile: React.FC = () => {
         </div>
         <div className="flex gap-3 items-center">
           <img
-            src={`${
-              user?.profileImage?.link
-                ? user?.profileImage?.link
+            src={
+              imagePreview
+                ? imagePreview
+                : user?.profileImage?.link
+                ? user.profileImage.link
                 : "/placeholder.svg"
-            }`}
+            }
             className="w-48 h-48 object-cover rounded-full"
           />
           <div className="flex flex-col gap-3">
@@ -623,7 +678,7 @@ const UpdateProfile: React.FC = () => {
                 className="w-full p-3"
                 type="text"
                 placeholder="First Name"
-                value={user?.firstName || formik.values.firstName}
+                value={formik.values.firstName}
                 onChange={(e) =>
                   formik.setFieldValue("firstName", e.target.value)
                 }
@@ -633,7 +688,7 @@ const UpdateProfile: React.FC = () => {
                 className="w-full p-3"
                 type="text"
                 placeholder="Middle Name"
-                value={user?.middleName || formik.values.middleName}
+                value={formik.values.middleName}
                 onChange={(e) =>
                   formik.setFieldValue("middleName", e.target.value)
                 }
@@ -643,7 +698,7 @@ const UpdateProfile: React.FC = () => {
                 className="w-full p-3"
                 type="text"
                 placeholder="Last Name"
-                value={user?.lastName || formik.values.lastName}
+                value={formik.values.lastName}
                 onChange={(e) =>
                   formik.setFieldValue("lastName", e.target.value)
                 }
@@ -654,13 +709,32 @@ const UpdateProfile: React.FC = () => {
               className="w-full p-3"
               type="text"
               placeholder="Biography"
-              value={!formik.values.bio ? user?.bio : formik.values.bio}
+              value={formik.values.bio}
               onChange={(e) => formik.setFieldValue("bio", e.target.value)}
             />
-            <p>{user?.bio}</p>
-            <button className="right-1 top-1 z-10 select-none rounded bg-mainBlue py-2 px-4 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md transition-all hover:shadow-md focus:shadow-lg active:shadow-md">
-              Update Profile Picture
-            </button>
+            <div>
+              <div>
+                <label>Profile Picture:</label>
+                <input type="file" onChange={handlePreview} />
+              </div>
+              {imagePreview && (
+                <div className="flex gap-1 items-center my-1">
+                  {!uploadSuccess && (
+                    <Button onClick={handleFileUpload} title="Upload" />
+                  )}
+                  <Button
+                    onClick={() => {
+                      setImagePreview(null);
+                      setImageData(null);
+                      setUploadSuccess(false);
+                      if (formik.values.profileImageId)
+                        formik.setFieldValue("profileImageId", "");
+                    }}
+                    title="Clear"
+                  />
+                </div>
+              )}
+            </div>
           </div>
         </div>
         {error && (

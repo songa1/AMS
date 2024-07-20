@@ -99,28 +99,30 @@ const UsersPage = () => {
           setValue={handleSearch}
           onSubmit={filteredUsers}
         />
-        <div className="flex gap-2 items-center">
-          <button
-            className=" right-1 top-1 select-none rounded bg-mainBlue py-2 px-4 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md transition-all hover:shadow-md focus:shadow-lg active:shadow-md"
-            type="submit"
-            onClick={() => setIsOpen(!isOpen)}
-          >
-            <BiUpload />
-          </button>
-          <button
-            className=" right-1 top-1 select-none rounded bg-mainBlue py-2 px-4 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md transition-all hover:shadow-md focus:shadow-lg active:shadow-md"
-            type="submit"
-            onClick={() => router.push("add-new-user")}
-          >
-            <CgAdd />
-          </button>
-          <button
-            className=" right-1 top-1 select-none rounded bg-mainBlue py-2 px-4 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md transition-all hover:shadow-md focus:shadow-lg active:shadow-md"
-            type="submit"
-          >
-            <BiDownload />
-          </button>
-        </div>
+        {isAdmin && (
+          <div className="flex gap-2 items-center">
+            <button
+              className=" right-1 top-1 select-none rounded bg-mainBlue py-2 px-4 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md transition-all hover:shadow-md focus:shadow-lg active:shadow-md"
+              type="submit"
+              onClick={() => setIsOpen(!isOpen)}
+            >
+              <BiUpload />
+            </button>
+            <button
+              className=" right-1 top-1 select-none rounded bg-mainBlue py-2 px-4 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md transition-all hover:shadow-md focus:shadow-lg active:shadow-md"
+              type="submit"
+              onClick={() => router.push("add-new-user")}
+            >
+              <CgAdd />
+            </button>
+            <button
+              className=" right-1 top-1 select-none rounded bg-mainBlue py-2 px-4 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md transition-all hover:shadow-md focus:shadow-lg active:shadow-md"
+              type="submit"
+            >
+              <BiDownload />
+            </button>
+          </div>
+        )}
       </div>
       <table className="min-w-full bg-white border border-gray-200">
         <thead>
@@ -137,7 +139,14 @@ const UsersPage = () => {
           {filteredUsers.map((user) => (
             <tr key={user.id}>
               <td className="py-2 px-4 border-b text-center">
-                <Avatar image="/profile.jpg" shape="circle" />
+                <Avatar
+                  image={
+                    user?.profileImage?.link
+                      ? user?.profileImage?.link
+                      : "/placeholder.svg"
+                  }
+                  shape="circle"
+                />
               </td>
               <td className="py-2 px-4 border-b text-center">
                 {user.firstName + " " + user.lastName}
