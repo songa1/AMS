@@ -40,7 +40,7 @@ const UsersPage = () => {
 
   useEffect(() => {
     if (data) {
-      setUsers(data?.data);
+      setUsers(data?.data.filter((fuser: User) => fuser.id !== user?.id));
     }
   }, [data]);
 
