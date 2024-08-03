@@ -5,10 +5,10 @@ import { useParams, useRouter } from "next/navigation";
 import { InputText } from "primereact/inputtext";
 import React, { useEffect, useRef, useState } from "react";
 import * as Yup from "yup";
-import { User } from "@/types/user";
 import { Dropdown } from "primereact/dropdown";
 import {
   useCohortsQuery,
+  useCountriesQuery,
   useDistrictsQuery,
   useGenderQuery,
   useSectorsByDistrictQuery,
@@ -21,9 +21,18 @@ import {
   useUploadPictureMutation,
 } from "@/lib/features/userSlice";
 import Loading from "@/app/loading";
-import { getUser } from "@/helpers/auth";
 import Button from "../Other/Button";
+import { FileUpload } from "primereact/fileupload";
+import { getUser } from "@/helpers/auth";
 import { Toast } from "primereact/toast";
+import {
+  cohort,
+  Country,
+  residentDistrict,
+  residentSector,
+  Track,
+  User,
+} from "@/types/user";
 
 const Personal = ({
   formik,
@@ -33,15 +42,75 @@ const Personal = ({
   genders,
   setSelectedDistrict,
   tracks,
-}: any) => {
+  countries,
+  usr,
+}: {
+  formik: any;
+  sectors: residentSector[];
+  cohorts: cohort[];
+  districts: residentDistrict[];
+  genders: any;
+  setSelectedDistrict: any;
+  tracks: Track[];
+  countries: Country[];
+  usr: User;
+}) => {
+  console.log(usr?.middleName);
   return (
     <div className="grid grid-cols-2 gap-3">
+      <div className="field">
+        <label>First Name:</label>
+        <InputText
+          variant="filled"
+          defaultValue={usr?.firstName}
+          className="w-full p-3"
+          type="text"
+          placeholder="First Name"
+          value={formik.values.firstName}
+          onChange={(e) => formik.setFieldValue("firstName", e.target.value)}
+          required
+        />
+      </div>
+      <div className="field">
+        <label>Middle Name:</label>
+        <InputText
+          variant="filled"
+          defaultValue={usr?.middleName}
+          className="w-full p-3"
+          type="text"
+          placeholder="Middle Name"
+          value={
+            formik.values.middleName
+              ? formik.values.middleName
+              : usr?.middleName
+              ? usr?.middleName
+              : ""
+          }
+          onChange={(e) => formik.setFieldValue("middleName", e.target.value)}
+          required
+        />
+      </div>
+      <div className="field">
+        <label>Last Name:</label>
+        <InputText
+          variant="filled"
+          defaultValue={usr?.lastName}
+          className="w-full p-3"
+          type="text"
+          placeholder="Last Name"
+          value={formik.values.lastName}
+          onChange={(e) => formik.setFieldValue("lastName", e.target.value)}
+          required
+        />
+      </div>
       <div className="field">
         <label>Email:</label>
         <InputText
           variant="filled"
+          defaultValue={usr?.email}
           className="w-full p-3"
           type="text"
+          disabled
           placeholder="Email"
           value={formik.values.email}
           onChange={(e) => formik.setFieldValue("email", e.target.value)}
@@ -52,6 +121,7 @@ const Personal = ({
         <label>Phone Number:</label>
         <InputText
           variant="filled"
+          defaultValue={usr?.phoneNumber}
           className="w-full p-3"
           type="text"
           placeholder="Phone Number"
@@ -64,6 +134,7 @@ const Personal = ({
         <label>WhatsApp Number:</label>
         <InputText
           variant="filled"
+          defaultValue={usr?.whatsappNumber}
           className="w-full p-3"
           type="text"
           placeholder="WhatsApp Number"
@@ -89,39 +160,59 @@ const Personal = ({
         />
       </div>
       <div className="field">
-        <label>District:</label>
-        <Dropdown
-          variant="filled"
-          className="w-full p-3"
-          placeholder="Select a district"
-          value={formik?.values?.districtName}
-          options={districts}
-          onChange={(e) => {
-            setSelectedDistrict(e.value.name);
-            formik.setFieldValue("districtName", e.value);
-            formik.setFieldValue("sectorId", "");
-            console.log(formik.values.districtName);
-          }}
-          optionLabel="name"
-          required
-        />
-      </div>
-      <div className="field">
-        <label>Sector:</label>
+        <label>Resident Country:</label>
         <Dropdown
           variant="filled"
           className="w-full p-3"
           type="text"
-          placeholder="Select a sector"
-          value={formik.values.sectorId}
-          options={sectors}
-          onChange={(e) => {
-            formik.setFieldValue("sectorId", e.target.value);
-          }}
+          placeholder="Select a country"
+          value={formik.values.residentCountryId}
+          options={countries}
+          onChange={(e) =>
+            formik.setFieldValue("residentCountryId", e.target.value)
+          }
           optionLabel="name"
           required
         />
       </div>
+      {formik.values.residentCountryId.id === "rwanda" && (
+        <div className="field">
+          <label>District:</label>
+          <Dropdown
+            variant="filled"
+            className="w-full p-3"
+            placeholder="Select a district"
+            value={formik?.values?.districtName}
+            options={districts}
+            onChange={(e) => {
+              setSelectedDistrict(e.value.name);
+              formik.setFieldValue("districtName", e.value);
+              formik.setFieldValue("sectorId", "");
+              console.log(formik.values.districtName);
+            }}
+            optionLabel="name"
+            required
+          />
+        </div>
+      )}
+      {formik.values.residentCountryId.id === "rwanda" && (
+        <div className="field">
+          <label>Sector:</label>
+          <Dropdown
+            variant="filled"
+            className="w-full p-3"
+            type="text"
+            placeholder="Select a sector"
+            value={formik.values.sectorId}
+            options={sectors}
+            onChange={(e) => {
+              formik.setFieldValue("sectorId", e.target.value);
+            }}
+            optionLabel="name"
+            required
+          />
+        </div>
+      )}
       <div className="field">
         <label>Cohort:</label>
         <Dropdown
@@ -132,6 +223,21 @@ const Personal = ({
           value={formik.values.cohortId}
           options={cohorts}
           onChange={(e) => formik.setFieldValue("cohortId", e.target.value)}
+          optionLabel="name"
+          required
+        />
+      </div>
+
+      <div className="field">
+        <label>Track:</label>
+        <Dropdown
+          variant="filled"
+          className="w-full p-3"
+          type="text"
+          placeholder="Select a track"
+          value={formik.values.track}
+          options={tracks}
+          onChange={(e) => formik.setFieldValue("track", e.target.value)}
           optionLabel="name"
           required
         />
@@ -150,20 +256,6 @@ const Personal = ({
           required
         />
       </div>
-      <div className="field">
-        <label>Track:</label>
-        <Dropdown
-          variant="filled"
-          className="w-full p-3"
-          type="text"
-          placeholder="Select a track"
-          value={formik.values.track}
-          options={tracks}
-          onChange={(e) => formik.setFieldValue("track", e.target.value)}
-          optionLabel="name"
-          required
-        />
-      </div>
     </div>
   );
 };
@@ -174,12 +266,15 @@ const Founded = ({
   districts,
   sectors,
   workingSectors,
+  countries,
+  usr,
 }: any) => (
   <div className="grid grid-cols-2 gap-3">
     <div className="field">
       <label>Your Initiative Name:</label>
       <InputText
         variant="filled"
+        defaultValue={usr?.organizationFounded?.name}
         className="w-full p-3"
         type="text"
         placeholder="What's your initiative?"
@@ -192,6 +287,7 @@ const Founded = ({
       <label>Working Sector:</label>
       <Dropdown
         variant="filled"
+        defaultValue={usr?.organizationFounded?.workingSector}
         className="w-full p-3"
         type="text"
         placeholder="Select a working sector"
@@ -206,6 +302,7 @@ const Founded = ({
       <label>Your Position:</label>
       <InputText
         variant="filled"
+        defaultValue={usr?.positionInFounded}
         className="w-full p-3"
         type="text"
         placeholder="What's your position?"
@@ -220,6 +317,7 @@ const Founded = ({
       <label>Website:</label>
       <InputText
         variant="filled"
+        defaultValue={usr?.organizationFounded?.website}
         className="w-full p-3"
         type="text"
         placeholder="What's your initiative's website?"
@@ -229,39 +327,57 @@ const Founded = ({
       />
     </div>
     <div className="field">
-      <label>District:</label>
-      <Dropdown
-        variant="filled"
-        className="w-full p-3"
-        placeholder="Select a district"
-        value={formik?.values?.foundedDistrictName}
-        options={districts}
-        onChange={(e) => {
-          setSelectedDistrict(e.value.name);
-          formik.setFieldValue("foundedDistrictName", e.value);
-          formik.setFieldValue("foundedSectorId", "");
-          console.log(formik.values.foundedDistrictName);
-        }}
-        optionLabel="name"
-        required
-      />
-    </div>
-    <div className="field">
-      <label>Sector:</label>
+      <label>Country:</label>
       <Dropdown
         variant="filled"
         className="w-full p-3"
         type="text"
-        placeholder="Select a sector"
-        value={formik.values.foundedSectorId}
-        options={sectors}
-        onChange={(e) => {
-          formik.setFieldValue("foundedSectorId", e.target.value);
-        }}
+        placeholder="Select a country"
+        value={formik.values.foundedCountry}
+        options={countries}
+        onChange={(e) => formik.setFieldValue("foundedCountry", e.target.value)}
         optionLabel="name"
         required
       />
     </div>
+    {formik.values.foundedCountry.id == "rwanda" && (
+      <div className="field">
+        <label>District:</label>
+        <Dropdown
+          variant="filled"
+          className="w-full p-3"
+          placeholder="Select a district"
+          value={formik?.values?.foundedDistrictName}
+          options={districts}
+          onChange={(e) => {
+            setSelectedDistrict(e.value.name);
+            formik.setFieldValue("foundedDistrictName", e.value);
+            formik.setFieldValue("foundedSectorId", "");
+            console.log(formik.values.foundedDistrictName);
+          }}
+          optionLabel="name"
+          required
+        />
+      </div>
+    )}
+    {formik.values.foundedCountry.id == "rwanda" && (
+      <div className="field">
+        <label>Sector:</label>
+        <Dropdown
+          variant="filled"
+          className="w-full p-3"
+          type="text"
+          placeholder="Select a sector"
+          value={formik.values.foundedSectorId}
+          options={sectors}
+          onChange={(e) => {
+            formik.setFieldValue("foundedSectorId", e.target.value);
+          }}
+          optionLabel="name"
+          required
+        />
+      </div>
+    )}
   </div>
 );
 
@@ -271,12 +387,15 @@ const Employment = ({
   districts,
   sectors,
   workingSectors,
+  countries,
+  usr,
 }: any) => (
   <div className="grid grid-cols-2 gap-3">
     <div className="field">
       <label>Company Name:</label>
       <InputText
         variant="filled"
+        defaultValue={usr?.organizationEmployed?.name}
         className="w-full p-3"
         type="text"
         placeholder="Who employs you?"
@@ -288,6 +407,7 @@ const Employment = ({
     <div className="field">
       <label>Working Sector:</label>
       <Dropdown
+        defaultValue={usr?.organizationEmployed?.workingSector}
         variant="filled"
         className="w-full p-3"
         type="text"
@@ -303,6 +423,7 @@ const Employment = ({
       <label>Your Position:</label>
       <InputText
         variant="filled"
+        defaultValue={usr?.positionInEmployed}
         className="w-full p-3"
         type="text"
         placeholder="What's your position?"
@@ -317,6 +438,7 @@ const Employment = ({
       <label>Website:</label>
       <InputText
         variant="filled"
+        defaultValue={usr?.organizationEmployed?.website}
         className="w-full p-3"
         type="text"
         placeholder="What's the company's website?"
@@ -326,78 +448,131 @@ const Employment = ({
       />
     </div>
     <div className="field">
-      <label>District:</label>
-      <Dropdown
-        variant="filled"
-        className="w-full p-3"
-        placeholder="Select a district"
-        value={formik?.values?.companyDistrictName}
-        options={districts}
-        onChange={(e) => {
-          setSelectedDistrict(e.value.name);
-          formik.setFieldValue("companyDistrictName", e.value);
-          formik.setFieldValue("companySectorId", "");
-          console.log(formik.values.foundedDistrictName);
-        }}
-        optionLabel="name"
-        required
-      />
-    </div>
-    <div className="field">
-      <label>Sector:</label>
+      <label>Country:</label>
       <Dropdown
         variant="filled"
         className="w-full p-3"
         type="text"
-        placeholder="Select a sector"
-        value={formik.values.companySectorId}
-        options={sectors}
-        onChange={(e) => {
-          formik.setFieldValue("companySectorId", e.target.value);
-        }}
+        placeholder="Select a country"
+        value={formik.values.companyCountry}
+        options={countries}
+        onChange={(e) => formik.setFieldValue("companyCountry", e.target.value)}
         optionLabel="name"
         required
       />
     </div>
+    {formik.values.companyCountry.id == "rwanda" && (
+      <div className="field">
+        <label>District:</label>
+        <Dropdown
+          variant="filled"
+          className="w-full p-3"
+          placeholder="Select a district"
+          value={formik?.values?.companyDistrictName}
+          options={districts}
+          onChange={(e) => {
+            setSelectedDistrict(e.value.name);
+            formik.setFieldValue("companyDistrictName", e.value);
+            formik.setFieldValue("companySectorId", "");
+            console.log(formik.values.foundedDistrictName);
+          }}
+          optionLabel="name"
+          required
+        />
+      </div>
+    )}
+    {formik.values.companyCountry.id == "rwanda" && (
+      <div className="field">
+        <label>Sector:</label>
+        <Dropdown
+          variant="filled"
+          className="w-full p-3"
+          type="text"
+          placeholder="Select a sector"
+          value={formik.values.companySectorId}
+          options={sectors}
+          onChange={(e) => {
+            formik.setFieldValue("companySectorId", e.target.value);
+          }}
+          optionLabel="name"
+          required
+        />
+      </div>
+    )}
   </div>
 );
 
-const UpdateProfile: React.FC = () => {
+function UpdateProfile() {
   const router = useRouter();
+  const { id } = useParams();
+  const user = getUser();
   const toast: any = useRef(null);
-
-  const [activeTab, setActiveTab] = useState<number>(0);
-  const [genders, setGenders] = useState<any[]>([]);
-  const [cohorts, setCohorts] = useState<any[]>([]);
-  const [districts, setDistricts] = useState<any[]>([]);
-  const [sectors, setSectors] = useState<any[]>([]);
-  const [userData, setUser] = useState<User>(getUser());
-  const [selectedDistrict, setSelectedDistrict] = useState<any | null>(
-    userData?.residentDistrict?.id
-  );
-  const [error, setError] = useState<string>("");
-  const [success, setSuccess] = useState<string>("");
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [activeTab, setActiveTab] = useState(0);
+  const [genders, setGenders] = useState([]);
+  const [cohorts, setCohorts] = useState([]);
+  const [districts, setDistricts] = useState([]);
+  const [districtsFounded, setDistrictsFounded] = useState([]);
+  const [districtsEmployed, setDistrictsEmployed] = useState([]);
+  const [countries, setCountries] = useState([]);
+  const [countriesFounded, setCountriesFounded] = useState([]);
+  const [countriesEmployed, setCountriesEmployed] = useState([]);
+  const [sectors, setSectors] = useState([]);
+  const [sectorsEmployed, setSectorsEmployed] = useState([]);
+  const [sectorsFounded, setSectorsFounded] = useState([]);
   const [tracks, setTracks] = useState([]);
   const [workingSectors, setWorkingSectors] = useState([]);
+  const [workingSectorsEmployed, setWorkingSectorsEmployed] = useState([]);
+  const [selectedDistrict, setSelectedDistrict] = useState(null);
+  const [selectedDistrictFounded, setSelectedDistrictFounded] = useState(null);
+  const [selectedDistrictEmployed, setSelectedDistrictEmployed] =
+    useState(null);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [imageData, setImageData] = useState<any>(null);
   const [uploadSuccess, setUploadSuccess] = useState(false);
 
-  const [updateUser] = useUpdatedUserMutation();
-  const [uploadPicture] = useUploadPictureMutation();
-
-  const { data: WorkingSectorsData } = useWorkingSectorQuery("");
-
-  const { data: TracksData } = useTracksQuery("");
-  const { data: userProfile, refetch } = useGetOneUserQuery(userData?.id);
-  const user = userProfile;
+  const [updatedUser] = useUpdatedUserMutation();
+  const { data: UserData } = useGetOneUserQuery<{ data: User }>(id);
   const { data: GenderData } = useGenderQuery("");
+  const { data: CountryData } = useCountriesQuery("");
   const { data: DistrictData } = useDistrictsQuery("");
   const { data: CohortsData } = useCohortsQuery("");
   const { data: SectorsData } = useSectorsByDistrictQuery(selectedDistrict, {
     skip: !selectedDistrict,
   });
+  const { data: SectorsDataFounded } = useSectorsByDistrictQuery(
+    selectedDistrictFounded,
+    {
+      skip: !selectedDistrictFounded,
+    }
+  );
+  const { data: SectorsDataEmployed } = useSectorsByDistrictQuery(
+    selectedDistrictEmployed,
+    {
+      skip: !selectedDistrictEmployed,
+    }
+  );
+
+  const { data: WorkingSectorsData } = useWorkingSectorQuery("");
+
+  const { data: TracksData } = useTracksQuery("");
+
+  const [uploadPicture] = useUploadPictureMutation();
+
+  useEffect(() => {
+    if (WorkingSectorsData) {
+      setWorkingSectors(WorkingSectorsData?.data);
+      setWorkingSectorsEmployed(WorkingSectorsData?.data);
+    }
+  }, [WorkingSectorsData]);
+
+  useEffect(() => {
+    if (TracksData) {
+      setTracks(TracksData?.data);
+    }
+  }, [TracksData]);
 
   useEffect(() => {
     if (GenderData) {
@@ -418,80 +593,73 @@ const UpdateProfile: React.FC = () => {
   }, [SectorsData]);
 
   useEffect(() => {
+    if (SectorsDataEmployed) {
+      setSectorsEmployed(SectorsDataEmployed?.data);
+    }
+  }, [SectorsDataEmployed]);
+
+  useEffect(() => {
+    if (SectorsDataFounded) {
+      setSectorsFounded(SectorsDataFounded?.data);
+    }
+  }, [SectorsDataFounded]);
+
+  useEffect(() => {
     if (DistrictData) {
       setDistricts(DistrictData?.data);
+      setDistrictsEmployed(DistrictData?.data);
+      setDistrictsFounded(DistrictData?.data);
     }
   }, [DistrictData]);
 
   useEffect(() => {
-    if (WorkingSectorsData) {
-      setWorkingSectors(WorkingSectorsData?.data);
+    if (CountryData) {
+      setCountries(CountryData?.data);
+      setCountriesEmployed(CountryData?.data);
+      setCountriesFounded(CountryData?.data);
     }
-  }, [WorkingSectorsData]);
-
-  useEffect(() => {
-    if (TracksData) {
-      setTracks(TracksData?.data);
-    }
-  }, [TracksData]);
+  }, [CountryData]);
 
   const handleTabClick = (index: number) => {
     setActiveTab(index);
   };
 
+  const usr = UserData;
+
   const formik = useFormik({
     initialValues: {
-      bio: user?.bio ? user?.bio : "",
-      firstName: user?.firstName ? user?.firstName : "",
-      middleName: user?.middleName ? user?.middleName : "",
-      lastName: user?.lastName ? user?.lastName : "",
-      email: user?.email ? user?.email : "",
-      gender: user?.gender ? user?.gender : { name: "" },
-      phoneNumber: user?.phoneNumber ? user?.phoneNumber : "",
-      districtName: user?.residentDistrict
-        ? user?.residentDistrict
-        : { id: "" },
-      sectorId: user?.residentSector ? user?.residentSector : { id: "" },
-      whatsAppNumber: user?.whatsappNumber ? user?.whatsappNumber : "",
-      nearlestLandmark: user?.nearestLandmark ? user?.nearestLandmark : "",
-      track: user?.track ? user?.track : "",
-      cohortId: user?.cohort ? user?.cohort : { id: "" },
-      initiativeName: user?.organizationFounded?.name
-        ? user?.organizationFounded?.name
-        : "",
-      mainSector: user?.organizationFounded?.workingSector
-        ? user?.organizationFounded?.workingSector
-        : "",
-      foundedPosition: user?.positionInFounded ? user?.positionInFounded : "",
-      foundedDistrictName: user?.organizationFounded?.district
-        ? user?.organizationFounded?.district
-        : { name: "" },
-      foundedSectorId: user?.organizationFounded?.sector
-        ? user?.organizationFounded?.sector
-        : { id: "" },
-      foundedWebsite: user?.organizationFounded?.website
-        ? user?.organizationFounded?.website
-        : "",
-      companyName: user?.organizationEmployed?.name
-        ? user?.organizationEmployed?.name
-        : "",
-      companySector: user?.organizationEmployed?.workingSector
-        ? user?.organizationEmployed?.workingSector
-        : "",
-      companyPosition: user?.positionInEmployed ? user?.positionInEmployed : "",
-      companyWebsite: user?.organizationEmployed?.website
-        ? user?.organizationEmployed?.website
-        : "",
-      companyDistrictName: user?.organizationEmployed?.district
-        ? user?.organizationEmployed?.district
-        : { name: "" },
-      companySectorId: user?.organizationEmployed?.sector
-        ? user?.organizationEmployed?.sector
-        : { id: "" },
+      firstName: usr?.firstName,
+      middleName: "",
+      lastName: "",
+      email: "",
+      gender: "",
+      phoneNumber: "",
+      districtName: "",
+      sectorId: "",
+      residentCountryId: "",
+      whatsAppNumber: "",
+      nearlestLandmark: "",
+      track: "",
+      cohortId: null,
+      initiativeName: "",
+      mainSector: "",
+      foundedPosition: "",
+      foundedDistrictName: "",
+      foundedSectorId: "",
+      foundedWebsite: "",
+      foundedCountry: "",
+      companyName: "",
+      companySector: "",
+      companyPosition: "",
+      companyWebsite: "",
+      companyDistrictName: "",
+      companySectorId: "",
+      companyCountry: "",
       profileImageId: "",
     },
     validationSchema: Yup.object({
-      email: Yup.string().email("Invalid email").required("Email is required"),
+      name: Yup.string().required("name  is required"),
+      email: Yup.string().email().required("Email is required"),
       phone: Yup.string().required("Phone Number is required"),
       gender: Yup.string().required("Gender is required"),
     }),
@@ -500,50 +668,69 @@ const UpdateProfile: React.FC = () => {
     },
   });
 
+  useEffect(() => {
+    if (error) {
+      setTimeout(() => {
+        setError("");
+      }, 10000);
+    }
+    if (success) {
+      setTimeout(() => {
+        setSuccess("");
+      }, 10000);
+    }
+  }, [error, success]);
+
   const handleSubmit = async () => {
     setIsLoading(true);
     const values: any = formik.values;
     try {
-      const res = await updateUser({
-        userId: user?.id,
+      const res = await updatedUser({
+        userId: usr?.id,
         user: {
-          firstName: values?.firstName,
-          middleName: values?.middleName,
-          lastName: values?.lastName,
-          email: values?.email,
-          phoneNumber: values?.phoneNumber,
-          whatsappNumber: values?.whatsAppNumber,
-          genderName: values?.gender?.name,
-          nearestLandmark: values?.nearlestLandmark,
+          firstName: values.firstName,
+          middleName: values.middleName,
+          lastName: values.lastName,
+          email: values.email,
+          phoneNumber: values.phoneNumber,
+          whatsappNumber: values.whatsAppNumber,
+          genderName: values.gender.name,
+          nearestLandmark: values.nearlestLandmark,
           cohortId: values?.cohortId?.id,
-          track: values?.track?.id,
-          residentDistrictId: values?.districtName?.id,
-          residentSectorId: values?.sectorId?.id,
+          trackId: values?.track?.id,
+          residentDistrictId: values?.districtName.id,
+          residentSectorId: values?.sectorId.id,
+          residentCountryId: values?.residentCountryId.id,
           positionInFounded: values?.foundedPosition,
           positionInEmployed: values?.companyPosition,
-          bio: values?.bio,
           profileImageId: values?.profileImageId,
         },
         organizationFounded: {
-          id: user?.organizationFounded?.id || "",
+          id: usr?.organizationFounded?.id,
           name: values?.initiativeName,
           workingSector: values?.mainSector?.id,
-          districtId: values?.foundedDistrictName?.name,
-          sectorId: values?.foundedSectorId?.id,
+          countryId: values?.foundedCountry?.id,
+          districtId: values.foundedDistrictName.name,
+          sectorId: values?.foundedSectorId.id,
           website: values?.foundedWebsite,
         },
         organizationEmployed: {
-          id: user?.organizationEmployed?.id || "",
+          id: usr?.organizationEmployed?.id,
           name: values?.companyName,
           workingSector: values?.companySector?.id,
-          districtId: values?.companyDistrictName?.name,
-          sectorId: values?.companySectorId?.id,
+          countryId: values?.companyCountry?.id,
+          districtId: values?.companyDistrictName.name,
+          sectorId: values?.companySectorId.id,
           website: values?.companyWebsite,
         },
       }).unwrap();
       if (res.message) {
         formik.resetForm();
-        refetch();
+        setImagePreview(null);
+        setImageData(null);
+        setUploadSuccess(false);
+        if (formik.values.profileImageId)
+          formik.setFieldValue("profileImageId", "");
         setSuccess("User updated successfully!");
       }
     } catch (error: any) {
@@ -570,6 +757,8 @@ const UpdateProfile: React.FC = () => {
           cohorts={cohorts}
           districts={districts}
           genders={genders}
+          countries={countries}
+          usr={usr}
           setSelectedDistrict={setSelectedDistrict}
           tracks={tracks}
         />
@@ -580,10 +769,12 @@ const UpdateProfile: React.FC = () => {
       content: (
         <Founded
           formik={formik}
-          setSelectedDistrict={setSelectedDistrict}
-          districts={districts}
-          sectors={sectors}
+          setSelectedDistrict={setSelectedDistrictFounded}
+          districts={districtsFounded}
+          sectors={sectorsFounded}
+          countries={countriesFounded}
           workingSectors={workingSectors}
+          usr={usr}
         />
       ),
     },
@@ -592,10 +783,12 @@ const UpdateProfile: React.FC = () => {
       content: (
         <Employment
           formik={formik}
-          setSelectedDistrict={setSelectedDistrict}
-          districts={districts}
-          sectors={sectors}
-          workingSectors={workingSectors}
+          setSelectedDistrict={setSelectedDistrictEmployed}
+          districts={districtsEmployed}
+          sectors={sectorsEmployed}
+          countries={countriesEmployed}
+          workingSectors={workingSectorsEmployed}
+          usr={usr}
         />
       ),
     },
@@ -648,75 +841,31 @@ const UpdateProfile: React.FC = () => {
   return (
     <div className="">
       <Toast ref={toast}></Toast>
-
       <div className="w-full">
-        <div className="grid grid-cols-4 items-center justify-end p-2">
-          <div className="col-span-3"></div>
-          <button
-            className="right-1 top-1 z-10 select-none rounded bg-mainBlue py-2 px-4 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md transition-all hover:shadow-md focus:shadow-lg active:shadow-md"
-            type="submit"
-            onClick={() => handleSubmit()}
-          >
-            Save
-          </button>
-        </div>
-        <div className="flex gap-3 items-center">
-          <img
-            src={
-              imagePreview
-                ? imagePreview
-                : user?.profileImage?.link
-                ? user.profileImage.link
-                : "/placeholder.svg"
-            }
-            className="w-48 h-48 object-cover rounded-full"
-          />
-          <div className="flex flex-col gap-3">
-            <div className="flex items-center justify-between gap-2">
-              <InputText
-                variant="filled"
-                className="w-full p-3"
-                type="text"
-                placeholder="First Name"
-                value={formik.values.firstName}
-                onChange={(e) =>
-                  formik.setFieldValue("firstName", e.target.value)
-                }
-              />
-              <InputText
-                variant="filled"
-                className="w-full p-3"
-                type="text"
-                placeholder="Middle Name"
-                value={formik.values.middleName}
-                onChange={(e) =>
-                  formik.setFieldValue("middleName", e.target.value)
-                }
-              />
-              <InputText
-                variant="filled"
-                className="w-full p-3"
-                type="text"
-                placeholder="Last Name"
-                value={formik.values.lastName}
-                onChange={(e) =>
-                  formik.setFieldValue("lastName", e.target.value)
-                }
-              />
-            </div>
-            <InputText
-              variant="filled"
-              className="w-full p-3"
-              type="text"
-              placeholder="Biography"
-              value={formik.values.bio}
-              onChange={(e) => formik.setFieldValue("bio", e.target.value)}
-            />
+        {error && (
+          <p className="bg-red-500 text-white rounded-md text-center p-2 w-full my-3">
+            {error}
+          </p>
+        )}
+        {success && (
+          <p className="bg-green-500 text-white rounded-md text-center p-2 w-full my-3">
+            {success}
+          </p>
+        )}
+        <div className="relative">
+          <div className="flex items-start justify-between p-2">
             <div>
               <div>
                 <label>Profile Picture:</label>
                 <input type="file" onChange={handlePreview} />
               </div>
+              {imagePreview && (
+                <img
+                  src={imagePreview}
+                  alt="Image Preview"
+                  className="mt-4 h-40 rounded-md w-40 object-cover"
+                />
+              )}
               {imagePreview && (
                 <div className="flex gap-1 items-center my-1">
                   {!uploadSuccess && (
@@ -735,18 +884,15 @@ const UpdateProfile: React.FC = () => {
                 </div>
               )}
             </div>
+            <button
+              className="right-1 top-1 z-10 select-none rounded bg-mainBlue py-2 px-4 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md transition-all hover:shadow-md focus:shadow-lg active:shadow-md"
+              type="submit"
+              onClick={() => handleSubmit()}
+            >
+              Save
+            </button>
           </div>
         </div>
-        {error && (
-          <p className="bg-red-500 text-white rounded-md text-center p-2 w-full my-3">
-            {error}
-          </p>
-        )}
-        {success && (
-          <p className="bg-green-500 text-white rounded-md text-center p-2 w-full my-3">
-            {success}
-          </p>
-        )}
         <div className="p-5 text-justify">
           <div className="my-5">
             <ul className="-mb-px flex items-center gap-4 text-sm font-medium">
@@ -776,6 +922,6 @@ const UpdateProfile: React.FC = () => {
       </div>
     </div>
   );
-};
+}
 
 export default UpdateProfile;

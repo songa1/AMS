@@ -301,40 +301,44 @@ const Founded = ({
         required
       />
     </div>
-    <div className="field">
-      <label>District:</label>
-      <Dropdown
-        variant="filled"
-        className="w-full p-3"
-        placeholder="Select a district"
-        value={formik?.values?.foundedDistrictName}
-        options={districts}
-        onChange={(e) => {
-          setSelectedDistrict(e.value.name);
-          formik.setFieldValue("foundedDistrictName", e.value);
-          formik.setFieldValue("foundedSectorId", "");
-          console.log(formik.values.foundedDistrictName);
-        }}
-        optionLabel="name"
-        required
-      />
-    </div>
-    <div className="field">
-      <label>Sector:</label>
-      <Dropdown
-        variant="filled"
-        className="w-full p-3"
-        type="text"
-        placeholder="Select a sector"
-        value={formik.values.foundedSectorId}
-        options={sectors}
-        onChange={(e) => {
-          formik.setFieldValue("foundedSectorId", e.target.value);
-        }}
-        optionLabel="name"
-        required
-      />
-    </div>
+    {formik.values.foundedCountry.id == "rwanda" && (
+      <div className="field">
+        <label>District:</label>
+        <Dropdown
+          variant="filled"
+          className="w-full p-3"
+          placeholder="Select a district"
+          value={formik?.values?.foundedDistrictName}
+          options={districts}
+          onChange={(e) => {
+            setSelectedDistrict(e.value.name);
+            formik.setFieldValue("foundedDistrictName", e.value);
+            formik.setFieldValue("foundedSectorId", "");
+            console.log(formik.values.foundedDistrictName);
+          }}
+          optionLabel="name"
+          required
+        />
+      </div>
+    )}
+    {formik.values.foundedCountry.id == "rwanda" && (
+      <div className="field">
+        <label>Sector:</label>
+        <Dropdown
+          variant="filled"
+          className="w-full p-3"
+          type="text"
+          placeholder="Select a sector"
+          value={formik.values.foundedSectorId}
+          options={sectors}
+          onChange={(e) => {
+            formik.setFieldValue("foundedSectorId", e.target.value);
+          }}
+          optionLabel="name"
+          required
+        />
+      </div>
+    )}
   </div>
 );
 
@@ -413,40 +417,44 @@ const Employment = ({
         required
       />
     </div>
-    <div className="field">
-      <label>District:</label>
-      <Dropdown
-        variant="filled"
-        className="w-full p-3"
-        placeholder="Select a district"
-        value={formik?.values?.companyDistrictName}
-        options={districts}
-        onChange={(e) => {
-          setSelectedDistrict(e.value.name);
-          formik.setFieldValue("companyDistrictName", e.value);
-          formik.setFieldValue("companySectorId", "");
-          console.log(formik.values.foundedDistrictName);
-        }}
-        optionLabel="name"
-        required
-      />
-    </div>
-    <div className="field">
-      <label>Sector:</label>
-      <Dropdown
-        variant="filled"
-        className="w-full p-3"
-        type="text"
-        placeholder="Select a sector"
-        value={formik.values.companySectorId}
-        options={sectors}
-        onChange={(e) => {
-          formik.setFieldValue("companySectorId", e.target.value);
-        }}
-        optionLabel="name"
-        required
-      />
-    </div>
+    {formik.values.companyCountry.id == "rwanda" && (
+      <div className="field">
+        <label>District:</label>
+        <Dropdown
+          variant="filled"
+          className="w-full p-3"
+          placeholder="Select a district"
+          value={formik?.values?.companyDistrictName}
+          options={districts}
+          onChange={(e) => {
+            setSelectedDistrict(e.value.name);
+            formik.setFieldValue("companyDistrictName", e.value);
+            formik.setFieldValue("companySectorId", "");
+            console.log(formik.values.foundedDistrictName);
+          }}
+          optionLabel="name"
+          required
+        />
+      </div>
+    )}
+    {formik.values.companyCountry.id == "rwanda" && (
+      <div className="field">
+        <label>Sector:</label>
+        <Dropdown
+          variant="filled"
+          className="w-full p-3"
+          type="text"
+          placeholder="Select a sector"
+          value={formik.values.companySectorId}
+          options={sectors}
+          onChange={(e) => {
+            formik.setFieldValue("companySectorId", e.target.value);
+          }}
+          optionLabel="name"
+          required
+        />
+      </div>
+    )}
   </div>
 );
 
@@ -667,6 +675,11 @@ function NewProfile() {
       }).unwrap();
       if (res.message) {
         formik.resetForm();
+        setImagePreview(null);
+        setImageData(null);
+        setUploadSuccess(false);
+        if (formik.values.profileImageId)
+          formik.setFieldValue("profileImageId", "");
         setSuccess("User added successfully!");
       }
     } catch (error: any) {

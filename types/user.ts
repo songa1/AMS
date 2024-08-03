@@ -9,8 +9,10 @@ export interface User {
   genderName: string;
   nearestLandmark: string | null;
   residentDistrictId: string | null;
+  residentCountryId: string | null;
   residentDistrict: residentDistrict;
   residentSectorId: string | null;
+  residentCountry: Country;
   residentSector: residentSector;
   cohortId: number | null;
   cohort: cohort;
@@ -36,6 +38,7 @@ export interface organization {
   workingSector: WorkingSector;
   districtId: string;
   district: residentDistrict;
+  country: Country;
   sectorId: string;
   sector: residentSector;
   website: string;
@@ -57,6 +60,11 @@ export interface gender {
 }
 
 export interface residentDistrict {
+  id: string;
+  name: string;
+}
+
+export interface Country {
   id: string;
   name: string;
 }
