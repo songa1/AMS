@@ -8,6 +8,7 @@ import * as Yup from "yup";
 import { Dropdown } from "primereact/dropdown";
 import {
   useCohortsQuery,
+  useCountriesQuery,
   useDistrictsQuery,
   useGenderQuery,
   useSectorsByDistrictQuery,
@@ -32,6 +33,7 @@ const Personal = ({
   genders,
   setSelectedDistrict,
   tracks,
+  countries,
 }: any) => {
   return (
     <div className="grid grid-cols-2 gap-3">
@@ -124,39 +126,59 @@ const Personal = ({
         />
       </div>
       <div className="field">
-        <label>District:</label>
-        <Dropdown
-          variant="filled"
-          className="w-full p-3"
-          placeholder="Select a district"
-          value={formik?.values?.districtName}
-          options={districts}
-          onChange={(e) => {
-            setSelectedDistrict(e.value.name);
-            formik.setFieldValue("districtName", e.value);
-            formik.setFieldValue("sectorId", "");
-            console.log(formik.values.districtName);
-          }}
-          optionLabel="name"
-          required
-        />
-      </div>
-      <div className="field">
-        <label>Sector:</label>
+        <label>Resident Country:</label>
         <Dropdown
           variant="filled"
           className="w-full p-3"
           type="text"
-          placeholder="Select a sector"
-          value={formik.values.sectorId}
-          options={sectors}
-          onChange={(e) => {
-            formik.setFieldValue("sectorId", e.target.value);
-          }}
+          placeholder="Select a country"
+          value={formik.values.residentCountryId}
+          options={countries}
+          onChange={(e) =>
+            formik.setFieldValue("residentCountryId", e.target.value)
+          }
           optionLabel="name"
           required
         />
       </div>
+      {formik.values.residentCountryId.id === "rwanda" && (
+        <div className="field">
+          <label>District:</label>
+          <Dropdown
+            variant="filled"
+            className="w-full p-3"
+            placeholder="Select a district"
+            value={formik?.values?.districtName}
+            options={districts}
+            onChange={(e) => {
+              setSelectedDistrict(e.value.name);
+              formik.setFieldValue("districtName", e.value);
+              formik.setFieldValue("sectorId", "");
+              console.log(formik.values.districtName);
+            }}
+            optionLabel="name"
+            required
+          />
+        </div>
+      )}
+      {formik.values.residentCountryId.id === "rwanda" && (
+        <div className="field">
+          <label>Sector:</label>
+          <Dropdown
+            variant="filled"
+            className="w-full p-3"
+            type="text"
+            placeholder="Select a sector"
+            value={formik.values.sectorId}
+            options={sectors}
+            onChange={(e) => {
+              formik.setFieldValue("sectorId", e.target.value);
+            }}
+            optionLabel="name"
+            required
+          />
+        </div>
+      )}
       <div className="field">
         <label>Cohort:</label>
         <Dropdown
@@ -167,6 +189,21 @@ const Personal = ({
           value={formik.values.cohortId}
           options={cohorts}
           onChange={(e) => formik.setFieldValue("cohortId", e.target.value)}
+          optionLabel="name"
+          required
+        />
+      </div>
+
+      <div className="field">
+        <label>Track:</label>
+        <Dropdown
+          variant="filled"
+          className="w-full p-3"
+          type="text"
+          placeholder="Select a track"
+          value={formik.values.track}
+          options={tracks}
+          onChange={(e) => formik.setFieldValue("track", e.target.value)}
           optionLabel="name"
           required
         />
@@ -185,20 +222,6 @@ const Personal = ({
           required
         />
       </div>
-      <div className="field">
-        <label>Track:</label>
-        <Dropdown
-          variant="filled"
-          className="w-full p-3"
-          type="text"
-          placeholder="Select a track"
-          value={formik.values.track}
-          options={tracks}
-          onChange={(e) => formik.setFieldValue("track", e.target.value)}
-          optionLabel="name"
-          required
-        />
-      </div>
     </div>
   );
 };
@@ -209,6 +232,7 @@ const Founded = ({
   districts,
   sectors,
   workingSectors,
+  countries,
 }: any) => (
   <div className="grid grid-cols-2 gap-3">
     <div className="field">
@@ -264,39 +288,57 @@ const Founded = ({
       />
     </div>
     <div className="field">
-      <label>District:</label>
-      <Dropdown
-        variant="filled"
-        className="w-full p-3"
-        placeholder="Select a district"
-        value={formik?.values?.foundedDistrictName}
-        options={districts}
-        onChange={(e) => {
-          setSelectedDistrict(e.value.name);
-          formik.setFieldValue("foundedDistrictName", e.value);
-          formik.setFieldValue("foundedSectorId", "");
-          console.log(formik.values.foundedDistrictName);
-        }}
-        optionLabel="name"
-        required
-      />
-    </div>
-    <div className="field">
-      <label>Sector:</label>
+      <label>Country:</label>
       <Dropdown
         variant="filled"
         className="w-full p-3"
         type="text"
-        placeholder="Select a sector"
-        value={formik.values.foundedSectorId}
-        options={sectors}
-        onChange={(e) => {
-          formik.setFieldValue("foundedSectorId", e.target.value);
-        }}
+        placeholder="Select a country"
+        value={formik.values.foundedCountry}
+        options={countries}
+        onChange={(e) => formik.setFieldValue("foundedCountry", e.target.value)}
         optionLabel="name"
         required
       />
     </div>
+    {formik.values.foundedCountry.id == "rwanda" && (
+      <div className="field">
+        <label>District:</label>
+        <Dropdown
+          variant="filled"
+          className="w-full p-3"
+          placeholder="Select a district"
+          value={formik?.values?.foundedDistrictName}
+          options={districts}
+          onChange={(e) => {
+            setSelectedDistrict(e.value.name);
+            formik.setFieldValue("foundedDistrictName", e.value);
+            formik.setFieldValue("foundedSectorId", "");
+            console.log(formik.values.foundedDistrictName);
+          }}
+          optionLabel="name"
+          required
+        />
+      </div>
+    )}
+    {formik.values.foundedCountry.id == "rwanda" && (
+      <div className="field">
+        <label>Sector:</label>
+        <Dropdown
+          variant="filled"
+          className="w-full p-3"
+          type="text"
+          placeholder="Select a sector"
+          value={formik.values.foundedSectorId}
+          options={sectors}
+          onChange={(e) => {
+            formik.setFieldValue("foundedSectorId", e.target.value);
+          }}
+          optionLabel="name"
+          required
+        />
+      </div>
+    )}
   </div>
 );
 
@@ -306,6 +348,7 @@ const Employment = ({
   districts,
   sectors,
   workingSectors,
+  countries,
 }: any) => (
   <div className="grid grid-cols-2 gap-3">
     <div className="field">
@@ -361,39 +404,57 @@ const Employment = ({
       />
     </div>
     <div className="field">
-      <label>District:</label>
-      <Dropdown
-        variant="filled"
-        className="w-full p-3"
-        placeholder="Select a district"
-        value={formik?.values?.companyDistrictName}
-        options={districts}
-        onChange={(e) => {
-          setSelectedDistrict(e.value.name);
-          formik.setFieldValue("companyDistrictName", e.value);
-          formik.setFieldValue("companySectorId", "");
-          console.log(formik.values.foundedDistrictName);
-        }}
-        optionLabel="name"
-        required
-      />
-    </div>
-    <div className="field">
-      <label>Sector:</label>
+      <label>Country:</label>
       <Dropdown
         variant="filled"
         className="w-full p-3"
         type="text"
-        placeholder="Select a sector"
-        value={formik.values.companySectorId}
-        options={sectors}
-        onChange={(e) => {
-          formik.setFieldValue("companySectorId", e.target.value);
-        }}
+        placeholder="Select a country"
+        value={formik.values.companyCountry}
+        options={countries}
+        onChange={(e) => formik.setFieldValue("companyCountry", e.target.value)}
         optionLabel="name"
         required
       />
     </div>
+    {formik.values.companyCountry.id == "rwanda" && (
+      <div className="field">
+        <label>District:</label>
+        <Dropdown
+          variant="filled"
+          className="w-full p-3"
+          placeholder="Select a district"
+          value={formik?.values?.companyDistrictName}
+          options={districts}
+          onChange={(e) => {
+            setSelectedDistrict(e.value.name);
+            formik.setFieldValue("companyDistrictName", e.value);
+            formik.setFieldValue("companySectorId", "");
+            console.log(formik.values.foundedDistrictName);
+          }}
+          optionLabel="name"
+          required
+        />
+      </div>
+    )}
+    {formik.values.companyCountry.id == "rwanda" && (
+      <div className="field">
+        <label>Sector:</label>
+        <Dropdown
+          variant="filled"
+          className="w-full p-3"
+          type="text"
+          placeholder="Select a sector"
+          value={formik.values.companySectorId}
+          options={sectors}
+          onChange={(e) => {
+            formik.setFieldValue("companySectorId", e.target.value);
+          }}
+          optionLabel="name"
+          required
+        />
+      </div>
+    )}
   </div>
 );
 
@@ -405,10 +466,21 @@ function NewProfile() {
   const [genders, setGenders] = useState([]);
   const [cohorts, setCohorts] = useState([]);
   const [districts, setDistricts] = useState([]);
+  const [districtsFounded, setDistrictsFounded] = useState([]);
+  const [districtsEmployed, setDistrictsEmployed] = useState([]);
+  const [countries, setCountries] = useState([]);
+  const [countriesFounded, setCountriesFounded] = useState([]);
+  const [countriesEmployed, setCountriesEmployed] = useState([]);
   const [sectors, setSectors] = useState([]);
+  const [sectorsEmployed, setSectorsEmployed] = useState([]);
+  const [sectorsFounded, setSectorsFounded] = useState([]);
   const [tracks, setTracks] = useState([]);
   const [workingSectors, setWorkingSectors] = useState([]);
+  const [workingSectorsEmployed, setWorkingSectorsEmployed] = useState([]);
   const [selectedDistrict, setSelectedDistrict] = useState(null);
+  const [selectedDistrictFounded, setSelectedDistrictFounded] = useState(null);
+  const [selectedDistrictEmployed, setSelectedDistrictEmployed] =
+    useState(null);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -418,11 +490,24 @@ function NewProfile() {
 
   const [addUser] = useAddUserMutation();
   const { data: GenderData } = useGenderQuery("");
+  const { data: CountryData } = useCountriesQuery("");
   const { data: DistrictData } = useDistrictsQuery("");
   const { data: CohortsData } = useCohortsQuery("");
   const { data: SectorsData } = useSectorsByDistrictQuery(selectedDistrict, {
     skip: !selectedDistrict,
   });
+  const { data: SectorsDataFounded } = useSectorsByDistrictQuery(
+    selectedDistrictFounded,
+    {
+      skip: !selectedDistrictFounded,
+    }
+  );
+  const { data: SectorsDataEmployed } = useSectorsByDistrictQuery(
+    selectedDistrictEmployed,
+    {
+      skip: !selectedDistrictEmployed,
+    }
+  );
 
   const { data: WorkingSectorsData } = useWorkingSectorQuery("");
 
@@ -433,6 +518,7 @@ function NewProfile() {
   useEffect(() => {
     if (WorkingSectorsData) {
       setWorkingSectors(WorkingSectorsData?.data);
+      setWorkingSectorsEmployed(WorkingSectorsData?.data);
     }
   }, [WorkingSectorsData]);
 
@@ -461,10 +547,32 @@ function NewProfile() {
   }, [SectorsData]);
 
   useEffect(() => {
+    if (SectorsDataEmployed) {
+      setSectorsEmployed(SectorsDataEmployed?.data);
+    }
+  }, [SectorsDataEmployed]);
+
+  useEffect(() => {
+    if (SectorsDataFounded) {
+      setSectorsFounded(SectorsDataFounded?.data);
+    }
+  }, [SectorsDataFounded]);
+
+  useEffect(() => {
     if (DistrictData) {
       setDistricts(DistrictData?.data);
+      setDistrictsEmployed(DistrictData?.data);
+      setDistrictsFounded(DistrictData?.data);
     }
   }, [DistrictData]);
+
+  useEffect(() => {
+    if (CountryData) {
+      setCountries(CountryData?.data);
+      setCountriesEmployed(CountryData?.data);
+      setCountriesFounded(CountryData?.data);
+    }
+  }, [CountryData]);
 
   const handleTabClick = (index: number) => {
     setActiveTab(index);
@@ -480,6 +588,7 @@ function NewProfile() {
       phoneNumber: "",
       districtName: "",
       sectorId: "",
+      residentCountryId: "",
       whatsAppNumber: "",
       nearlestLandmark: "",
       track: "",
@@ -490,12 +599,14 @@ function NewProfile() {
       foundedDistrictName: "",
       foundedSectorId: "",
       foundedWebsite: "",
+      foundedCountry: "",
       companyName: "",
       companySector: "",
       companyPosition: "",
       companyWebsite: "",
       companyDistrictName: "",
       companySectorId: "",
+      companyCountry: "",
       profileImageId: "",
     },
     validationSchema: Yup.object({
@@ -508,6 +619,19 @@ function NewProfile() {
       // Being done in another function
     },
   });
+
+  useEffect(() => {
+    if (error) {
+      setTimeout(() => {
+        setError("");
+      }, 10000);
+    }
+    if (success) {
+      setTimeout(() => {
+        setSuccess("");
+      }, 10000);
+    }
+  }, [error, success]);
 
   const handleSubmit = async () => {
     setIsLoading(true);
@@ -524,9 +648,10 @@ function NewProfile() {
           genderName: values.gender.name,
           nearestLandmark: values.nearlestLandmark,
           cohortId: values?.cohortId?.id,
-          track: values?.track?.id,
+          trackId: values?.track?.id,
           residentDistrictId: values?.districtName.id,
           residentSectorId: values?.sectorId.id,
+          residentCountryId: values?.residentCountryId.id,
           positionInFounded: values?.foundedPosition,
           positionInEmployed: values?.companyPosition,
           profileImageId: values?.profileImageId,
@@ -534,6 +659,7 @@ function NewProfile() {
         organizationFounded: {
           name: values?.initiativeName,
           workingSector: values?.mainSector?.id,
+          countryId: values?.foundedCountry?.id,
           districtId: values.foundedDistrictName.name,
           sectorId: values?.foundedSectorId.id,
           website: values?.foundedWebsite,
@@ -541,6 +667,7 @@ function NewProfile() {
         organizationEmployed: {
           name: values?.companyName,
           workingSector: values?.companySector?.id,
+          countryId: values?.companyCountry?.id,
           districtId: values?.companyDistrictName.name,
           sectorId: values?.companySectorId.id,
           website: values?.companyWebsite,
@@ -548,6 +675,11 @@ function NewProfile() {
       }).unwrap();
       if (res.message) {
         formik.resetForm();
+        setImagePreview(null);
+        setImageData(null);
+        setUploadSuccess(false);
+        if (formik.values.profileImageId)
+          formik.setFieldValue("profileImageId", "");
         setSuccess("User added successfully!");
       }
     } catch (error: any) {
@@ -574,6 +706,7 @@ function NewProfile() {
           cohorts={cohorts}
           districts={districts}
           genders={genders}
+          countries={countries}
           setSelectedDistrict={setSelectedDistrict}
           tracks={tracks}
         />
@@ -584,9 +717,10 @@ function NewProfile() {
       content: (
         <Founded
           formik={formik}
-          setSelectedDistrict={setSelectedDistrict}
-          districts={districts}
-          sectors={sectors}
+          setSelectedDistrict={setSelectedDistrictFounded}
+          districts={districtsFounded}
+          sectors={sectorsFounded}
+          countries={countriesFounded}
           workingSectors={workingSectors}
         />
       ),
@@ -596,10 +730,11 @@ function NewProfile() {
       content: (
         <Employment
           formik={formik}
-          setSelectedDistrict={setSelectedDistrict}
-          districts={districts}
-          sectors={sectors}
-          workingSectors={workingSectors}
+          setSelectedDistrict={setSelectedDistrictEmployed}
+          districts={districtsEmployed}
+          sectors={sectorsEmployed}
+          countries={countriesEmployed}
+          workingSectors={workingSectorsEmployed}
         />
       ),
     },

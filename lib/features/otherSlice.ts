@@ -12,6 +12,9 @@ export const otherSlices = createApi({
     districts: builder.query({
       query: (code) => `data/districts`,
     }),
+    countries: builder.query({
+      query: (code) => `data/countries`,
+    }),
     cohorts: builder.query({
       query: (code) => `data/cohorts`,
     }),
@@ -34,4 +37,5 @@ export const {
   useCohortsQuery,
   useWorkingSectorQuery,
   useTracksQuery,
+  useCountriesQuery,
 } = otherSlices;
