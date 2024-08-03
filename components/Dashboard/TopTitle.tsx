@@ -23,7 +23,7 @@ function TopTitle({ title }: { title: string }) {
           src={
             user?.profileImage?.link
               ? user?.profileImage?.link
-              : "/placeholder.png"
+              : "/placeholder.svg"
           }
           width={50}
           height={50}
