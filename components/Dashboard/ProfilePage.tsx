@@ -8,7 +8,10 @@ import Loading from "@/app/loading";
 import { getUser } from "@/helpers/auth";
 import DisplayField from "../Other/DisplayField";
 import Link from "next/link";
-import { useGetOneUserQuery } from "@/lib/features/userSlice";
+import {
+  useChangeMutation,
+  useGetOneUserQuery,
+} from "@/lib/features/userSlice";
 import { Toast } from "primereact/toast";
 import ConfirmModal from "../Other/confirmModal";
 
@@ -130,6 +133,7 @@ function ProfilePage() {
   const [loading, setLoading] = useState(false);
 
   const userProfile = useGetOneUserQuery(id || userData?.id);
+  const [change] = useChangeMutation();
   const user: User = userProfile?.data;
 
   const getUserData = async () => {
@@ -180,7 +184,13 @@ function ProfilePage() {
     } catch (error) {}
   };
 
-  const changeRole = async () => {};
+  const changeRole = async () => {
+    try {
+      const res = await change()
+    } catch (error) {
+      
+    }
+  };
 
   return (
     <div className="">

@@ -12,9 +12,13 @@ export const usersSlices = createApi({
     getOneUser: builder.query({
       query: (userId) => `users/${userId}`,
     }),
+    change: builder.mutation({
+      query: (userId) => ({
+        url: `users/role/${userId}`,
+        method: "POST",
+      }),
+    }),
     deleteUser: builder.mutation({
-      // Assuming your API endpoint for deleting a user is like DELETE /users/{userId}
-
       query: (userId) => ({
         url: `users/${userId}`,
         method: "DELETE",
@@ -63,4 +67,5 @@ export const {
   useAddUserMutation,
   useBulkAddUsersMutation,
   useUploadPictureMutation,
+  useChangeMutation,
 } = usersSlices;
