@@ -1,6 +1,5 @@
-
 import ProfilePage from "@/components/Dashboard/ProfilePage";
-import TopTitle from "@/components/Dashboard/TopTitle";
+import TopTitle from "@/components/Other/TopTitle";
 
 function page() {
   return (

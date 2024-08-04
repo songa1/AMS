@@ -118,7 +118,7 @@ const Sidebar = ({
 
   return (
     <aside
-      className={`top-0 left-0 z-40 h-full bg-mainBlue ${
+      className={`top-0 left-0 h-full bg-mainBlue ${
         !titles ? "w-16" : "w-60"
       } fixed top-0 bottom-0 left-0`}
     >

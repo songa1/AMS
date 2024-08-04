@@ -1,7 +1,7 @@
 "use client";
 
-import TopTitle from "@/components/Dashboard/TopTitle";
-import GetUser from "@/components/Dashboard/getOneUserPage";
+import ProfilePage from "@/components/Dashboard/ProfilePage";
+import TopTitle from "@/components/Other/TopTitle";
 import { OnlyAdmin } from "@/components/Other/AccessDashboard";
 import React from "react";
 
@@ -10,7 +10,7 @@ function page() {
     <div>
       <TopTitle title="One User" />
       <OnlyAdmin>
-        <GetUser />
+        <ProfilePage />
       </OnlyAdmin>
     </div>
   );

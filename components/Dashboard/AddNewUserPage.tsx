@@ -580,6 +580,7 @@ function NewProfile() {
 
   const formik = useFormik({
     initialValues: {
+      bio: "",
       firstName: "",
       middleName: "",
       lastName: "",
@@ -643,6 +644,7 @@ function NewProfile() {
           middleName: values.middleName,
           lastName: values.lastName,
           email: values.email,
+          bio: values?.bio,
           phoneNumber: values.phoneNumber,
           whatsappNumber: values.whatsAppNumber,
           genderName: values.gender.name,
@@ -802,7 +804,9 @@ function NewProfile() {
           <div className="flex items-start justify-between p-2">
             <div>
               <div>
-                <label>Profile Picture:</label>
+                <label>
+                  Profile Picture:<br></br>
+                </label>
                 <input type="file" onChange={handlePreview} />
               </div>
               {imagePreview && (
@@ -838,6 +842,17 @@ function NewProfile() {
               Save
             </button>
           </div>
+        </div>
+        <div className="p-3">
+          <label>Biography:</label>
+          <textarea
+            rows={5}
+            className="w-full p-3 bg-gray-100 border-2 border-gray-200 outline-none rounded-md"
+            placeholder="Enter the user's BIO..."
+            value={formik.values.bio}
+            onChange={(e) => formik.setFieldValue("bio", e.target.value)}
+            required
+          />
         </div>
         <div className="p-5 text-justify">
           <div className="my-5">

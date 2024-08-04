@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Sidebar from "./Sidebar";
-import { AccessDashboard } from "../Other/AccessDashboard";
+import { AccessDashboard } from "./AccessDashboard";
 
 function Layout({ children }: { children: React.ReactNode }) {
   const [titles, setTitles] = useState(true);

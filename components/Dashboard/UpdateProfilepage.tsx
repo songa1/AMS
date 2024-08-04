@@ -44,6 +44,7 @@ const Personal = ({
   tracks,
   countries,
   usr,
+  auth,
 }: {
   formik: any;
   sectors: residentSector[];
@@ -54,6 +55,7 @@ const Personal = ({
   tracks: Track[];
   countries: Country[];
   usr: User;
+  auth: boolean;
 }) => {
   console.log(usr?.middleName);
   return (
@@ -65,6 +67,7 @@ const Personal = ({
           defaultValue={usr?.firstName}
           className="w-full p-3"
           type="text"
+          disabled={auth}
           placeholder="First Name"
           value={formik.values.firstName}
           onChange={(e) => formik.setFieldValue("firstName", e.target.value)}
@@ -77,6 +80,7 @@ const Personal = ({
           variant="filled"
           defaultValue={usr?.middleName}
           className="w-full p-3"
+          disabled={auth}
           type="text"
           placeholder="Middle Name"
           value={
@@ -96,6 +100,7 @@ const Personal = ({
           variant="filled"
           defaultValue={usr?.lastName}
           className="w-full p-3"
+          disabled={auth}
           type="text"
           placeholder="Last Name"
           value={formik.values.lastName}
@@ -123,6 +128,7 @@ const Personal = ({
           variant="filled"
           defaultValue={usr?.phoneNumber}
           className="w-full p-3"
+          disabled={auth}
           type="text"
           placeholder="Phone Number"
           value={formik.values.phoneNumber}
@@ -136,6 +142,7 @@ const Personal = ({
           variant="filled"
           defaultValue={usr?.whatsappNumber}
           className="w-full p-3"
+          disabled={auth}
           type="text"
           placeholder="WhatsApp Number"
           value={formik.values.whatsAppNumber}
@@ -150,6 +157,7 @@ const Personal = ({
         <Dropdown
           variant="filled"
           className="w-full p-3"
+          disabled={auth}
           type="text"
           placeholder="Select a gender"
           value={formik.values.gender}
@@ -164,6 +172,7 @@ const Personal = ({
         <Dropdown
           variant="filled"
           className="w-full p-3"
+          disabled={auth}
           type="text"
           placeholder="Select a country"
           value={formik.values.residentCountryId}
@@ -183,6 +192,7 @@ const Personal = ({
             className="w-full p-3"
             placeholder="Select a district"
             value={formik?.values?.districtName}
+            disabled={auth}
             options={districts}
             onChange={(e) => {
               setSelectedDistrict(e.value.name);
@@ -201,6 +211,7 @@ const Personal = ({
           <Dropdown
             variant="filled"
             className="w-full p-3"
+            disabled={auth}
             type="text"
             placeholder="Select a sector"
             value={formik.values.sectorId}
@@ -218,6 +229,7 @@ const Personal = ({
         <Dropdown
           variant="filled"
           className="w-full p-3"
+          disabled={auth}
           type="text"
           placeholder="Select a cohort"
           value={formik.values.cohortId}
@@ -233,6 +245,7 @@ const Personal = ({
         <Dropdown
           variant="filled"
           className="w-full p-3"
+          disabled={auth}
           type="text"
           placeholder="Select a track"
           value={formik.values.track}
@@ -247,6 +260,7 @@ const Personal = ({
         <InputText
           variant="filled"
           className="w-full p-3"
+          disabled={auth}
           type="text"
           placeholder="What's the popular place near you?"
           value={formik.values.nearlestLandmark}
@@ -268,6 +282,7 @@ const Founded = ({
   workingSectors,
   countries,
   usr,
+  auth,
 }: any) => (
   <div className="grid grid-cols-2 gap-3">
     <div className="field">
@@ -276,6 +291,7 @@ const Founded = ({
         variant="filled"
         defaultValue={usr?.organizationFounded?.name}
         className="w-full p-3"
+        disabled={auth}
         type="text"
         placeholder="What's your initiative?"
         value={formik.values.initiativeName}
@@ -289,6 +305,7 @@ const Founded = ({
         variant="filled"
         defaultValue={usr?.organizationFounded?.workingSector}
         className="w-full p-3"
+        disabled={auth}
         type="text"
         placeholder="Select a working sector"
         value={formik.values.mainSector}
@@ -304,6 +321,7 @@ const Founded = ({
         variant="filled"
         defaultValue={usr?.positionInFounded}
         className="w-full p-3"
+        disabled={auth}
         type="text"
         placeholder="What's your position?"
         value={formik.values.foundedPosition}
@@ -319,6 +337,7 @@ const Founded = ({
         variant="filled"
         defaultValue={usr?.organizationFounded?.website}
         className="w-full p-3"
+        disabled={auth}
         type="text"
         placeholder="What's your initiative's website?"
         value={formik.values.foundedWebsite}
@@ -331,6 +350,7 @@ const Founded = ({
       <Dropdown
         variant="filled"
         className="w-full p-3"
+        disabled={auth}
         type="text"
         placeholder="Select a country"
         value={formik.values.foundedCountry}
@@ -348,6 +368,7 @@ const Founded = ({
           className="w-full p-3"
           placeholder="Select a district"
           value={formik?.values?.foundedDistrictName}
+          disabled={auth}
           options={districts}
           onChange={(e) => {
             setSelectedDistrict(e.value.name);
@@ -366,6 +387,7 @@ const Founded = ({
         <Dropdown
           variant="filled"
           className="w-full p-3"
+          disabled={auth}
           type="text"
           placeholder="Select a sector"
           value={formik.values.foundedSectorId}
@@ -389,6 +411,7 @@ const Employment = ({
   workingSectors,
   countries,
   usr,
+  auth,
 }: any) => (
   <div className="grid grid-cols-2 gap-3">
     <div className="field">
@@ -397,6 +420,7 @@ const Employment = ({
         variant="filled"
         defaultValue={usr?.organizationEmployed?.name}
         className="w-full p-3"
+        disabled={auth}
         type="text"
         placeholder="Who employs you?"
         value={formik.values.companyName}
@@ -410,6 +434,7 @@ const Employment = ({
         defaultValue={usr?.organizationEmployed?.workingSector}
         variant="filled"
         className="w-full p-3"
+        disabled={auth}
         type="text"
         placeholder="Select a working sector"
         value={formik.values.companySector}
@@ -425,6 +450,7 @@ const Employment = ({
         variant="filled"
         defaultValue={usr?.positionInEmployed}
         className="w-full p-3"
+        disabled={auth}
         type="text"
         placeholder="What's your position?"
         value={formik.values.companyPosition}
@@ -440,6 +466,7 @@ const Employment = ({
         variant="filled"
         defaultValue={usr?.organizationEmployed?.website}
         className="w-full p-3"
+        disabled={auth}
         type="text"
         placeholder="What's the company's website?"
         value={formik.values.companyWebsite}
@@ -452,6 +479,7 @@ const Employment = ({
       <Dropdown
         variant="filled"
         className="w-full p-3"
+        disabled={auth}
         type="text"
         placeholder="Select a country"
         value={formik.values.companyCountry}
@@ -466,6 +494,7 @@ const Employment = ({
         <label>District:</label>
         <Dropdown
           variant="filled"
+          disabled={auth}
           className="w-full p-3"
           placeholder="Select a district"
           value={formik?.values?.companyDistrictName}
@@ -487,6 +516,7 @@ const Employment = ({
         <Dropdown
           variant="filled"
           className="w-full p-3"
+          disabled={auth}
           type="text"
           placeholder="Select a sector"
           value={formik.values.companySectorId}
@@ -502,7 +532,7 @@ const Employment = ({
   </div>
 );
 
-function UpdateProfile() {
+function UpdateProfilepage() {
   const router = useRouter();
   const { id } = useParams();
   const user = getUser();
@@ -534,7 +564,7 @@ function UpdateProfile() {
   const [uploadSuccess, setUploadSuccess] = useState(false);
 
   const [updatedUser] = useUpdatedUserMutation();
-  const { data: UserData } = useGetOneUserQuery<{ data: User }>(id);
+  const { data: UserData } = useGetOneUserQuery<{ data: User }>(id || user?.id);
   const { data: GenderData } = useGenderQuery("");
   const { data: CountryData } = useCountriesQuery("");
   const { data: DistrictData } = useDistrictsQuery("");
@@ -554,6 +584,8 @@ function UpdateProfile() {
       skip: !selectedDistrictEmployed,
     }
   );
+
+  const authorized = user?.id === id || user?.role?.name === "ADMIN";
 
   const { data: WorkingSectorsData } = useWorkingSectorQuery("");
 
@@ -632,6 +664,7 @@ function UpdateProfile() {
       middleName: "",
       lastName: "",
       email: "",
+      bio: usr?.bio,
       gender: "",
       phoneNumber: "",
       districtName: "",
@@ -692,6 +725,7 @@ function UpdateProfile() {
           middleName: values.middleName,
           lastName: values.lastName,
           email: values.email,
+          bio: values?.bio,
           phoneNumber: values.phoneNumber,
           whatsappNumber: values.whatsAppNumber,
           genderName: values.gender.name,
@@ -761,6 +795,7 @@ function UpdateProfile() {
           usr={usr}
           setSelectedDistrict={setSelectedDistrict}
           tracks={tracks}
+          auth={authorized}
         />
       ),
     },
@@ -775,6 +810,7 @@ function UpdateProfile() {
           countries={countriesFounded}
           workingSectors={workingSectors}
           usr={usr}
+          auth={authorized}
         />
       ),
     },
@@ -789,6 +825,7 @@ function UpdateProfile() {
           countries={countriesEmployed}
           workingSectors={workingSectorsEmployed}
           usr={usr}
+          auth={authorized}
         />
       ),
     },
@@ -856,8 +893,14 @@ function UpdateProfile() {
           <div className="flex items-start justify-between p-2">
             <div>
               <div>
-                <label>Profile Picture:</label>
-                <input type="file" onChange={handlePreview} />
+                <label>
+                  Profile Picture:<br></br>
+                </label>
+                <input
+                  disabled={authorized}
+                  type="file"
+                  onChange={handlePreview}
+                />
               </div>
               {imagePreview && (
                 <img
@@ -893,6 +936,19 @@ function UpdateProfile() {
             </button>
           </div>
         </div>
+        <div className="p-3">
+          <label>Biography:</label>
+          <textarea
+            rows={5}
+            defaultValue={usr?.bio}
+            className="w-full p-3 bg-gray-100 border-2 border-gray-200 outline-none rounded-md"
+            placeholder="Enter the user's BIO..."
+            value={formik.values.bio}
+            onChange={(e) => formik.setFieldValue("bio", e.target.value)}
+            disabled={authorized}
+            required
+          />
+        </div>
         <div className="p-5 text-justify">
           <div className="my-5">
             <ul className="-mb-px flex items-center gap-4 text-sm font-medium">
@@ -924,4 +980,4 @@ function UpdateProfile() {
   );
 }
 
-export default UpdateProfile;
+export default UpdateProfilepage;

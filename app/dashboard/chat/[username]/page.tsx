@@ -1,5 +1,5 @@
 import IndividualChatPage from "@/components/Dashboard/IndividualChatPage";
-import TopTitle from "@/components/Dashboard/TopTitle";
+import TopTitle from "@/components/Other/TopTitle";
 
 function page() {
   return (

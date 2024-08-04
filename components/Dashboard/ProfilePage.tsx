@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { User } from "@/types/user";
 
 import Loading from "@/app/loading";
@@ -9,6 +9,8 @@ import { getUser } from "@/helpers/auth";
 import DisplayField from "../Other/DisplayField";
 import Link from "next/link";
 import { useGetOneUserQuery } from "@/lib/features/userSlice";
+import { Toast } from "primereact/toast";
+import ConfirmModal from "../Other/confirmModal";
 
 const Personal = ({ user }: { user: User | null }) => {
   return (
@@ -118,13 +120,16 @@ const Employment = ({ user }: { user: User | null }) => (
 function ProfilePage() {
   const router = useRouter();
   const { id } = useParams();
+  const toast: any = useRef(null);
   const [activeTab, setActiveTab] = useState(0);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [roleModal, setRoleModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [userData, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  const userProfile = useGetOneUserQuery(userData?.id);
+  const userProfile = useGetOneUserQuery(id || userData?.id);
   const user: User = userProfile?.data;
 
   const getUserData = async () => {
@@ -161,8 +166,35 @@ function ProfilePage() {
     return <Loading />;
   }
 
+  const handleChangeRole = async () => {
+    try {
+      if (userData?.role?.name === "ADMIN") {
+        setRoleModal(true);
+      } else {
+        toast.current.show({
+          severity: "error",
+          summary: "Permission Issue",
+          detail: "You can not change user's role. Contact ADMIN!",
+        });
+      }
+    } catch (error) {}
+  };
+
+  const changeRole = async () => {};
+
   return (
     <div className="">
+      <Toast ref={toast} />
+      {roleModal && (
+        <ConfirmModal
+          cancelText="Cancel"
+          confirmText={loading ? "Changing..." : "Change"}
+          title="Changing a user's role"
+          description="Are you sure you want to change the user's role a user? Note that if the user was the ADMIN, the user will become a normal USER, and if a user was a normal USER, the user will become an ADMIN."
+          closeModal={() => setRoleModal(false)}
+          action={changeRole}
+        />
+      )}
       <div className="w-full">
         <div className="flex gap-3 items-center">
           <img
@@ -180,6 +212,13 @@ function ProfilePage() {
                     user?.lastName || ""
                   }`
                 : ""}
+              &nbsp;
+              <span
+                onClick={handleChangeRole}
+                className="text-xs border-2 border-gray-200 p-1 rounded-md cursor-pointer"
+              >
+                {user?.role?.name}
+              </span>
             </h2>
             <p>{user?.bio}</p>
             <Link href="/dashboard/update-profile">
