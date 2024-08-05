@@ -186,9 +186,19 @@ function ProfilePage() {
 
   const changeRole = async () => {
     try {
-      const res = await change()
-    } catch (error) {
-      
+      const res = await change({ userId: id || userData?.id }).unwrap();
+      toast.current.show({
+        severity: "success",
+        summary: "Change Role",
+        detail: "You have changed the user's role.",
+      });
+    } catch (error: any) {
+      console.log(error.message);
+      toast.current.show({
+        severity: "error",
+        summary: "Error",
+        detail: error.message,
+      });
     }
   };
 
