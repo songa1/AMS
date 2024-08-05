@@ -1,6 +1,5 @@
-import TopTitle from "@/components/Dashboard/TopTitle";
+import TopTitle from "@/components/Other/TopTitle";
 import UsersPage from "@/components/Dashboard/userspage";
-import { OnlyAdmin } from "@/components/Other/AccessDashboard";
 
 function page() {
   return (

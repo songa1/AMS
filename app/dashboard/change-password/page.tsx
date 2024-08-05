@@ -1,5 +1,5 @@
 import ChangePasswordPage from "@/components/Dashboard/ResetPassword";
-import TopTitle from "@/components/Dashboard/TopTitle";
+import TopTitle from "@/components/Other/TopTitle";
 
 function page() {
   return (

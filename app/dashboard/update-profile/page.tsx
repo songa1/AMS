@@ -1,5 +1,4 @@
-
-import TopTitle from "@/components/Dashboard/TopTitle";
+import TopTitle from "@/components/Other/TopTitle";
 import UpdateProfilepage from "@/components/Dashboard/UpdateProfilepage";
 import React from "react";
 
