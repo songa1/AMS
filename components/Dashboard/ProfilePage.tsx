@@ -186,7 +186,7 @@ function ProfilePage() {
 
   const changeRole = async () => {
     try {
-      const res = await change({ userId: id || userData?.id }).unwrap();
+      const res = await change(id || userData?.id).unwrap();
       toast.current.show({
         severity: "success",
         summary: "Change Role",
