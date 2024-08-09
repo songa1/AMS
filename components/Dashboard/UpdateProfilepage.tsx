@@ -57,7 +57,6 @@ const Personal = ({
   usr: User;
   auth: boolean;
 }) => {
-  console.log(usr?.middleName);
   return (
     <div className="grid grid-cols-2 gap-3">
       <div className="field">
@@ -199,7 +198,6 @@ const Personal = ({
                 setSelectedDistrict(e.value.name);
                 formik.setFieldValue("districtName", e.value);
                 formik.setFieldValue("sectorId", "");
-                console.log(formik.values.districtName);
               }}
               optionLabel="name"
               required
@@ -377,7 +375,6 @@ const Founded = ({
               setSelectedDistrict(e.value.name);
               formik.setFieldValue("foundedDistrictName", e.value);
               formik.setFieldValue("foundedSectorId", "");
-              console.log(formik.values.foundedDistrictName);
             }}
             optionLabel="name"
             required
@@ -508,7 +505,6 @@ const Employment = ({
               setSelectedDistrict(e.value.name);
               formik.setFieldValue("companyDistrictName", e.value);
               formik.setFieldValue("companySectorId", "");
-              console.log(formik.values.foundedDistrictName);
             }}
             optionLabel="name"
             required
@@ -570,7 +566,9 @@ function UpdateProfilepage() {
   const [uploadSuccess, setUploadSuccess] = useState(false);
 
   const [updatedUser] = useUpdatedUserMutation();
-  const { data: UserData } = useGetOneUserQuery<{ data: User }>(id || user?.id);
+  const { data: UserData, refetch } = useGetOneUserQuery<{ data: User }>(
+    id || user?.id
+  );
   const { data: GenderData } = useGenderQuery("");
   const { data: CountryData } = useCountriesQuery("");
   const { data: DistrictData } = useDistrictsQuery("");
@@ -727,20 +725,20 @@ function UpdateProfilepage() {
       const res = await updatedUser({
         userId: usr?.id,
         user: {
-          firstName: values.firstName,
-          middleName: values.middleName,
-          lastName: values.lastName,
-          email: values.email,
+          firstName: values?.firstName,
+          middleName: values?.middleName,
+          lastName: values?.lastName,
+          email: values?.email,
           bio: values?.bio,
-          phoneNumber: values.phoneNumber,
-          whatsappNumber: values.whatsAppNumber,
-          genderName: values.gender.name,
-          nearestLandmark: values.nearlestLandmark,
+          phoneNumber: values?.phoneNumber,
+          whatsappNumber: values?.whatsAppNumber,
+          genderName: values?.gender?.name,
+          nearestLandmark: values?.nearlestLandmark,
           cohortId: values?.cohortId?.id,
           trackId: values?.track?.id,
-          residentDistrictId: values?.districtName.id,
+          residentDistrictId: values?.districtName?.id,
           residentSectorId: values?.sectorId.id,
-          residentCountryId: values?.residentCountryId.id,
+          residentCountryId: values?.residentCountryId?.id,
           positionInFounded: values?.foundedPosition,
           positionInEmployed: values?.companyPosition,
           profileImageId: values?.profileImageId,
@@ -750,8 +748,8 @@ function UpdateProfilepage() {
           name: values?.initiativeName,
           workingSector: values?.mainSector?.id,
           countryId: values?.foundedCountry?.id,
-          districtId: values.foundedDistrictName.name,
-          sectorId: values?.foundedSectorId.id,
+          districtId: values?.foundedDistrictName?.name,
+          sectorId: values?.foundedSectorId?.id,
           website: values?.foundedWebsite,
         },
         organizationEmployed: {
@@ -759,8 +757,8 @@ function UpdateProfilepage() {
           name: values?.companyName,
           workingSector: values?.companySector?.id,
           countryId: values?.companyCountry?.id,
-          districtId: values?.companyDistrictName.name,
-          sectorId: values?.companySectorId.id,
+          districtId: values?.companyDistrictName?.name,
+          sectorId: values?.companySectorId?.id,
           website: values?.companyWebsite,
         },
       }).unwrap();
@@ -772,6 +770,7 @@ function UpdateProfilepage() {
         if (formik.values.profileImageId)
           formik.setFieldValue("profileImageId", "");
         setSuccess("User updated successfully!");
+        refetch();
       }
     } catch (error: any) {
       console.log(error);
@@ -936,7 +935,10 @@ function UpdateProfilepage() {
             <button
               className="right-1 top-1 z-10 select-none rounded bg-mainBlue py-2 px-4 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md transition-all hover:shadow-md focus:shadow-lg active:shadow-md"
               type="submit"
-              onClick={() => handleSubmit()}
+              onClick={(e) => {
+                e.preventDefault();
+                handleSubmit();
+              }}
             >
               Save
             </button>
