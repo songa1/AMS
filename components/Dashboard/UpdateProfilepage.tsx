@@ -737,7 +737,7 @@ function UpdateProfilepage() {
           cohortId: values?.cohortId?.id,
           trackId: values?.track?.id,
           residentDistrictId: values?.districtName?.id,
-          residentSectorId: values?.sectorId.id,
+          residentSectorId: values?.sectorId?.id,
           residentCountryId: values?.residentCountryId?.id,
           positionInFounded: values?.foundedPosition,
           positionInEmployed: values?.companyPosition,
