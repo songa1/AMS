@@ -28,8 +28,22 @@ const LoginPage = () => {
       setIsLoading(true);
       try {
         const result = await login(values).unwrap();
+        localStorage.setItem(
+          AUTH_STORED_DATA?.USER,
+          JSON.stringify(result?.user)
+        );
+        Cookies.set(AUTH_STORED_DATA?.TOKEN, result?.token, {
+          expires: 7,
+        });
+        Cookies.set(AUTH_STORED_DATA?.USER, JSON.stringify(result?.user), {
+          expires: 7,
+        });
         if (result?.status === 200) {
           formik.resetForm();
+          localStorage.setItem(
+            AUTH_STORED_DATA?.USER,
+            JSON.stringify(result?.user)
+          );
           Cookies.set(AUTH_STORED_DATA?.TOKEN, result?.token, {
             expires: 7,
           });

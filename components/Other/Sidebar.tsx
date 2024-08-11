@@ -17,6 +17,7 @@ import { AUTH_STORED_DATA, getUser, token } from "@/helpers/auth";
 import { useLogoutMutation } from "@/lib/features/authSlice";
 import Cookies from "js-cookie";
 import { usePathname } from "next/navigation";
+import { CiSettings } from "react-icons/ci";
 
 const Sidebar = ({
   titles,
@@ -110,6 +111,14 @@ const Sidebar = ({
       title: "Change Password",
       icon: <BiLock />,
       link: "/dashboard/change-password",
+      show: true,
+      count: 0,
+    },
+    {
+      id: 8,
+      title: "Settings",
+      icon: <CiSettings />,
+      link: "/dashboard/data",
       show: true,
       count: 0,
     },

@@ -27,6 +27,13 @@ export const otherSlices = createApi({
     tracks: builder.query({
       query: () => `data/tracks`,
     }),
+    addCohort: builder.mutation({
+      query: (data) => ({
+        url: "data/cohort",
+        method: "POST",
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -38,4 +45,5 @@ export const {
   useWorkingSectorQuery,
   useTracksQuery,
   useCountriesQuery,
+  useAddCohortMutation,
 } = otherSlices;

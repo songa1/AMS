@@ -69,6 +69,10 @@
   @apply grid grid-cols-3 gap-3 h-[75vh];
 }
 
+.data-hold {
+  @apply grid grid-cols-3 gap-3 h-[50vh];
+}
+
 .notifications-left {
   @apply border border-gray-200 rounded-md h-full overflow-scroll no-scrollbar relative;
 }

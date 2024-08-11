@@ -14,6 +14,8 @@ import {
 } from "@/lib/features/userSlice";
 import { Toast } from "primereact/toast";
 import ConfirmModal from "../Other/confirmModal";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
 
 const Personal = ({ user }: { user: User | null }) => {
   return (
@@ -149,6 +151,7 @@ const Employment = ({ user }: { user: User | null }) => (
 );
 
 function ProfilePage() {
+  dayjs.extend(relativeTime);
   const { id } = useParams();
   const toast: any = useRef(null);
   const [activeTab, setActiveTab] = useState(0);
@@ -208,7 +211,9 @@ function ProfilePage() {
           detail: "You can not change user's role. Contact ADMIN!",
         });
       }
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const changeRole = async () => {
@@ -267,6 +272,10 @@ function ProfilePage() {
               </span>
             </h2>
             <p>{user?.bio}</p>
+            <p className="text-gray-500 text-xs">
+              Profile created at {dayjs(user?.createdAt).format("DD MMM YYYY")},
+              Last updated {dayjs(user?.updatedAt).fromNow()}
+            </p>
             <Link href="/dashboard/update-profile">
               <button className="right-1 top-1 z-10 select-none rounded bg-mainBlue py-2 px-4 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md transition-all hover:shadow-md focus:shadow-lg active:shadow-md">
                 Update Profile
