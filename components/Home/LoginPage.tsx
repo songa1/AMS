@@ -5,14 +5,12 @@ import InputError from "@/components/Other/InputError";
 import { useLoginMutation } from "@/lib/features/authSlice";
 import { useFormik } from "formik";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import * as Yup from "yup";
 import Cookies from "js-cookie";
 import { AUTH_STORED_DATA } from "@/helpers/auth";
 
 const LoginPage = () => {
-  const router = useRouter();
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [login] = useLoginMutation();
@@ -39,9 +37,9 @@ const LoginPage = () => {
             expires: 7,
           });
           if (result?.user?.role?.name == "ADMIN") {
-            router.push("/dashboard");
+            globalThis.location.href = "/dashboard";
           } else {
-            router.push("/dashboard/profile");
+            globalThis.location.href = "/dashboard/profile";
           }
         }
       } catch (err: any) {

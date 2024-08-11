@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import { Avatar } from "primereact/avatar";
-import { useRouter } from "next/navigation";
 import SearchInput from "../Other/SearchInput";
 import FullScreenModal from "../Other/FullScreenModal";
 import { useDeleteUserMutation, useUsersQuery } from "@/lib/features/userSlice";
@@ -16,7 +15,6 @@ import { getUser } from "@/helpers/auth";
 import Loading from "@/app/loading";
 
 const UsersPage = () => {
-  const router = useRouter();
   const [searchText, setSearchText] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [users, setUsers] = useState<User[]>([]);
@@ -30,8 +28,6 @@ const UsersPage = () => {
   const user = getUser();
 
   const isAdmin = user?.role?.name == "ADMIN";
-
-  console.log(data);
 
   useEffect(() => {
     if (data) {
@@ -110,7 +106,9 @@ const UsersPage = () => {
             <button
               className=" right-1 top-1 select-none rounded bg-mainBlue py-2 px-4 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md transition-all hover:shadow-md focus:shadow-lg active:shadow-md"
               type="submit"
-              onClick={() => router.push("add-new-user")}
+              onClick={() =>
+                (globalThis.location.href = "/dashboard/add-new-user")
+              }
             >
               <CgAdd />
             </button>
@@ -163,7 +161,9 @@ const UsersPage = () => {
                 {isAdmin && (
                   <button
                     className=" bg-mainBlue text-xs p-1  rounded"
-                    onClick={() => router.push("users/" + user.id)}
+                    onClick={() =>
+                      (globalThis.location.href = "/dashboard/users/" + user.id)
+                    }
                   >
                     <BsEye />
                   </button>
@@ -171,7 +171,9 @@ const UsersPage = () => {
                 {isAdmin && (
                   <button
                     className=" bg-green-400 text-xs p-1 rounded"
-                    onClick={() => router.push("update-profile/" + user.id)}
+                    onClick={() =>
+                      (globalThis.location.href = "update-profile/" + user.id)
+                    }
                   >
                     <BiEdit />
                   </button>
@@ -192,7 +194,7 @@ const UsersPage = () => {
                   className=" bg-gray-600 text-xs p-1 rounded"
                   onClick={async (e) => {
                     e.preventDefault();
-                    router.push(`/dashboard/chat/${user?.id}`);
+                    globalThis.location.href = `/dashboard/chat/${user?.id}`;
                   }}
                 >
                   <BiMessage />

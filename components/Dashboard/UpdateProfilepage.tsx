@@ -1,7 +1,7 @@
 "use client";
 
 import { useFormik } from "formik";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { InputText } from "primereact/inputtext";
 import React, { useEffect, useRef, useState } from "react";
 import * as Yup from "yup";
@@ -535,7 +535,6 @@ const Employment = ({
 );
 
 function UpdateProfilepage() {
-  const router = useRouter();
   const { id } = useParams();
   const user = getUser();
   const toast: any = useRef(null);

@@ -16,7 +16,7 @@ import { useUnopenedNotificationsQuery } from "@/lib/features/notificationSlice"
 import { AUTH_STORED_DATA, getUser, token } from "@/helpers/auth";
 import { useLogoutMutation } from "@/lib/features/authSlice";
 import Cookies from "js-cookie";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 const Sidebar = ({
   titles,
@@ -25,7 +25,6 @@ const Sidebar = ({
   titles: boolean;
   setTitles: any;
 }) => {
-  const router = useRouter();
   const user = getUser();
   const link = usePathname();
   const isMobile = typeof window !== "undefined" && window?.innerWidth <= 768;

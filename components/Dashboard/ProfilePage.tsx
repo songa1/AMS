@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import { User } from "@/types/user";
 
@@ -149,7 +149,6 @@ const Employment = ({ user }: { user: User | null }) => (
 );
 
 function ProfilePage() {
-  const router = useRouter();
   const { id } = useParams();
   const toast: any = useRef(null);
   const [activeTab, setActiveTab] = useState(0);
@@ -221,7 +220,6 @@ function ProfilePage() {
         detail: "You have changed the user's role.",
       });
     } catch (error: any) {
-      console.log(error.message);
       toast.current.show({
         severity: "error",
         summary: "Error",

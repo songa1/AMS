@@ -4,14 +4,13 @@ import React, { useEffect, useState } from "react";
 import ChatPage from "./ChatPage";
 import relativeTime from "dayjs/plugin/relativeTime";
 import dayjs from "dayjs";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { usePrivateChatsQuery } from "@/lib/features/chatSlice";
 import { getUser } from "@/helpers/auth";
 import { Message } from "@/types/message";
 
 function IndividualChatPage() {
   dayjs.extend(relativeTime);
-  const router = useRouter();
   const user = getUser();
   const [chats, setChats] = useState<Message[]>([]);
 
@@ -38,8 +37,6 @@ function IndividualChatPage() {
     }
   }, [data, user.id]);
 
-  console.log(chats);
-
   return (
     <div className="grid grid-cols-4 gap-2">
       <div>
@@ -48,7 +45,7 @@ function IndividualChatPage() {
           <ul className="flex flex-col gap-1">
             <li
               className="border-b border-gray-200 p-2 px-4 cursor-pointer hover:bg-blue-100"
-              onClick={() => router.push("/dashboard/chat")}
+              onClick={() => (globalThis.location.href = "/dashboard/chat")}
             >
               <div>
                 {/* <p className="text-xs text-mainBlue">
@@ -68,7 +65,9 @@ function IndividualChatPage() {
                   <li
                     key={index + 1}
                     className="border-b border-gray-200 p-2 px-4 cursor-pointer hover:bg-blue-100"
-                    onClick={() => router.push(`/dashboard/chat/${noti?.id}`)}
+                    onClick={() =>
+                      (globalThis.location.href = `/dashboard/chat/${noti?.id}`)
+                    }
                   >
                     <div>
                       <p className="text-xs text-mainBlue">

@@ -19,8 +19,6 @@ function Notifications() {
   const { data, refetch } = useNotificationsQuery(user?.id);
   const [openNotification] = useOpenNotificationMutation();
 
-  console.log(data);
-
   const nots = data?.notifications ? data?.notifications : [];
 
   useEffect(() => {

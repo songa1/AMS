@@ -8,7 +8,7 @@ import {
 } from "@/lib/features/authSlice";
 import { useFormik } from "formik";
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import * as Yup from "yup";
 import Cookies from "js-cookie";
@@ -16,7 +16,6 @@ import { AUTH_STORED_DATA } from "@/helpers/auth";
 
 const ResetPassword = () => {
   const { token } = useParams();
-  const router = useRouter();
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [success, setSuccess] = useState("");

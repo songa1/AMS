@@ -1,7 +1,6 @@
 "use client";
 
 import { useFormik } from "formik";
-import { useRouter } from "next/navigation";
 import { InputText } from "primereact/inputtext";
 import React, { useEffect, useRef, useState } from "react";
 import * as Yup from "yup";
@@ -154,7 +153,6 @@ const Personal = ({
               setSelectedDistrict(e.value.name);
               formik.setFieldValue("districtName", e.value);
               formik.setFieldValue("sectorId", "");
-              console.log(formik.values.districtName);
             }}
             optionLabel="name"
             required
@@ -314,7 +312,6 @@ const Founded = ({
             setSelectedDistrict(e.value.name);
             formik.setFieldValue("foundedDistrictName", e.value);
             formik.setFieldValue("foundedSectorId", "");
-            console.log(formik.values.foundedDistrictName);
           }}
           optionLabel="name"
           required
@@ -430,7 +427,6 @@ const Employment = ({
             setSelectedDistrict(e.value.name);
             formik.setFieldValue("companyDistrictName", e.value);
             formik.setFieldValue("companySectorId", "");
-            console.log(formik.values.foundedDistrictName);
           }}
           optionLabel="name"
           required
@@ -459,7 +455,6 @@ const Employment = ({
 );
 
 function NewProfile() {
-  const router = useRouter();
   const user = getUser();
   const toast: any = useRef(null);
   const [activeTab, setActiveTab] = useState(0);
