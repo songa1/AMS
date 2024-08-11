@@ -35,13 +35,21 @@ const Personal = ({ user }: { user: User | null }) => {
         <DisplayField text={user?.genderName} />
       </div>
       <div className="field">
-        <label>Resident District:</label>
-        <DisplayField text={user?.residentDistrict?.name} />
+        <label>Resident Country:</label>
+        <DisplayField text={user?.residentCountry?.name} />
       </div>
-      <div className="field">
-        <label>Resident Sector:</label>
-        <DisplayField text={user?.residentSector?.name} />
-      </div>
+      {user?.residentCountry && user?.residentCountry?.id === "rwanda" && (
+        <div className="field">
+          <label>Resident District:</label>
+          <DisplayField text={user?.residentDistrict?.name} />
+        </div>
+      )}
+      {user?.residentCountry && user?.residentCountry?.id === "rwanda" && (
+        <div className="field">
+          <label>Resident Sector:</label>
+          <DisplayField text={user?.residentSector?.name} />
+        </div>
+      )}
       <div className="field">
         <label>Cohort:</label>
         <DisplayField text={user?.cohort?.name} />
@@ -81,13 +89,23 @@ const Founded = ({ user }: { user: User | null }) => (
       <DisplayField text={user?.organizationFounded?.website} />
     </div>
     <div className="field">
-      <label>District:</label>
+      <label>Country:</label>
       <DisplayField text={user?.organizationFounded?.district?.name} />
     </div>
-    <div className="field">
-      <label>Sector:</label>
-      <DisplayField text={user?.organizationFounded?.sector?.name} />
-    </div>
+    {user?.organizationFounded &&
+      user?.organizationFounded?.country?.name == "rwanda" && (
+        <div className="field">
+          <label>District:</label>
+          <DisplayField text={user?.organizationFounded?.district?.name} />
+        </div>
+      )}
+    {user?.organizationFounded &&
+      user?.organizationFounded?.country?.name == "rwanda" && (
+        <div className="field">
+          <label>Sector:</label>
+          <DisplayField text={user?.organizationFounded?.sector?.name} />
+        </div>
+      )}
   </div>
 );
 
@@ -110,13 +128,23 @@ const Employment = ({ user }: { user: User | null }) => (
       <DisplayField text={user?.organizationEmployed?.website} />
     </div>
     <div className="field">
-      <label>District:</label>
-      <DisplayField text={user?.organizationEmployed?.district?.name} />
+      <label>Country:</label>
+      <DisplayField text={user?.organizationEmployed?.country?.name} />
     </div>
-    <div className="field">
-      <label>Sector:</label>
-      <DisplayField text={user?.organizationEmployed?.district?.name} />
-    </div>
+    {user?.organizationEmployed &&
+      user?.organizationEmployed?.country?.id == "rwanda" && (
+        <div className="field">
+          <label>District:</label>
+          <DisplayField text={user?.organizationEmployed?.district?.name} />
+        </div>
+      )}
+    {user?.organizationEmployed &&
+      user?.organizationEmployed?.country?.name == "rwanda" && (
+        <div className="field">
+          <label>Sector:</label>
+          <DisplayField text={user?.organizationEmployed?.district?.name} />
+        </div>
+      )}
   </div>
 );
 
