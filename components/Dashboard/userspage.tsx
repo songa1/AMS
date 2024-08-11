@@ -8,17 +8,12 @@ import FullScreenModal from "../Other/FullScreenModal";
 import { useDeleteUserMutation, useUsersQuery } from "@/lib/features/userSlice";
 import { User } from "@/types/user";
 import ConfirmModal from "../Other/confirmModal";
-import {
-  BiDownload,
-  BiEdit,
-  BiExport,
-  BiMessage,
-  BiUpload,
-} from "react-icons/bi";
+import { BiDownload, BiEdit, BiMessage, BiUpload } from "react-icons/bi";
 import { CgAdd } from "react-icons/cg";
 import { BsEye } from "react-icons/bs";
 import { FiDelete } from "react-icons/fi";
 import { getUser } from "@/helpers/auth";
+import Loading from "@/app/loading";
 
 const UsersPage = () => {
   const router = useRouter();
@@ -42,7 +37,7 @@ const UsersPage = () => {
     if (data) {
       setUsers(data?.data.filter((fuser: User) => fuser.id !== user?.id));
     }
-  }, [data]);
+  }, [data, user]);
 
   const searchUsers = (text: string) => {
     const results = [];
@@ -75,6 +70,10 @@ const UsersPage = () => {
       setLoading(false);
     }
   };
+
+  if (isLoading || loading) {
+    return <Loading />;
+  }
 
   return (
     <div className="container mx-auto p-4">
