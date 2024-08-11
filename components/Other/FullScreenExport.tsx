@@ -27,7 +27,7 @@ const FullScreenExport = ({
     });
   };
   const generatePDF = () => {
-    const input = document.getElementById("user-list");
+    const input: any = document.getElementById("user-list");
 
     html2canvas(input).then((canvas) => {
       const imgData = canvas.toDataURL("image/png");
