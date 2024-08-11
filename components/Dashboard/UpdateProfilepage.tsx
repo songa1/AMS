@@ -741,7 +741,7 @@ function UpdateProfilepage() {
           residentCountryId: values?.residentCountryId?.id,
           positionInFounded: values?.foundedPosition,
           positionInEmployed: values?.companyPosition,
-          profileImageId: values?.profileImageId,
+          profileImageId: values?.profileImageId?.id,
         },
         organizationFounded: {
           id: usr?.organizationFounded?.id,
@@ -763,10 +763,16 @@ function UpdateProfilepage() {
         },
       }).unwrap();
       if (res.message) {
+        if (id) {
+          globalThis.location.href = "/dashboard/users/" + id;
+        } else {
+          globalThis.location.href = "/dashboard/profile";
+        }
         formik.resetForm();
         setImagePreview(null);
         setImageData(null);
         setUploadSuccess(false);
+
         if (formik.values.profileImageId)
           formik.setFieldValue("profileImageId", "");
         setSuccess("User updated successfully!");
