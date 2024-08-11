@@ -3,6 +3,7 @@
 import {
   useAddCohortMutation,
   useCohortsQuery,
+  useDeleteCohortMutation,
 } from "@/lib/features/otherSlice";
 import { useFormik } from "formik";
 import React, { useEffect, useRef, useState } from "react";
@@ -12,6 +13,7 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import dayjs from "dayjs";
 import { Toast } from "primereact/toast";
+import { FiDelete } from "react-icons/fi";
 
 function Cohorts() {
   const toast: any = useRef(null);
@@ -21,20 +23,50 @@ function Cohorts() {
 
   const { data: CohortsData, refetch } = useCohortsQuery("");
   const [addCohort] = useAddCohortMutation();
+  const [deleteCohort] = useDeleteCohortMutation();
 
   useEffect(() => {
     if (CohortsData) {
       setData(
-        CohortsData?.data.map((c: any) => {
-          return {
-            name: c?.name,
-            description: c?.description,
-            createdAt: dayjs(c.createdAt).format("DD-MM-YYYY"),
-          };
-        })
+        CohortsData?.data
+          .map((c: any) => {
+            return {
+              name: c?.name,
+              description: c?.description,
+              createdAt: dayjs(c.createdAt).format("DD-MM-YYYY"),
+              Action: (
+                <button
+                  className=" bg-red-600 text-xs p-1 rounded"
+                  onClick={async (e) => {
+                    e.preventDefault();
+                    await handleDelete(c.id);
+                  }}
+                >
+                  <FiDelete />
+                </button>
+              ),
+            };
+          })
+          .sort((a: any, b: any) => a.createdAt - b.createdAt)
       );
     }
   }, [CohortsData]);
+
+  const handleDelete = async (id: number) => {
+    try {
+      const res = await deleteCohort(id).unwrap();
+      if (res) {
+        refetch();
+        toast.current.show({
+          severity: "info",
+          summary: "Success",
+          detail: "Cohort deleted successfully!",
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const formik = useFormik({
     initialValues: {
@@ -48,7 +80,7 @@ function Cohorts() {
           name: values?.name,
           description: values?.description,
         }).unwrap();
-        if (res.status === 201) {
+        if (res) {
           formik.resetForm();
           refetch();
           toast.current.show({

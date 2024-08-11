@@ -34,6 +34,12 @@ export const otherSlices = createApi({
         body: data,
       }),
     }),
+    deleteCohort: builder.mutation({
+      query: (id) => ({
+        url: `data/cohort/${id}`,
+        method: "DELETE",
+      }),
+    }),
   }),
 });
 
@@ -46,4 +52,5 @@ export const {
   useTracksQuery,
   useCountriesQuery,
   useAddCohortMutation,
+  useDeleteCohortMutation,
 } = otherSlices;
