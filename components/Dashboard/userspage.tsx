@@ -13,10 +13,12 @@ import { BsEye } from "react-icons/bs";
 import { FiDelete } from "react-icons/fi";
 import { getUser } from "@/helpers/auth";
 import Loading from "@/app/loading";
+import FullScreenExport from "../Other/FullScreenExport";
 
 const UsersPage = () => {
   const [searchText, setSearchText] = useState("");
   const [isOpen, setIsOpen] = useState(false);
+  const [exportOpen, setExportOpen] = useState(false);
   const [users, setUsers] = useState<User[]>([]);
   const [modal, setModal] = useState(false);
   const [idToDelete, setIdToDelete] = useState<string | null>(null);
@@ -78,6 +80,12 @@ const UsersPage = () => {
         setIsOpen={setIsOpen}
         isOpen={isOpen}
       />
+      <FullScreenExport
+        refetch={refetch}
+        setIsOpen={setExportOpen}
+        isOpen={exportOpen}
+        users={filteredUsers}
+      />
       {modal && (
         <ConfirmModal
           cancelText="Cancel"
@@ -115,6 +123,7 @@ const UsersPage = () => {
             <button
               className=" right-1 top-1 select-none rounded bg-mainBlue py-2 px-4 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md transition-all hover:shadow-md focus:shadow-lg active:shadow-md"
               type="submit"
+              onClick={() => setExportOpen(!exportOpen)}
             >
               <BiDownload />
             </button>
