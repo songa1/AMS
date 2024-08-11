@@ -6,9 +6,10 @@ import OneStat from "../Other/OneStat";
 import { MdOutlinePending } from "react-icons/md";
 import { FaMessage } from "react-icons/fa6";
 import { useStatsQuery } from "@/lib/features/statsSlice";
+import Loading from "@/app/loading";
 
 function DashboardHome() {
-  const { data: StatsData } = useStatsQuery("");
+  const { data: StatsData, isLoading } = useStatsQuery("");
   const stats = [
     {
       id: 1,
@@ -39,6 +40,11 @@ function DashboardHome() {
       link: "/dashboard/notifications",
     },
   ];
+
+  if (isLoading) {
+    return <Loading />;
+  }
+
   return (
     <div>
       <div className="grid justify-between items-center gap-5 md:grid-cols-4 sm:grid-cols-3 xs:grid-cols-1">

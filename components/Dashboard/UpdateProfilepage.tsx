@@ -872,7 +872,7 @@ function UpdateProfilepage() {
             summary: "Success",
             detail: "Image uploaded successfully!",
           });
-          formik.setFieldValue("profileImageId", data?.image?.id);
+          formik.setFieldValue("profileImageId", data?.image);
           setUploadSuccess(true);
         }
       } catch (error: any) {
