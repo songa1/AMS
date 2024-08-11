@@ -5,9 +5,9 @@ import { useEffect } from "react";
 
 export const AccessDashboard = ({ children }: { children: any }) => {
   useEffect(() => {
-    // if (!isAuthenticated()) {
-    //   globalThis.location.href = "/";
-    // }
+    if (!isAuthenticated()) {
+      globalThis.location.href = "/";
+    }
   }, []);
 
   return <>{children}</>;
