@@ -4,9 +4,9 @@ WORKDIR /usr/app
 
 RUN npm install --global pm2
 
-COPY ./* ./*
 COPY ./package*.json ./
 COPY ./public ./public
+COPY ./app ./app
 
 RUN npm install
 
