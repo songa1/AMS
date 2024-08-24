@@ -4,7 +4,7 @@ import TopTitle from "@/components/Other/TopTitle";
 function page() {
   return (
     <div>
-      <TopTitle title="Supporting Data" />
+      <TopTitle title="Settings" />
       <DataNeededPage />
     </div>
   );

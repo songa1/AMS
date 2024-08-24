@@ -12,7 +12,7 @@ function Layout({ children }: { children: React.ReactNode }) {
         <Sidebar titles={titles} setTitles={setTitles} />
       </div>
 
-      <div className={`p-5 w-full h-screen ${!titles ? "ml-16" : "ml-60"}`}>
+      <div className={`p-5 w-full h-screen ${!titles ? "ml-14" : "ml-60"}`}>
         <AccessDashboard>{children}</AccessDashboard>
       </div>
     </div>

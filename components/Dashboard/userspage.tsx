@@ -130,89 +130,92 @@ const UsersPage = () => {
           </div>
         )}
       </div>
-      <table className="min-w-full bg-white border border-gray-200">
-        <thead>
-          <tr>
-            <th className="py-2 px-4 border-b">Picture</th>
-            <th className="py-2 px-4 border-b">Name</th>
-            <th className="py-2 px-4 border-b">Email</th>
-            <th className="py-2 px-4 border-b">Phone</th>
-            {isAdmin && <th className="py-2 px-4 border-b">Gender</th>}
-            <th className="py-2 px-4 border-b">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredUsers.map((user) => (
-            <tr key={user.id}>
-              <td className="py-2 px-4 border-b text-center">
-                <Avatar
-                  image={
-                    user?.profileImage?.link
-                      ? user?.profileImage?.link
-                      : "/placeholder.svg"
-                  }
-                  shape="circle"
-                />
-              </td>
-              <td className="py-2 px-4 border-b text-center">
-                {user.firstName + " " + user.lastName}
-              </td>
-              <td className="py-2 px-4 border-b text-center">{user.email}</td>
-              <td className="py-2 px-4 border-b text-center">
-                {user.phoneNumber}
-              </td>
-              {isAdmin && (
+      <div className="overflow-x-scroll">
+        <table className="min-w-full bg-white border border-gray-200">
+          <thead>
+            <tr>
+              <th className="py-2 px-4 border-b">Picture</th>
+              <th className="py-2 px-4 border-b">Name</th>
+              <th className="py-2 px-4 border-b">Email</th>
+              <th className="py-2 px-4 border-b">Phone</th>
+              {isAdmin && <th className="py-2 px-4 border-b">Gender</th>}
+              <th className="py-2 px-4 border-b">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredUsers.map((user) => (
+              <tr key={user.id}>
                 <td className="py-2 px-4 border-b text-center">
-                  {user.genderName}
+                  <Avatar
+                    image={
+                      user?.profileImage?.link
+                        ? user?.profileImage?.link
+                        : "/placeholder.svg"
+                    }
+                    shape="circle"
+                  />
                 </td>
-              )}
-              <td className="py-2 px-4 flex items-center justify-center gap-1 mt-1 text-white">
+                <td className="py-2 px-4 border-b text-start">
+                  {user.firstName + " " + user.lastName}
+                </td>
+                <td className="py-2 px-4 border-b text-start">{user.email}</td>
+                <td className="py-2 px-4 border-b text-center">
+                  {user.phoneNumber}
+                </td>
                 {isAdmin && (
-                  <button
-                    className=" bg-mainBlue text-xs p-1  rounded"
-                    onClick={() =>
-                      (globalThis.location.href = "/dashboard/users/" + user.id)
-                    }
-                  >
-                    <BsEye />
-                  </button>
+                  <td className="py-2 px-4 border-b text-center">
+                    {user.genderName}
+                  </td>
                 )}
-                {isAdmin && (
+                <td className="py-2 px-4 flex items-center justify-center gap-1 mt-1 text-white">
+                  {isAdmin && (
+                    <button
+                      className=" bg-mainBlue text-xs p-1  rounded"
+                      onClick={() =>
+                        (globalThis.location.href =
+                          "/dashboard/users/" + user.id)
+                      }
+                    >
+                      <BsEye />
+                    </button>
+                  )}
+                  {isAdmin && (
+                    <button
+                      className=" bg-green-400 text-xs p-1 rounded"
+                      onClick={() =>
+                        (globalThis.location.href = "update-profile/" + user.id)
+                      }
+                    >
+                      <BiEdit />
+                    </button>
+                  )}
+                  {isAdmin && (
+                    <button
+                      className=" bg-red-600 text-xs p-1 rounded"
+                      onClick={async (e) => {
+                        e.preventDefault();
+                        setIdToDelete(user?.id);
+                        setModal(true);
+                      }}
+                    >
+                      <FiDelete />
+                    </button>
+                  )}
                   <button
-                    className=" bg-green-400 text-xs p-1 rounded"
-                    onClick={() =>
-                      (globalThis.location.href = "update-profile/" + user.id)
-                    }
-                  >
-                    <BiEdit />
-                  </button>
-                )}
-                {isAdmin && (
-                  <button
-                    className=" bg-red-600 text-xs p-1 rounded"
+                    className=" bg-gray-600 text-xs p-1 rounded"
                     onClick={async (e) => {
                       e.preventDefault();
-                      setIdToDelete(user?.id);
-                      setModal(true);
+                      globalThis.location.href = `/dashboard/chat/${user?.id}`;
                     }}
                   >
-                    <FiDelete />
+                    <BiMessage />
                   </button>
-                )}
-                <button
-                  className=" bg-gray-600 text-xs p-1 rounded"
-                  onClick={async (e) => {
-                    e.preventDefault();
-                    globalThis.location.href = `/dashboard/chat/${user?.id}`;
-                  }}
-                >
-                  <BiMessage />
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

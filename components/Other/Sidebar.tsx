@@ -118,7 +118,7 @@ const Sidebar = ({
       id: 8,
       title: "Settings",
       icon: <CiSettings />,
-      link: "/dashboard/data",
+      link: "/dashboard/settings",
       show: true,
       count: 0,
     },

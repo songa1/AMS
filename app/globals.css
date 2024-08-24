@@ -108,3 +108,9 @@
 .td {
   @apply flex items-center justify-center;
 }
+
+table,
+tr,
+td {
+  @apply border border-gray-200;
+}

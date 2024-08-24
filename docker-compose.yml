@@ -1,0 +1,27 @@
+version: "3.9"
+services:
+  web:
+    build: .
+    restart: always
+    environment:
+      - DEBUG=False
+
+    env_file:
+      - .env
+    networks:
+      - yali-network
+
+  nginx:
+    build: ./nginx
+    environment:
+      - BACKEND_ADDR=${NEXT_PUBLIC_API_URL}
+    ports:
+      - ${NGINX_PORT}:${NGINX_PORT}
+
+    env_file:
+      - .env
+    networks:
+      - yali-network
+networks:
+  yali-network:
+    name: yali-network
