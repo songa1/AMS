@@ -40,11 +40,12 @@ server {
     add_header X-Cache-Status $upstream_cache_status;
   }
 
+  location / {
+    proxy_pass http://web;
+  }
+
   location /api {
     proxy_pass http://api:4000/api;
   }
 
-  location / {
-    proxy_pass http://web;
-  }
 }

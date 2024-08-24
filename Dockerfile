@@ -10,13 +10,9 @@ RUN npm install --global pm2
 # Copy package.json and package-lock.json before other files
 # Utilise Docker cache to save re-installing dependencies if unchanged
 COPY ./package*.json ./
-COPY ./public ./public
 
 # Install dependencies
 RUN npm install
-
-# Copy all files
-COPY ./ ./
 
 # Build app
 RUN npm run build
