@@ -1,4 +1,9 @@
-import NewProfile from "@/components/Dashboard/AddNewUserPage";
+import dynamic from "next/dynamic";
+
+const NewProfile = dynamic(
+  () => import("@/components/Dashboard/AddNewUserPage"),
+  { ssr: false }
+);
 import TopTitle from "@/components/Other/TopTitle";
 import { OnlyAdmin } from "@/components/Other/AccessDashboard";
 

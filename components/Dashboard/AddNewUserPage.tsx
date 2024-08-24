@@ -20,7 +20,6 @@ import {
 } from "@/lib/features/userSlice";
 import Loading from "@/app/loading";
 import Button from "../Other/Button";
-import { FileUpload } from "primereact/fileupload";
 import { getUser } from "@/helpers/auth";
 import { Toast } from "primereact/toast";
 
