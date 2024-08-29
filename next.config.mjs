@@ -4,8 +4,9 @@ const nextConfig = {
     domains: ["res.cloudinary.com"],
   },
   devIndicators: {
-    buildActivity: false,
+    buildActivity: true,
   },
+  output: "standalone",
   productionBrowserSourceMaps: false,
 };
 
