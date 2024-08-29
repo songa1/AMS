@@ -17,7 +17,10 @@ export const isAuthenticated = () => {
 // };
 
 export const getUser = () => {
-  const user = localStorage.getItem(AUTH_STORED_DATA?.USER);
+  const user =
+    typeof window !== "undefined"
+      ? localStorage.getItem(AUTH_STORED_DATA?.USER)
+      : null;
   return user ? JSON.parse(user) : null;
 };
 
