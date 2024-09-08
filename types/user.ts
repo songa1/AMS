@@ -4,6 +4,10 @@ export interface User {
   middleName: string;
   lastName: string;
   email: string;
+  linkedin: string;
+  instagram: string;
+  facebook: string;
+  twitter: string;
   phoneNumber: string;
   whatsappNumber: string;
   genderName: string;

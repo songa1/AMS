@@ -270,6 +270,54 @@ const Personal = ({
           required
         />
       </div>
+      <div className="field">
+        <label>LinkedIn Account:</label>
+        <InputText
+          variant="filled"
+          disabled={auth}
+          className="w-full p-3"
+          type="text"
+          placeholder="https://linkedin.com/in/..."
+          value={formik.values.linkedin}
+          onChange={(e) => formik.setFieldValue("linkedin", e.target.value)}
+        />
+      </div>
+      <div className="field">
+        <label>X (Twitter) Account:</label>
+        <InputText
+          variant="filled"
+          disabled={auth}
+          className="w-full p-3"
+          type="text"
+          placeholder="https://x.com/..."
+          value={formik.values.twitter}
+          onChange={(e) => formik.setFieldValue("twitter", e.target.value)}
+        />
+      </div>
+      <div className="field">
+        <label>Instagram Account:</label>
+        <InputText
+          variant="filled"
+          className="w-full p-3"
+          disabled={auth}
+          type="text"
+          placeholder="https://instagram.com/..."
+          value={formik.values.instagram}
+          onChange={(e) => formik.setFieldValue("instagram", e.target.value)}
+        />
+      </div>
+      <div className="field">
+        <label>Facebook Account:</label>
+        <InputText
+          variant="filled"
+          className="w-full p-3"
+          disabled={auth}
+          type="text"
+          placeholder="https://facebook.com/..."
+          value={formik.values.facebook}
+          onChange={(e) => formik.setFieldValue("facebook", e.target.value)}
+        />
+      </div>
     </div>
   );
 };
@@ -667,6 +715,10 @@ function UpdateProfilepage() {
       middleName: usr?.middleName,
       lastName: usr?.lastName,
       email: usr?.email,
+      linkedin: usr?.linkedin,
+      instagram: usr?.instagram,
+      twitter: usr?.twitter,
+      facebook: usr?.facebook,
       bio: usr?.bio,
       gender: usr?.gender,
       phoneNumber: usr?.phoneNumber,
@@ -728,6 +780,10 @@ function UpdateProfilepage() {
           middleName: values?.middleName,
           lastName: values?.lastName,
           email: values?.email,
+          linkedin: values?.linkedin,
+          instagram: values?.instagram,
+          twitter: values?.twitter,
+          facebook: values?.facebook,
           bio: values?.bio,
           phoneNumber: values?.phoneNumber,
           whatsappNumber: values?.whatsAppNumber,
