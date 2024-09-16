@@ -114,7 +114,7 @@ const Personal = ({
           defaultValue={usr?.email}
           className="w-full p-3"
           type="text"
-          disabled
+          disabled={usr?.role?.name === "ADMIN" ? true : false}
           placeholder="Email"
           value={formik.values.email}
           onChange={(e) => formik.setFieldValue("email", e.target.value)}

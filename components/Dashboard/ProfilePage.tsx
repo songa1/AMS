@@ -66,6 +66,22 @@ const Personal = ({ user }: { user: User | null }) => {
         <label>Track:</label>
         <DisplayField text={user?.track ? user?.track?.name : ""} />
       </div>
+      <div className="field">
+        <label>Facebook Account:</label>
+        <DisplayField text={user?.facebook ? user?.facebook : "--"} />
+      </div>
+      <div className="field">
+        <label>Instagram Account:</label>
+        <DisplayField text={user?.instagram ? user?.instagram : "--"} />
+      </div>
+      <div className="field">
+        <label>LinkedIn Account:</label>
+        <DisplayField text={user?.linkedin ? user?.linkedin : "--"} />
+      </div>
+      <div className="field">
+        <label>Twitter Account:</label>
+        <DisplayField text={user?.twitter ? user?.twitter : "--"} />
+      </div>
     </div>
   );
 };
@@ -233,6 +249,8 @@ function ProfilePage() {
     }
   };
 
+  const isAdmin = userData?.role?.name === "ADMIN";
+
   return (
     <div className="">
       <Toast ref={toast} />
@@ -276,7 +294,13 @@ function ProfilePage() {
               Profile created at {dayjs(user?.createdAt).format("DD MMM YYYY")},
               Last updated {dayjs(user?.updatedAt).fromNow()}
             </p>
-            <Link href="/dashboard/update-profile">
+            <Link
+              href={`${
+                isAdmin
+                  ? "/dashboard/update-profile/" + id
+                  : "/dashboard/update-profile"
+              }`}
+            >
               <button className="right-1 top-1 z-10 select-none rounded bg-mainBlue py-2 px-4 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md transition-all hover:shadow-md focus:shadow-lg active:shadow-md">
                 Update Profile
               </button>
