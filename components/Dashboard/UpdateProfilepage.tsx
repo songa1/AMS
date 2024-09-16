@@ -33,6 +33,7 @@ import {
   Track,
   User,
 } from "@/types/user";
+import InputError from "../Other/InputError";
 
 const Personal = ({
   formik,
@@ -72,6 +73,9 @@ const Personal = ({
           onChange={(e) => formik.setFieldValue("firstName", e.target.value)}
           required
         />
+        {formik.errors.firstName && formik.touched.firstName && (
+          <InputError error={formik.errors.firstName} />
+        )}
       </div>
       <div className="field">
         <label>Middle Name:</label>
@@ -92,6 +96,9 @@ const Personal = ({
           onChange={(e) => formik.setFieldValue("middleName", e.target.value)}
           required
         />
+        {formik.errors.middleName && formik.touched.middleName && (
+          <InputError error={formik.errors.middleName} />
+        )}
       </div>
       <div className="field">
         <label>Last Name:</label>
@@ -106,6 +113,9 @@ const Personal = ({
           onChange={(e) => formik.setFieldValue("lastName", e.target.value)}
           required
         />
+        {formik.errors.lastName && formik.touched.lastName && (
+          <InputError error={formik.errors.lastName} />
+        )}
       </div>
       <div className="field">
         <label>Email:</label>
@@ -120,6 +130,9 @@ const Personal = ({
           onChange={(e) => formik.setFieldValue("email", e.target.value)}
           required
         />
+        {formik.errors.email && formik.touched.email && (
+          <InputError error={formik.errors.email} />
+        )}
       </div>
       <div className="field">
         <label>Phone Number:</label>
@@ -134,6 +147,9 @@ const Personal = ({
           onChange={(e) => formik.setFieldValue("phoneNumber", e.target.value)}
           required
         />
+        {formik.errors.phoneNumber && formik.touched.phoneNumber && (
+          <InputError error={formik.errors.phoneNumber} />
+        )}
       </div>
       <div className="field">
         <label>WhatsApp Number:</label>
@@ -150,6 +166,9 @@ const Personal = ({
           }
           required
         />
+        {formik.errors.whatsAppNumber && formik.touched.whatsAppNumber && (
+          <InputError error={formik.errors.whatsAppNumber} />
+        )}
       </div>
       <div className="field">
         <label>Gender:</label>
@@ -165,6 +184,9 @@ const Personal = ({
           optionLabel="name"
           required
         />
+        {formik.errors.gender && formik.touched.gender && (
+          <InputError error={formik.errors.gender} />
+        )}
       </div>
       <div className="field">
         <label>Resident Country:</label>
@@ -182,6 +204,10 @@ const Personal = ({
           optionLabel="name"
           required
         />
+        {formik.errors.residentCountryId &&
+          formik.touched.residentCountryId && (
+            <InputError error={formik.errors.residentCountryId} />
+          )}
       </div>
       {formik.values.residentCountryId &&
         formik.values.residentCountryId.id === "rwanda" && (
@@ -202,6 +228,9 @@ const Personal = ({
               optionLabel="name"
               required
             />
+            {formik.errors.districtName && formik.touched.districtName && (
+              <InputError error={formik.errors.districtName} />
+            )}
           </div>
         )}
       {formik.values.residentCountryId &&
@@ -222,6 +251,9 @@ const Personal = ({
               optionLabel="name"
               required
             />
+            {formik.errors.sectorId && formik.touched.sectorId && (
+              <InputError error={formik.errors.sectorId} />
+            )}
           </div>
         )}
       <div className="field">
@@ -238,6 +270,9 @@ const Personal = ({
           optionLabel="name"
           required
         />
+        {formik.errors.cohortId && formik.touched.cohortId && (
+          <InputError error={formik.errors.cohortId} />
+        )}
       </div>
 
       <div className="field">
@@ -254,6 +289,9 @@ const Personal = ({
           optionLabel="name"
           required
         />
+        {formik.errors.track && formik.touched.track && (
+          <InputError error={formik.errors.track} />
+        )}
       </div>
       <div className="field">
         <label>Nearest Landmark:</label>
@@ -269,6 +307,9 @@ const Personal = ({
           }
           required
         />
+        {formik.errors.nearlestLandmark && formik.touched.nearlestLandmark && (
+          <InputError error={formik.errors.nearestLandmark} />
+        )}
       </div>
       <div className="field">
         <label>LinkedIn Account:</label>
@@ -281,6 +322,9 @@ const Personal = ({
           value={formik.values.linkedin}
           onChange={(e) => formik.setFieldValue("linkedin", e.target.value)}
         />
+        {formik.errors.linkedin && formik.touched.linkedin && (
+          <InputError error={formik.errors.linkedin} />
+        )}
       </div>
       <div className="field">
         <label>X (Twitter) Account:</label>
@@ -293,6 +337,9 @@ const Personal = ({
           value={formik.values.twitter}
           onChange={(e) => formik.setFieldValue("twitter", e.target.value)}
         />
+        {formik.errors.twitter && formik.touched.twitter && (
+          <InputError error={formik.errors.twitter} />
+        )}
       </div>
       <div className="field">
         <label>Instagram Account:</label>
@@ -305,6 +352,9 @@ const Personal = ({
           value={formik.values.instagram}
           onChange={(e) => formik.setFieldValue("instagram", e.target.value)}
         />
+        {formik.errors.instagram && formik.touched.instagram && (
+          <InputError error={formik.errors.instagram} />
+        )}
       </div>
       <div className="field">
         <label>Facebook Account:</label>
@@ -317,6 +367,9 @@ const Personal = ({
           value={formik.values.facebook}
           onChange={(e) => formik.setFieldValue("facebook", e.target.value)}
         />
+        {formik.errors.facebook && formik.touched.facebook && (
+          <InputError error={formik.errors.facebook} />
+        )}
       </div>
     </div>
   );
@@ -746,10 +799,53 @@ function UpdateProfilepage() {
       profileImageId: usr?.profileImage,
     },
     validationSchema: Yup.object({
-      name: Yup.string().required("name  is required"),
-      email: Yup.string().email().required("Email is required"),
-      phone: Yup.string().required("Phone Number is required"),
-      gender: Yup.string().required("Gender is required"),
+      bio: Yup.string().max(500, "Bio cannot exceed 500 characters"),
+      firstName: Yup.string().required("First name is required"),
+      middleName: Yup.string(),
+      lastName: Yup.string().required("Last name is required"),
+      email: Yup.string()
+        .email("Invalid email address")
+        .required("Email is required"),
+      linkedin: Yup.string().url("Invalid LinkedIn URL"),
+      instagram: Yup.string().url("Invalid Instagram URL"),
+      twitter: Yup.string().url("Invalid Twitter URL"),
+      facebook: Yup.string().url("Invalid Facebook URL"),
+      gender: Yup.string().oneOf(
+        ["Male", "Female", "Other"],
+        "Select a valid gender"
+      ),
+      phoneNumber: Yup.string().matches(
+        /^[0-9]+$/,
+        "Phone number must be digits only"
+      ),
+      districtName: Yup.string(),
+      sectorId: Yup.string(),
+      residentCountryId: Yup.string().required("Resident country is required"),
+      whatsAppNumber: Yup.string().matches(
+        /^[0-9]+$/,
+        "WhatsApp number must be digits only"
+      ),
+      nearlestLandmark: Yup.string().max(
+        255,
+        "Landmark cannot exceed 255 characters"
+      ),
+      track: Yup.string(),
+      cohortId: Yup.number().nullable(),
+      initiativeName: Yup.string(),
+      mainSector: Yup.string(),
+      foundedPosition: Yup.string(),
+      foundedDistrictName: Yup.string(),
+      foundedSectorId: Yup.string(),
+      foundedWebsite: Yup.string().url("Invalid website URL"),
+      foundedCountry: Yup.string(),
+      companyName: Yup.string(),
+      companySector: Yup.string(),
+      companyPosition: Yup.string(),
+      companyWebsite: Yup.string().url("Invalid website URL"),
+      companyDistrictName: Yup.string(),
+      companySectorId: Yup.string(),
+      companyCountry: Yup.string(),
+      profileImageId: Yup.string(),
     }),
     onSubmit: async (values) => {
       // Being done in another function
