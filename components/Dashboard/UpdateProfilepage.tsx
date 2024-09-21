@@ -12,6 +12,7 @@ import {
   useDistrictsQuery,
   useGenderQuery,
   useSectorsByDistrictQuery,
+  useStatesByCountryQuery,
   useTracksQuery,
   useWorkingSectorQuery,
 } from "@/lib/features/otherSlice";
@@ -46,6 +47,8 @@ const Personal = ({
   countries,
   usr,
   auth,
+  states,
+  setCountry,
 }: {
   formik: any;
   sectors: residentSector[];
@@ -57,6 +60,8 @@ const Personal = ({
   countries: Country[];
   usr: User;
   auth: boolean;
+  states: any;
+  setCountry: any;
 }) => {
   return (
     <div className="grid grid-cols-2 gap-3">
@@ -198,9 +203,10 @@ const Personal = ({
           placeholder="Select a country"
           value={formik.values.residentCountryId}
           options={countries}
-          onChange={(e) =>
-            formik.setFieldValue("residentCountryId", e.target.value)
-          }
+          onChange={(e) => {
+            formik.setFieldValue("residentCountryId", e.target.value);
+            setCountry(e.target.value?.id);
+          }}
           optionLabel="name"
           required
         />
@@ -210,7 +216,29 @@ const Personal = ({
           )}
       </div>
       {formik.values.residentCountryId &&
-        formik.values.residentCountryId.id === "rwanda" && (
+        formik.values.residentCountryId.id !== "RW" && (
+          <div className="field">
+            <label>State:</label>
+            <Dropdown
+              variant="filled"
+              className="w-full p-3"
+              placeholder="Select a state"
+              value={formik?.values?.state}
+              disabled={auth}
+              options={states}
+              onChange={(e) => {
+                formik.setFieldValue("state", e.value);
+              }}
+              optionLabel="name"
+              required
+            />
+            {formik.errors.state && formik.touched.state && (
+              <InputError error={formik.errors.state} />
+            )}
+          </div>
+        )}
+      {formik.values.residentCountryId &&
+        formik.values.residentCountryId.id === "RW" && (
           <div className="field">
             <label>District:</label>
             <Dropdown
@@ -234,7 +262,7 @@ const Personal = ({
           </div>
         )}
       {formik.values.residentCountryId &&
-        formik.values.residentCountryId.id === "rwanda" && (
+        formik.values.residentCountryId.id === "RW" && (
           <div className="field">
             <label>Sector:</label>
             <Dropdown
@@ -384,6 +412,8 @@ const Founded = ({
   countries,
   usr,
   auth,
+  states,
+  setCountry,
 }: any) => (
   <div className="grid grid-cols-2 gap-3">
     <div className="field">
@@ -461,8 +491,30 @@ const Founded = ({
         required
       />
     </div>
-    {formik.values.residentCountryId &&
-      formik.values.foundedCountry.id == "rwanda" && (
+    {formik.values.foundedCountry &&
+      formik.values.foundedCountry.id !== "RW" && (
+        <div className="field">
+          <label>State:</label>
+          <Dropdown
+            variant="filled"
+            className="w-full p-3"
+            placeholder="Select a state"
+            value={formik?.values?.foundedState}
+            disabled={auth}
+            options={states}
+            onChange={(e) => {
+              formik.setFieldValue("foundedState", e.value);
+            }}
+            optionLabel="name"
+            required
+          />
+          {formik.errors.foundedState && formik.touched.foundedState && (
+            <InputError error={formik.errors.foundedState} />
+          )}
+        </div>
+      )}
+    {formik.values.foundedCountry &&
+      formik.values.foundedCountry.id == "RW" && (
         <div className="field">
           <label>District:</label>
           <Dropdown
@@ -482,8 +534,8 @@ const Founded = ({
           />
         </div>
       )}
-    {formik.values.residentCountryId &&
-      formik.values.foundedCountry.id == "rwanda" && (
+    {formik.values.foundedCountry &&
+      formik.values.foundedCountry.id == "RW" && (
         <div className="field">
           <label>Sector:</label>
           <Dropdown
@@ -514,6 +566,8 @@ const Employment = ({
   countries,
   usr,
   auth,
+  states,
+  setCountry,
 }: any) => (
   <div className="grid grid-cols-2 gap-3">
     <div className="field">
@@ -591,7 +645,29 @@ const Employment = ({
         required
       />
     </div>
-    {formik.values.residentCountryId &&
+    {formik.values.companyCountry &&
+      formik.values.companyCountry.id !== "RW" && (
+        <div className="field">
+          <label>State:</label>
+          <Dropdown
+            variant="filled"
+            className="w-full p-3"
+            placeholder="Select a state"
+            value={formik?.values?.companyState}
+            disabled={auth}
+            options={states}
+            onChange={(e) => {
+              formik.setFieldValue("companyState", e.value);
+            }}
+            optionLabel="name"
+            required
+          />
+          {formik.errors.companyState && formik.touched.companyState && (
+            <InputError error={formik.errors.companyState} />
+          )}
+        </div>
+      )}
+    {formik.values.companyCountry &&
       formik.values.companyCountry.id == "rwanda" && (
         <div className="field">
           <label>District:</label>
@@ -612,7 +688,7 @@ const Employment = ({
           />
         </div>
       )}
-    {formik.values.residentCountryId &&
+    {formik.values.companyCountry &&
       formik.values.companyCountry.id == "rwanda" && (
         <div className="field">
           <label>Sector:</label>
@@ -664,6 +740,8 @@ function UpdateProfilepage() {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [imageData, setImageData] = useState<any>(null);
   const [uploadSuccess, setUploadSuccess] = useState(false);
+  const [country, setCountry] = useState("");
+  const [states, setStates] = useState("");
 
   const [updatedUser] = useUpdatedUserMutation();
   const { data: UserData, refetch } = useGetOneUserQuery<{ data: User }>(
@@ -694,6 +772,10 @@ function UpdateProfilepage() {
   const { data: WorkingSectorsData } = useWorkingSectorQuery("");
 
   const { data: TracksData } = useTracksQuery("");
+
+  const { data: StatesData } = useStatesByCountryQuery(country, {
+    skip: !country,
+  });
 
   const [uploadPicture] = useUploadPictureMutation();
 
@@ -756,6 +838,12 @@ function UpdateProfilepage() {
     }
   }, [CountryData]);
 
+  useEffect(() => {
+    if (StatesData) {
+      setStates(StatesData?.data);
+    }
+  }, [StatesData]);
+
   const handleTabClick = (index: number) => {
     setActiveTab(index);
   };
@@ -778,6 +866,7 @@ function UpdateProfilepage() {
       districtName: usr?.residentDistrict,
       sectorId: usr?.residentSector,
       residentCountryId: usr?.residentCountry,
+      state: usr?.state,
       whatsAppNumber: usr?.whatsappNumber,
       nearlestLandmark: usr?.nearestLandmark,
       track: usr?.track,
@@ -795,6 +884,8 @@ function UpdateProfilepage() {
       companyWebsite: usr?.organizationEmployed?.website,
       companyDistrictName: usr?.organizationEmployed?.district,
       companySectorId: usr?.organizationEmployed?.sector,
+      companyState: usr?.organizationEmployed?.state,
+      foundedState: usr?.organizationFounded?.state,
       companyCountry: usr?.organizationEmployed?.country,
       profileImageId: usr?.profileImage,
     },
@@ -890,6 +981,7 @@ function UpdateProfilepage() {
           residentDistrictId: values?.districtName?.id,
           residentSectorId: values?.sectorId?.id,
           residentCountryId: values?.residentCountryId?.id,
+          state: values?.state?.id,
           positionInFounded: values?.foundedPosition,
           positionInEmployed: values?.companyPosition,
           profileImageId: values?.profileImageId?.id,
@@ -899,6 +991,7 @@ function UpdateProfilepage() {
           name: values?.initiativeName,
           workingSector: values?.mainSector?.id,
           countryId: values?.foundedCountry?.id,
+          state: values?.foundedState?.id,
           districtId: values?.foundedDistrictName?.name,
           sectorId: values?.foundedSectorId?.id,
           website: values?.foundedWebsite,
@@ -908,6 +1001,7 @@ function UpdateProfilepage() {
           name: values?.companyName,
           workingSector: values?.companySector?.id,
           countryId: values?.companyCountry?.id,
+          state: values?.companyState?.id,
           districtId: values?.companyDistrictName?.name,
           sectorId: values?.companySectorId?.id,
           website: values?.companyWebsite,
@@ -958,6 +1052,8 @@ function UpdateProfilepage() {
           setSelectedDistrict={setSelectedDistrict}
           tracks={tracks}
           auth={authorized}
+          states={states}
+          setCountry={setCountry}
         />
       ),
     },
@@ -973,6 +1069,8 @@ function UpdateProfilepage() {
           workingSectors={workingSectors}
           usr={usr}
           auth={authorized}
+          states={states}
+          setCountry={setCountry}
         />
       ),
     },
@@ -988,6 +1086,8 @@ function UpdateProfilepage() {
           workingSectors={workingSectorsEmployed}
           usr={usr}
           auth={authorized}
+          states={states}
+          setCountry={setCountry}
         />
       ),
     },

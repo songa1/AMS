@@ -15,6 +15,12 @@ export const otherSlices = createApi({
     countries: builder.query({
       query: (code) => `data/countries`,
     }),
+    states: builder.query({
+      query: (code) => `data/states`,
+    }),
+    statesByCountry: builder.query({
+      query: (countryId) => `data/states/${countryId}`,
+    }),
     cohorts: builder.query({
       query: (code) => `data/cohorts`,
     }),
@@ -53,4 +59,6 @@ export const {
   useCountriesQuery,
   useAddCohortMutation,
   useDeleteCohortMutation,
+  useStatesQuery,
+  useStatesByCountryQuery,
 } = otherSlices;

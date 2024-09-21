@@ -16,6 +16,7 @@ export interface User {
   residentCountryId: string | null;
   residentDistrict: residentDistrict;
   residentSectorId: string | null;
+  state: State;
   residentCountry: Country;
   residentSector: residentSector;
   cohortId: number | null;
@@ -44,6 +45,7 @@ export interface organization {
   district: residentDistrict;
   country: Country;
   sectorId: string;
+  state: State;
   sector: residentSector;
   website: string;
 }
@@ -71,6 +73,12 @@ export interface residentDistrict {
 export interface Country {
   id: string;
   name: string;
+}
+
+export interface State {
+  id: string;
+  name: string;
+  countryCode: string;
 }
 
 export interface residentSector {

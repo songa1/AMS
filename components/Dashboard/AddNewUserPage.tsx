@@ -11,6 +11,8 @@ import {
   useDistrictsQuery,
   useGenderQuery,
   useSectorsByDistrictQuery,
+  useStatesByCountryQuery,
+  useStatesQuery,
   useTracksQuery,
   useWorkingSectorQuery,
 } from "@/lib/features/otherSlice";
@@ -33,6 +35,8 @@ const Personal = ({
   setSelectedDistrict,
   tracks,
   countries,
+  states,
+  setCountry,
 }: any) => {
   return (
     <div className="grid grid-cols-2 gap-3">
@@ -154,9 +158,10 @@ const Personal = ({
           placeholder="Select a country"
           value={formik.values.residentCountryId}
           options={countries}
-          onChange={(e) =>
-            formik.setFieldValue("residentCountryId", e.target.value)
-          }
+          onChange={(e) => {
+            formik.setFieldValue("residentCountryId", e.target.value);
+            setCountry(e.target.value.id);
+          }}
           optionLabel="name"
           required
         />
@@ -165,7 +170,27 @@ const Personal = ({
             <InputError error={formik.errors.residentCountryId} />
           )}
       </div>
-      {formik.values.residentCountryId.id === "rwanda" && (
+      {formik.values.residentCountryId.id !== "RW" && (
+        <div className="field">
+          <label>State:</label>
+          <Dropdown
+            variant="filled"
+            className="w-full p-3"
+            placeholder="Select a state"
+            value={formik?.values?.state}
+            options={states}
+            onChange={(e) => {
+              formik.setFieldValue("state", e.value);
+            }}
+            optionLabel="name"
+            required
+          />
+          {formik.errors.state && formik.touched.state && (
+            <InputError error={formik.errors.state} />
+          )}
+        </div>
+      )}
+      {formik.values.residentCountryId.id === "RW" && (
         <div className="field">
           <label>District:</label>
           <Dropdown
@@ -187,7 +212,7 @@ const Personal = ({
           )}
         </div>
       )}
-      {formik.values.residentCountryId.id === "rwanda" && (
+      {formik.values.residentCountryId.id === "RW" && (
         <div className="field">
           <label>Sector:</label>
           <Dropdown
@@ -327,6 +352,8 @@ const Founded = ({
   sectors,
   workingSectors,
   countries,
+  states,
+  setCountry,
 }: any) => (
   <div className="grid grid-cols-2 gap-3">
     <div className="field">
@@ -442,6 +469,8 @@ const Employment = ({
   sectors,
   workingSectors,
   countries,
+  states,
+  setCountry,
 }: any) => (
   <div className="grid grid-cols-2 gap-3">
     <div className="field">
@@ -578,10 +607,15 @@ function NewProfile() {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [imageData, setImageData] = useState<any>(null);
   const [uploadSuccess, setUploadSuccess] = useState(false);
+  const [country, setCountry] = useState("");
+  const [states, setStates] = useState("");
 
   const [addUser] = useAddUserMutation();
   const { data: GenderData } = useGenderQuery("");
   const { data: CountryData } = useCountriesQuery("");
+  const { data: StatesData } = useStatesByCountryQuery(country, {
+    skip: !country,
+  });
   const { data: DistrictData } = useDistrictsQuery("");
   const { data: CohortsData } = useCohortsQuery("");
   const { data: SectorsData } = useSectorsByDistrictQuery(selectedDistrict, {
@@ -644,6 +678,12 @@ function NewProfile() {
   }, [SectorsDataEmployed]);
 
   useEffect(() => {
+    if (StatesData) {
+      setStates(StatesData?.data);
+    }
+  }, [StatesData]);
+
+  useEffect(() => {
     if (SectorsDataFounded) {
       setSectorsFounded(SectorsDataFounded?.data);
     }
@@ -689,6 +729,7 @@ function NewProfile() {
       nearlestLandmark: "",
       track: "",
       cohortId: null,
+      state: null,
       initiativeName: "",
       mainSector: "",
       foundedPosition: "",
@@ -704,6 +745,8 @@ function NewProfile() {
       companySectorId: "",
       companyCountry: "",
       profileImageId: "",
+      companyState: null,
+      foundedState: null,
     },
     validationSchema: Yup.object({
       bio: Yup.string().max(500, "Bio cannot exceed 500 characters"),
@@ -795,6 +838,7 @@ function NewProfile() {
           trackId: values?.track?.id,
           residentDistrictId: values?.districtName.id,
           residentSectorId: values?.sectorId.id,
+          state: values?.state?.id,
           residentCountryId: values?.residentCountryId.id,
           positionInFounded: values?.foundedPosition,
           positionInEmployed: values?.companyPosition,
@@ -804,6 +848,7 @@ function NewProfile() {
           name: values?.initiativeName,
           workingSector: values?.mainSector?.id,
           countryId: values?.foundedCountry?.id,
+          state: values?.foundedState?.id,
           districtId: values.foundedDistrictName.name,
           sectorId: values?.foundedSectorId.id,
           website: values?.foundedWebsite,
@@ -812,6 +857,7 @@ function NewProfile() {
           name: values?.companyName,
           workingSector: values?.companySector?.id,
           countryId: values?.companyCountry?.id,
+          state: values?.companyState?.id,
           districtId: values?.companyDistrictName.name,
           sectorId: values?.companySectorId.id,
           website: values?.companyWebsite,
@@ -853,6 +899,8 @@ function NewProfile() {
           countries={countries}
           setSelectedDistrict={setSelectedDistrict}
           tracks={tracks}
+          states={states}
+          setCountry={setCountry}
         />
       ),
     },
@@ -866,6 +914,8 @@ function NewProfile() {
           sectors={sectorsFounded}
           countries={countriesFounded}
           workingSectors={workingSectors}
+          states={states}
+          setCountry={setCountry}
         />
       ),
     },
@@ -879,6 +929,8 @@ function NewProfile() {
           sectors={sectorsEmployed}
           countries={countriesEmployed}
           workingSectors={workingSectorsEmployed}
+          states={states}
+          setCountry={setCountry}
         />
       ),
     },
