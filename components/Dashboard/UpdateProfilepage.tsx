@@ -486,7 +486,10 @@ const Founded = ({
         placeholder="Select a country"
         value={formik.values.foundedCountry}
         options={countries}
-        onChange={(e) => formik.setFieldValue("foundedCountry", e.target.value)}
+        onChange={(e) => {
+          formik.setFieldValue("foundedCountry", e.target.value);
+          setCountry(e.target.value?.id);
+        }}
         optionLabel="name"
         required
       />
@@ -640,7 +643,10 @@ const Employment = ({
         placeholder="Select a country"
         value={formik.values.companyCountry}
         options={countries}
-        onChange={(e) => formik.setFieldValue("companyCountry", e.target.value)}
+        onChange={(e) => {
+          formik.setFieldValue("companyCountry", e.target.value);
+          setCountry(e.target.value?.id);
+        }}
         optionLabel="name"
         required
       />
@@ -742,6 +748,10 @@ function UpdateProfilepage() {
   const [uploadSuccess, setUploadSuccess] = useState(false);
   const [country, setCountry] = useState("");
   const [states, setStates] = useState("");
+  const [employedCountry, setEmployedCountry] = useState("");
+  const [employedStates, setEmployedStates] = useState("");
+  const [foundedCountry, setFoundedCountry] = useState("");
+  const [foundedStates, setFoundedStates] = useState("");
 
   const [updatedUser] = useUpdatedUserMutation();
   const { data: UserData, refetch } = useGetOneUserQuery<{ data: User }>(
@@ -775,6 +785,17 @@ function UpdateProfilepage() {
 
   const { data: StatesData } = useStatesByCountryQuery(country, {
     skip: !country,
+  });
+
+  const { data: EmployedStatesData } = useStatesByCountryQuery(
+    employedCountry,
+    {
+      skip: !employedCountry,
+    }
+  );
+
+  const { data: FoundedStatesData } = useStatesByCountryQuery(foundedCountry, {
+    skip: !foundedCountry,
   });
 
   const [uploadPicture] = useUploadPictureMutation();
@@ -843,6 +864,18 @@ function UpdateProfilepage() {
       setStates(StatesData?.data);
     }
   }, [StatesData]);
+
+  useEffect(() => {
+    if (EmployedStatesData) {
+      setEmployedStates(EmployedStatesData?.data);
+    }
+  }, [EmployedStatesData]);
+
+  useEffect(() => {
+    if (FoundedStatesData) {
+      setFoundedStates(FoundedStatesData?.data);
+    }
+  }, [FoundedStatesData]);
 
   const handleTabClick = (index: number) => {
     setActiveTab(index);
@@ -1069,8 +1102,8 @@ function UpdateProfilepage() {
           workingSectors={workingSectors}
           usr={usr}
           auth={authorized}
-          states={states}
-          setCountry={setCountry}
+          states={foundedStates}
+          setCountry={setFoundedCountry}
         />
       ),
     },
@@ -1086,8 +1119,8 @@ function UpdateProfilepage() {
           workingSectors={workingSectorsEmployed}
           usr={usr}
           auth={authorized}
-          states={states}
-          setCountry={setCountry}
+          states={employedStates}
+          setCountry={setEmployedCountry}
         />
       ),
     },

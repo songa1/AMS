@@ -417,12 +417,36 @@ const Founded = ({
         placeholder="Select a country"
         value={formik.values.foundedCountry}
         options={countries}
-        onChange={(e) => formik.setFieldValue("foundedCountry", e.target.value)}
+        onChange={(e) => {
+          formik.setFieldValue("foundedCountry", e.target.value);
+          setCountry(e.target.value?.id);
+        }}
         optionLabel="name"
         required
       />
     </div>
-    {formik.values.foundedCountry.id == "rwanda" && (
+    {formik.values.foundedCountry &&
+      formik.values.foundedCountry.id !== "RW" && (
+        <div className="field">
+          <label>State:</label>
+          <Dropdown
+            variant="filled"
+            className="w-full p-3"
+            placeholder="Select a state"
+            value={formik?.values?.foundedState}
+            options={states}
+            onChange={(e) => {
+              formik.setFieldValue("foundedState", e.value);
+            }}
+            optionLabel="name"
+            required
+          />
+          {formik.errors.foundedState && formik.touched.foundedState && (
+            <InputError error={formik.errors.foundedState} />
+          )}
+        </div>
+      )}
+    {formik.values.foundedCountry.id == "RW" && (
       <div className="field">
         <label>District:</label>
         <Dropdown
@@ -441,7 +465,7 @@ const Founded = ({
         />
       </div>
     )}
-    {formik.values.foundedCountry.id == "rwanda" && (
+    {formik.values.foundedCountry.id == "RW" && (
       <div className="field">
         <label>Sector:</label>
         <Dropdown
@@ -534,12 +558,36 @@ const Employment = ({
         placeholder="Select a country"
         value={formik.values.companyCountry}
         options={countries}
-        onChange={(e) => formik.setFieldValue("companyCountry", e.target.value)}
+        onChange={(e) => {
+          formik.setFieldValue("companyCountry", e.target.value);
+          setCountry(e.target.value?.id);
+        }}
         optionLabel="name"
         required
       />
     </div>
-    {formik.values.companyCountry.id == "rwanda" && (
+    {formik.values.companyCountry &&
+      formik.values.companyCountry.id !== "RW" && (
+        <div className="field">
+          <label>State:</label>
+          <Dropdown
+            variant="filled"
+            className="w-full p-3"
+            placeholder="Select a state"
+            value={formik?.values?.companyState}
+            options={states}
+            onChange={(e) => {
+              formik.setFieldValue("companyState", e.value);
+            }}
+            optionLabel="name"
+            required
+          />
+          {formik.errors.companyState && formik.touched.companyState && (
+            <InputError error={formik.errors.companyState} />
+          )}
+        </div>
+      )}
+    {formik.values.companyCountry.id == "RW" && (
       <div className="field">
         <label>District:</label>
         <Dropdown
@@ -558,7 +606,7 @@ const Employment = ({
         />
       </div>
     )}
-    {formik.values.companyCountry.id == "rwanda" && (
+    {formik.values.companyCountry.id == "RW" && (
       <div className="field">
         <label>Sector:</label>
         <Dropdown
@@ -609,12 +657,25 @@ function NewProfile() {
   const [uploadSuccess, setUploadSuccess] = useState(false);
   const [country, setCountry] = useState("");
   const [states, setStates] = useState("");
+  const [employedCountry, setEmployedCountry] = useState("");
+  const [employedStates, setEmployedStates] = useState("");
+  const [foundedCountry, setFoundedCountry] = useState("");
+  const [foundedStates, setFoundedStates] = useState("");
 
   const [addUser] = useAddUserMutation();
   const { data: GenderData } = useGenderQuery("");
   const { data: CountryData } = useCountriesQuery("");
   const { data: StatesData } = useStatesByCountryQuery(country, {
     skip: !country,
+  });
+  const { data: EmployedStatesData } = useStatesByCountryQuery(
+    employedCountry,
+    {
+      skip: !employedCountry,
+    }
+  );
+  const { data: FoundedStatesData } = useStatesByCountryQuery(foundedCountry, {
+    skip: !foundedCountry,
   });
   const { data: DistrictData } = useDistrictsQuery("");
   const { data: CohortsData } = useCohortsQuery("");
@@ -682,6 +743,18 @@ function NewProfile() {
       setStates(StatesData?.data);
     }
   }, [StatesData]);
+
+  useEffect(() => {
+    if (EmployedStatesData) {
+      setEmployedStates(EmployedStatesData?.data);
+    }
+  }, [EmployedStatesData]);
+
+  useEffect(() => {
+    if (FoundedStatesData) {
+      setFoundedStates(FoundedStatesData?.data);
+    }
+  }, [FoundedStatesData]);
 
   useEffect(() => {
     if (SectorsDataFounded) {
@@ -914,8 +987,8 @@ function NewProfile() {
           sectors={sectorsFounded}
           countries={countriesFounded}
           workingSectors={workingSectors}
-          states={states}
-          setCountry={setCountry}
+          states={foundedStates}
+          setCountry={setFoundedCountry}
         />
       ),
     },
@@ -929,8 +1002,8 @@ function NewProfile() {
           sectors={sectorsEmployed}
           countries={countriesEmployed}
           workingSectors={workingSectorsEmployed}
-          states={states}
-          setCountry={setCountry}
+          states={employedStates}
+          setCountry={setEmployedCountry}
         />
       ),
     },
