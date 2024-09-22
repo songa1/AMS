@@ -22,7 +22,7 @@ import { useParams } from "next/navigation";
 function ChatPage() {
   const user = getUser();
   dayjs.extend(relativeTime);
-  // const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const { username } = useParams();
 
   const { data: chatsData } = useChatsQuery("", {
@@ -41,19 +41,19 @@ function ChatPage() {
   const [addMessage] = useAddMessageMutation();
   const { data: UsersQuery } = useUsersQuery("");
 
-  // useEffect(() => {
-  //   if (chatsData && !username) {
-  //     setMessages(chatsData?.data);
-  //   }
-  // }, [chatsData, username]);
+  useEffect(() => {
+    if (chatsData && !username) {
+      setMessages(chatsData?.data);
+    }
+  }, [chatsData, username]);
 
-  // useEffect(() => {
-  //   if (privateChatsData && username) {
-  //     setMessages(privateChatsData?.data);
-  //   }
-  // }, [privateChatsData, username]);
+  useEffect(() => {
+    if (privateChatsData && username) {
+      setMessages(privateChatsData?.data);
+    }
+  }, [privateChatsData, username]);
 
-  const messages = username ? privateChatsData?.data : chatsData?.data;
+  // const messages = username ? privateChatsData?.data : chatsData?.data;
 
   const messagesEndRef: any = useRef(null);
 

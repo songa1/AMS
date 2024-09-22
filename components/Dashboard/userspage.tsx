@@ -35,7 +35,7 @@ const UsersPage = () => {
     if (data) {
       setUsers(data?.data.filter((fuser: User) => fuser.id !== user?.id));
     }
-  }, [data, user]);
+  }, [data, user?.id]);
 
   const searchUsers = (text: string) => {
     const results = [];

@@ -19,7 +19,6 @@ const FullScreenExport = ({
 }) => {
   const toast: any = useRef(null);
 
-  
   const show = () => {
     toast.current.show({
       severity: "success",
@@ -90,7 +89,7 @@ const FullScreenExport = ({
               className="modal-overlay absolute w-full h-full bg-white opacity-95"
               onClick={toggleModal}
             ></div>
-            <div className="modal-container fixed w-full h-full z-50 overflow-y-auto">
+            <div className="modal-container fixed w-full h-full z-10 overflow-y-auto">
               <div
                 className="modal-close absolute top-0 right-0 cursor-pointer flex flex-col items-center mt-4 mr-4 text-black text-sm z-50"
                 onClick={toggleModal}
