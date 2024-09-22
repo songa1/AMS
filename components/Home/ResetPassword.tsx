@@ -41,10 +41,10 @@ const ResetPassword = () => {
           newPassword: values.password,
         }).unwrap();
 
-        if (result?.status === 200) {
-          formik.resetForm();
-          setSuccess(result.message);
-        }
+        // if (result?.status == 201) {
+        formik.resetForm();
+        setSuccess(result.message);
+        // }
       } catch (err: any) {
         console.error("Failed to reset:", err);
         if (err?.status === 401) {
