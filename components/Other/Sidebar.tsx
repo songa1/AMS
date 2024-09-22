@@ -156,7 +156,10 @@ const Sidebar = ({
                     link == nav?.link ? "bg-gray-800 rounded-lg" : ""
                   }`}
                 >
-                  <Link href={nav?.link} className="sidebar-menu">
+                  <div
+                    onClick={() => (globalThis.location.href = nav?.link)}
+                    className="sidebar-menu cursor-pointer"
+                  >
                     {nav?.icon}
                     <span className="flex-1 ms-3 whitespace-nowrap">
                       {titles && nav?.title}
@@ -166,7 +169,7 @@ const Sidebar = ({
                         {nav?.count}
                       </span>
                     )}
-                  </Link>
+                  </div>
                 </li>
               );
             }
