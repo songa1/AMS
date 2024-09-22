@@ -30,6 +30,19 @@ export const otherSlices = createApi({
     workingSector: builder.query({
       query: () => `data/working-sectors`,
     }),
+    addWorkingSector: builder.mutation({
+      query: (data) => ({
+        url: "data/working-sectors",
+        method: "POST",
+        body: data,
+      }),
+    }),
+    deleteWorkingSector: builder.mutation({
+      query: (id) => ({
+        url: `data/working-sector/${id}`,
+        method: "DELETE",
+      }),
+    }),
     tracks: builder.query({
       query: () => `data/tracks`,
     }),
@@ -43,6 +56,19 @@ export const otherSlices = createApi({
     deleteCohort: builder.mutation({
       query: (id) => ({
         url: `data/cohort/${id}`,
+        method: "DELETE",
+      }),
+    }),
+    addTrack: builder.mutation({
+      query: (data) => ({
+        url: "data/tracks",
+        method: "POST",
+        body: data,
+      }),
+    }),
+    deleteTrack: builder.mutation({
+      query: (id) => ({
+        url: `data/track/${id}`,
         method: "DELETE",
       }),
     }),
@@ -61,4 +87,8 @@ export const {
   useDeleteCohortMutation,
   useStatesQuery,
   useStatesByCountryQuery,
+  useAddTrackMutation,
+  useDeleteTrackMutation,
+  useAddWorkingSectorMutation,
+  useDeleteWorkingSectorMutation,
 } = otherSlices;

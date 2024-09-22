@@ -2,8 +2,14 @@
 
 import {
   useAddCohortMutation,
+  useAddTrackMutation,
+  useAddWorkingSectorMutation,
   useCohortsQuery,
   useDeleteCohortMutation,
+  useDeleteTrackMutation,
+  useDeleteWorkingSectorMutation,
+  useTracksQuery,
+  useWorkingSectorQuery,
 } from "@/lib/features/otherSlice";
 import { useFormik } from "formik";
 import React, { useEffect, useRef, useState } from "react";
@@ -15,24 +21,23 @@ import dayjs from "dayjs";
 import { Toast } from "primereact/toast";
 import { FiDelete } from "react-icons/fi";
 
-function Cohorts() {
+function WorkingSector() {
   const toast: any = useRef(null);
   const [error, setError] = useState();
   const [loading, setLoading] = useState();
   const [data, setData] = useState<any>([]);
 
-  const { data: CohortsData, refetch } = useCohortsQuery("");
-  const [addCohort] = useAddCohortMutation();
-  const [deleteCohort] = useDeleteCohortMutation();
+  const { data: WorkingSectorData, refetch } = useWorkingSectorQuery("");
+  const [addWorkingSector] = useAddWorkingSectorMutation();
+  const [deleteWorkingSector] = useDeleteWorkingSectorMutation();
 
   useEffect(() => {
-    if (CohortsData) {
+    if (WorkingSectorData) {
       setData(
-        CohortsData?.data
+        WorkingSectorData?.data
           .map((c: any) => {
             return {
               Name: c?.name,
-              Description: c?.description,
               CreatedAt: dayjs(c.createdAt).format("DD-MM-YYYY"),
               Action: (
                 <button
@@ -51,17 +56,17 @@ function Cohorts() {
           .sort((a: any, b: any) => a.createdAt - b.createdAt)
       );
     }
-  }, [CohortsData]);
+  }, [WorkingSectorData]);
 
   const handleDelete = async (id: number) => {
     try {
-      const res = await deleteCohort(id).unwrap();
+      const res = await deleteWorkingSector(id).unwrap();
       if (res) {
         refetch();
         toast.current.show({
           severity: "info",
           summary: "Success",
-          detail: "Cohort deleted successfully!",
+          detail: "Working Sector deleted successfully!",
         });
       }
     } catch (error) {
@@ -72,14 +77,12 @@ function Cohorts() {
   const formik = useFormik({
     initialValues: {
       name: "",
-      description: "",
     },
     validationSchema: Yup.object({}),
     onSubmit: async (values) => {
       try {
-        const res = await addCohort({
+        const res = await addWorkingSector({
           name: values?.name,
-          description: values?.description,
         }).unwrap();
         if (res) {
           formik.resetForm();
@@ -87,7 +90,7 @@ function Cohorts() {
           toast.current.show({
             severity: "info",
             summary: "Success",
-            detail: "Cohort added successfully!",
+            detail: "Working Sector added successfully!",
           });
         }
       } catch (error) {
@@ -101,18 +104,15 @@ function Cohorts() {
       <Toast ref={toast}></Toast>
       <div className="data-hold">
         <div className="notifications-left">
-          <h1 className="noti-sticky-header">Add Cohort</h1>
+          <h1 className="noti-sticky-header">Add Working Sector</h1>
           <form className="p-3">
             {error && (
               <p className="bg-red-500 text-white rounded-md text-center p-2 w-full">
                 {error}
               </p>
             )}
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700 mt-2"
-            >
-              Cohort Name:
+            <label className="block text-sm font-medium text-gray-700 mt-2">
+              Working Sector Name:
             </label>
             <input
               type="text"
@@ -124,25 +124,6 @@ function Cohorts() {
             />
             {formik.errors.name && formik.touched.name && (
               <InputError error={formik.errors.name} />
-            )}
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700 mt-3"
-            >
-              Description:
-            </label>
-            <textarea
-              rows={5}
-              id="name"
-              value={formik.values.description}
-              onChange={(e) =>
-                formik.setFieldValue("description", e.target.value)
-              }
-              required
-              className="w-full p-2 mt-1 border rounded"
-            />
-            {formik.errors.description && formik.touched.description && (
-              <InputError error={formik.errors.description} />
             )}
             <button
               type="submit"
@@ -158,7 +139,7 @@ function Cohorts() {
           </form>
         </div>
         <div className="notifications-right">
-          <div className="noti-sticky-header">Cohorts</div>
+          <div className="noti-sticky-header">Working Sectors</div>
           <DataTable
             value={data}
             tableStyle={{ minWidth: "50rem" }}
@@ -175,4 +156,4 @@ function Cohorts() {
   );
 }
 
-export default Cohorts;
+export default WorkingSector;
