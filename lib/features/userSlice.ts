@@ -63,6 +63,12 @@ export const usersSlices = createApi({
         body: data,
       }),
     }),
+    exportUsers: builder.mutation({
+      query: () => ({
+        url: "users/export",
+        method: "POST",
+      }),
+    }),
   }),
 });
 
@@ -76,4 +82,5 @@ export const {
   useUploadPictureMutation,
   useChangeMutation,
   useImportUsersMutation,
+  useExportUsersMutation,
 } = usersSlices;

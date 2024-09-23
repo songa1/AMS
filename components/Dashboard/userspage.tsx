@@ -1,10 +1,14 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Avatar } from "primereact/avatar";
 import SearchInput from "../Other/SearchInput";
 import FullScreenModal from "../Other/FullScreenModal";
-import { useDeleteUserMutation, useUsersQuery } from "@/lib/features/userSlice";
+import {
+  useDeleteUserMutation,
+  useExportUsersMutation,
+  useUsersQuery,
+} from "@/lib/features/userSlice";
 import { User } from "@/types/user";
 import ConfirmModal from "../Other/confirmModal";
 import { BiDownload, BiEdit, BiMessage, BiUpload } from "react-icons/bi";
@@ -14,6 +18,7 @@ import { FiDelete } from "react-icons/fi";
 import { getUser } from "@/helpers/auth";
 import Loading from "@/app/loading";
 import FullScreenExport from "../Other/FullScreenExport";
+import { Menu } from "primereact/menu";
 
 const UsersPage = () => {
   const [searchText, setSearchText] = useState("");
@@ -23,13 +28,49 @@ const UsersPage = () => {
   const [modal, setModal] = useState(false);
   const [idToDelete, setIdToDelete] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const menuRight: any = useRef(null);
 
   const { data, isLoading, refetch } = useUsersQuery("");
   const [deleteUser] = useDeleteUserMutation();
+  const [exportUsers] = useExportUsersMutation();
 
   const user = getUser();
 
   const isAdmin = user?.role?.name == "ADMIN";
+
+  const items = [
+    {
+      label: "Options",
+      items: [
+        {
+          label: "Export PDF",
+          icon: "pi pi-refresh",
+          command: () => setExportOpen(!exportOpen),
+        },
+        {
+          label: "Export Excel",
+          icon: "pi pi-export",
+          command: async () => {
+            try {
+              const res = await exportUsers("").unwrap();
+              const blob = new Blob([new Uint8Array(res.data.data)], {
+                type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+              });
+              const url = window.URL.createObjectURL(blob);
+              const link = document.createElement("a");
+              link.href = url;
+              link.setAttribute("download", `users_data_${Date.now()}.xlsx`);
+              document.body.appendChild(link);
+              link.click();
+              link.remove();
+            } catch (error) {
+              console.log(error);
+            }
+          },
+        },
+      ],
+    },
+  ];
 
   useEffect(() => {
     if (data) {
@@ -120,10 +161,19 @@ const UsersPage = () => {
             >
               <CgAdd />
             </button>
+            <Menu
+              model={items}
+              popup
+              ref={menuRight}
+              id="popup_menu_right"
+              popupAlignment="right"
+            />
             <button
               className=" right-1 top-1 select-none rounded bg-mainBlue py-2 px-4 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md transition-all hover:shadow-md focus:shadow-lg active:shadow-md"
               type="submit"
-              onClick={() => setExportOpen(!exportOpen)}
+              onClick={(event: any) => menuRight.current.toggle(event)}
+              aria-controls="popup_menu_right"
+              aria-haspopup
             >
               <BiDownload />
             </button>
