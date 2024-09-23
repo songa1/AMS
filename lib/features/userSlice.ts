@@ -56,6 +56,16 @@ export const usersSlices = createApi({
         body: credentials,
       }),
     }),
+    importUsers: builder.mutation({
+      query: (data) => ({
+        url: "users/import",
+        method: "POST",
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -68,4 +78,5 @@ export const {
   useBulkAddUsersMutation,
   useUploadPictureMutation,
   useChangeMutation,
+  useImportUsersMutation,
 } = usersSlices;

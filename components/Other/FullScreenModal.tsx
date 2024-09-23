@@ -2,9 +2,11 @@ import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import React, { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
-import Papa from "papaparse";
 import Button from "./Button";
-import { useBulkAddUsersMutation } from "@/lib/features/userSlice";
+import {
+  useBulkAddUsersMutation,
+  useImportUsersMutation,
+} from "@/lib/features/userSlice";
 import { Toast } from "primereact/toast";
 
 const acceptedCSVTypes = [
@@ -26,6 +28,7 @@ const FullScreenModal = ({
   const [savedData, setSavedData] = useState([]);
 
   const [bulkAddUsers] = useBulkAddUsersMutation();
+  const [importUsers] = useImportUsersMutation();
   const toast: any = useRef(null);
 
   const show = () => {
@@ -62,42 +65,21 @@ const FullScreenModal = ({
     };
   }, [isOpen]);
 
-  const handleFileUpload = (event: any) => {
+  const handleFileUpload = async (event: any) => {
+    event.preventDefault();
     const file = event.target.files[0];
-    Papa.parse(file, {
-      skipEmptyLines: true,
-      header: true,
-      complete: function (results) {
-        const mappedData = results.data.map((item: any) => {
-          return {
-            firstName: item["First name"],
-            middleName: item["Middle Name"],
-            lastName: item["Second name"],
-            email: item["Email Address"],
-            phoneNumber: item["Your personal Phone number"],
-            whatsappNumber: item["Your WhatsApp number"],
-            genderName: item["Gender"],
-            track: item["Track"],
-          };
-        });
-        setData(mappedData);
-      },
-    });
-  };
 
-  const handleSave = async () => {
-    const goodData = data.map((d: any) => {
-      return {
-        name: d.name,
-        email: d.email,
-        phoneNumber: d.phoneNumber,
-        gender: d.gender,
-        cohortId: d.cohortId,
-        companySectorId: d.companySectorId,
-      };
-    });
+    if (!file) {
+      alert("Please select a file");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+
     try {
-      const res = await bulkAddUsers({ users: data }).unwrap();
+      console.log(formData);
+      const res = await importUsers(formData).unwrap();
       if (res.status === 201) {
         refetch();
         setIsOpen(!isOpen);
@@ -106,7 +88,49 @@ const FullScreenModal = ({
     } catch (error) {
       console.log(error);
     }
+    // Papa.parse(file, {
+    //   skipEmptyLines: true,
+    //   header: true,
+    //   complete: function (results) {
+    //     const mappedData = results.data.map((item: any) => {
+    //       return {
+    //         firstName: item["First name"],
+    //         middleName: item["Middle Name"],
+    //         lastName: item["Second name"],
+    //         email: item["Email Address"],
+    //         phoneNumber: item["Your personal Phone number"],
+    //         whatsappNumber: item["Your WhatsApp number"],
+    //         genderName: item["Gender"],
+    //         track: item["Track"],
+    //       };
+    //     });
+    //     setData(mappedData);
+    //   },
+    // });
   };
+
+  // const handleSave = async () => {
+  //   // const goodData = data.map((d: any) => {
+  //   //   return {
+  //   //     name: d.name,
+  //   //     email: d.email,
+  //   //     phoneNumber: d.phoneNumber,
+  //   //     gender: d.gender,
+  //   //     cohortId: d.cohortId,
+  //   //     companySectorId: d.companySectorId,
+  //   //   };
+  //   // });
+  //   try {
+  //     const res = await importUsers({ users: data }).unwrap();
+  //     if (res.status === 201) {
+  //       refetch();
+  //       setIsOpen(!isOpen);
+  //       show();
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   return (
     <div>
