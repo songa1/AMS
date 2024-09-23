@@ -60,9 +60,6 @@ export const usersSlices = createApi({
       query: (data) => ({
         url: "users/import",
         method: "POST",
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
         body: data,
       }),
     }),

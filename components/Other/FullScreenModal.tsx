@@ -1,18 +1,12 @@
-import { Column } from "primereact/column";
-import { DataTable } from "primereact/datatable";
 import React, { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import Button from "./Button";
-import {
-  useBulkAddUsersMutation,
-  useImportUsersMutation,
-} from "@/lib/features/userSlice";
+import { useImportUsersMutation } from "@/lib/features/userSlice";
 import { Toast } from "primereact/toast";
+import { ProgressSpinner } from "primereact/progressspinner";
 
 const acceptedCSVTypes = [
   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-  "application/vnd.ms-excel",
-  "text/csv",
 ];
 
 const FullScreenModal = ({
@@ -24,12 +18,9 @@ const FullScreenModal = ({
   setIsOpen: any;
   refetch: any;
 }) => {
-  const [data, setData] = useState<any>([]);
-  const [savedData, setSavedData] = useState([]);
-
-  const [bulkAddUsers] = useBulkAddUsersMutation();
   const [importUsers] = useImportUsersMutation();
   const toast: any = useRef(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const show = () => {
     toast.current.show({
@@ -66,7 +57,7 @@ const FullScreenModal = ({
   }, [isOpen]);
 
   const handleFileUpload = async (event: any) => {
-    event.preventDefault();
+    setIsLoading(true);
     const file = event.target.files[0];
 
     if (!file) {
@@ -78,59 +69,33 @@ const FullScreenModal = ({
     formData.append("file", file);
 
     try {
-      console.log(formData);
       const res = await importUsers(formData).unwrap();
-      if (res.status === 201) {
-        refetch();
-        setIsOpen(!isOpen);
-        show();
+      console.log(res);
+      if (res.errors.length > 0) {
+        res.errors.forEach((err: any) => {
+          toast.current.show({
+            severity: "error",
+            summary: "Error",
+            detail: `Row: ${err?.row["Email Address"]}. ${err?.message}`,
+          });
+        });
+      }
+
+      if (res.processedUsers.length > 0) {
+        toast.current.show({
+          severity: "success",
+          summary: "Success",
+          detail: `${res.processedUsers.length} rows has been processed!`,
+        });
       }
     } catch (error) {
       console.log(error);
+    } finally {
+      refetch();
+      setIsOpen(!isOpen);
+      setIsLoading(false);
     }
-    // Papa.parse(file, {
-    //   skipEmptyLines: true,
-    //   header: true,
-    //   complete: function (results) {
-    //     const mappedData = results.data.map((item: any) => {
-    //       return {
-    //         firstName: item["First name"],
-    //         middleName: item["Middle Name"],
-    //         lastName: item["Second name"],
-    //         email: item["Email Address"],
-    //         phoneNumber: item["Your personal Phone number"],
-    //         whatsappNumber: item["Your WhatsApp number"],
-    //         genderName: item["Gender"],
-    //         track: item["Track"],
-    //       };
-    //     });
-    //     setData(mappedData);
-    //   },
-    // });
   };
-
-  // const handleSave = async () => {
-  //   // const goodData = data.map((d: any) => {
-  //   //   return {
-  //   //     name: d.name,
-  //   //     email: d.email,
-  //   //     phoneNumber: d.phoneNumber,
-  //   //     gender: d.gender,
-  //   //     cohortId: d.cohortId,
-  //   //     companySectorId: d.companySectorId,
-  //   //   };
-  //   // });
-  //   try {
-  //     const res = await importUsers({ users: data }).unwrap();
-  //     if (res.status === 201) {
-  //       refetch();
-  //       setIsOpen(!isOpen);
-  //       show();
-  //     }
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
 
   return (
     <div>
@@ -166,7 +131,7 @@ const FullScreenModal = ({
                     Upload Users
                   </p>
                 </div>
-                <p className="text-xs">Use Excel or CSV file</p>
+                <p className="text-xs">Use Excel file</p>
               </div>
               <div className=" border border-gray-200 rounded-md">
                 <div className="w-[90%] mx-auto items-center justify-between flex">
@@ -176,21 +141,16 @@ const FullScreenModal = ({
                     onChange={handleFileUpload}
                     accept={acceptedCSVTypes.join(",")}
                   />
-                  <Button title="Save" onClick={handleSave} />
+                  <Button title="Save" onClick={handleFileUpload} />
                 </div>
               </div>
 
-              <div className="w-[90%] mx-auto h-[90vh] overflow-scroll no-scrollbar">
-                <DataTable
-                  value={data}
-                  tableStyle={{ minWidth: "50rem" }}
-                  editMode="cell"
-                >
-                  {data.length > 0 &&
-                    Object.keys(data[0]).map((key) => (
-                      <Column key={key} field={key} header={key}></Column>
-                    ))}
-                </DataTable>
+              <div className="w-[90%] mx-auto h-[90vh] overflow-scroll no-scrollbar flex items-center justify-center">
+                {isLoading && (
+                  <div className="p-10">
+                    <ProgressSpinner />
+                  </div>
+                )}
               </div>
             </div>
           </div>,
