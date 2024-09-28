@@ -143,7 +143,7 @@ const Sidebar = ({
             <img
               src="/yali.png"
               height={20}
-              width={90}
+              width={100}
               className="rounded-md"
             />
           )}
