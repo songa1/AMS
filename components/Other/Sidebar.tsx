@@ -119,7 +119,7 @@ const Sidebar = ({
       title: "Settings",
       icon: <CiSettings />,
       link: "/dashboard/settings",
-      show: true,
+      show: !isAdmin ? false : true,
       count: 0,
     },
   ];
