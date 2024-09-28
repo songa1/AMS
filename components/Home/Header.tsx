@@ -4,9 +4,10 @@ import React from "react";
 
 function Header() {
   return (
-    <div className="bg-mainBlue w-full p-5">
-      <h2 className="text-white text-center text-3xl font-extrabold text-gray-900">
-        ALMNI MANAGEMENT SYSTEM!
+    <div className="w-full p-5 flex justify-center items-center flex-col py-5 gap-5">
+      <img src="/yali.png" width={200} />
+      <h2 className="text-mainBlue text-center text-2xl font-extrabold text-gray-900">
+        ALUMNI MANAGEMENT SYSTEM!
       </h2>
     </div>
   );

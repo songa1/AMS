@@ -186,7 +186,7 @@ const UsersPage = () => {
             <tr>
               <th className="py-2 px-4 border-b">Picture</th>
               <th className="py-2 px-4 border-b">Name</th>
-              <th className="py-2 px-4 border-b">Email</th>
+              {isAdmin && <th className="py-2 px-4 border-b">Email</th>}
               <th className="py-2 px-4 border-b">Phone</th>
               {isAdmin && <th className="py-2 px-4 border-b">Gender</th>}
               <th className="py-2 px-4 border-b">Actions</th>
@@ -208,7 +208,11 @@ const UsersPage = () => {
                 <td className="py-2 px-4 border-b text-start">
                   {user.firstName + " " + user.lastName}
                 </td>
-                <td className="py-2 px-4 border-b text-start">{user.email}</td>
+                {isAdmin && (
+                  <td className="py-2 px-4 border-b text-start">
+                    {user.email}
+                  </td>
+                )}
                 <td className="py-2 px-4 border-b text-center">
                   {user.phoneNumber}
                 </td>

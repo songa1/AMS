@@ -139,7 +139,13 @@ const Sidebar = ({
             <MdMenu />
           </div>
           {titles && (
-            <h1 className="text-center font-black text-white text-xl">AMS</h1>
+            // <h1 className="text-center font-black text-white text-xl">AMS</h1>
+            <img
+              src="/yali.png"
+              height={20}
+              width={90}
+              className="rounded-md"
+            />
           )}
         </div>
         <ul className="space-y-2 font-medium">
