@@ -25,6 +25,8 @@ import Button from "../Other/Button";
 import { getUser } from "@/helpers/auth";
 import { Toast } from "primereact/toast";
 import InputError from "../Other/InputError";
+import PhoneInputWithCountrySelect from "react-phone-number-input";
+import "react-phone-number-input/style.css";
 
 const Personal = ({
   formik,
@@ -102,14 +104,16 @@ const Personal = ({
       </div>
       <div className="field">
         <label>Phone Number:</label>
-        <InputText
-          variant="filled"
-          className="w-full p-3"
-          type="text"
-          placeholder="Phone Number"
+        <PhoneInputWithCountrySelect
+          international
+          countryCallingCodeEditable={false}
+          defaultCountry="RW"
+          className="w-full p-3 rounded border border-main p-3 bg-gray-100"
           value={formik.values.phoneNumber}
-          onChange={(e) => formik.setFieldValue("phoneNumber", e.target.value)}
-          required
+          onChange={(e: any) => {
+            formik.setFieldValue("phoneNumber", e);
+          }}
+          placeholder="Enter phone number"
         />
         {formik.errors.phoneNumber && formik.touched.phoneNumber && (
           <InputError error={formik.errors.phoneNumber} />
