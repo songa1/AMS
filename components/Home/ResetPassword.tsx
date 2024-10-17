@@ -67,8 +67,9 @@ const ResetPassword = () => {
 
   return (
     <div className="flex h-screen lg:inline ">
-      <div className="w-full lg:w min-w-[300px] flex flex-col  items-center">
+      <div className="w-full lg:w min-w-[300px] flex flex-col  items-center border border-mainBlue max-w-[40%] mx-auto mt-7 p-3 rounded-md shadow-xl">
         <Header />
+        <div className="w-full h-2 bg-mainBlue shadow-md"></div>
         <div className="max-w-md w-full space-y-8 mt-20">
           <h1 className="mb-4 text-2xl font-bold">Change your Password</h1>
           {success && (

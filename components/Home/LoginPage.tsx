@@ -77,17 +77,17 @@ const LoginPage = () => {
 
   return (
     <div className="flex h-screen lg:inline ">
-      <div className="w-full lg:w min-w-[300px] flex flex-col  items-center border border-mainBlue max-w-[40%] mx-auto m-3 p-3 rounded-md shadow-xl">
+      <div className="w-full lg:w min-w-[300px] flex flex-col  items-center border border-mainBlue max-w-[40%] mx-auto mt-7 p-3 rounded-md shadow-xl">
         <Header />
         <div className="w-full h-2 bg-mainBlue shadow-md"></div>
-        <div className="max-w-md w-full space-y-8 mt-20">
-          <form className="mt-4 space-y-6">
+        <div className="w-full space-y-8 mt-20">
+          <form className="w-full">
             {error && (
               <p className="bg-red-500 text-white rounded-md text-center p-2 w-full">
                 {error}
               </p>
             )}
-            <div>
+            <div className="w-full">
               <label
                 htmlFor="email"
                 className="block text-sm font-medium text-gray-700"
@@ -144,7 +144,7 @@ const LoginPage = () => {
             <div>
               <button
                 type="submit"
-                className="w-full bg-mainBlue text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
+                className="w-full bg-mainBlue text-white py-2 px-4 rounded-md hover:bg-blue-600 mt-3 focus:outline-none focus:bg-blue-600"
                 onClick={(e) => {
                   e.preventDefault();
                   formik.handleSubmit();

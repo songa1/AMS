@@ -6,6 +6,7 @@ import { useFormik } from "formik";
 import React, { useEffect, useState } from "react";
 import * as Yup from "yup";
 import InputError from "../Other/InputError";
+import Header from "../Home/Header";
 
 const ForgotPasswordPage = () => {
   const [error, setError] = useState("");
@@ -49,16 +50,18 @@ const ForgotPasswordPage = () => {
   }, [error]);
 
   return (
-    <div className="flex items-center justify-center w-full p-40 ">
-      <div className="p-6 bg-white rounded shadow-md min-w-[300px]">
-        <h1 className="mb-4 text-2xl font-bold">Forgot Password</h1>
+    <div className="flex items-center justify-center w-full">
+      <div className="w-full lg:w min-w-[300px] flex flex-col  items-center border border-mainBlue max-w-[40%] mx-auto mt-7 p-3 rounded-md shadow-xl">
+        <Header />
+        <div className="w-full h-2 bg-mainBlue shadow-md"></div>
+        <h1 className="my-3 text-2xl font-bold">Forgot Password</h1>
         {success && (
           <p className="bg-green-500 text-white rounded-md text-center p-2 w-full">
             {success}
           </p>
         )}
         {!success && (
-          <form>
+          <form className="w-full">
             {error && (
               <p className="bg-red-500 text-white rounded-md text-center p-2 w-full">
                 {error}
