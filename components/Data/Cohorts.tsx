@@ -81,7 +81,15 @@ function Cohorts() {
           name: values?.name,
           description: values?.description,
         }).unwrap();
+        if (res && res.status === 400) {
+          toast.current.show({
+            severity: "error",
+            summary: "Error",
+            detail: res?.data?.message,
+          });
+        }
         if (res) {
+          console.log(res);
           formik.resetForm();
           refetch();
           toast.current.show({
@@ -90,8 +98,13 @@ function Cohorts() {
             detail: "Cohort added successfully!",
           });
         }
-      } catch (error) {
+      } catch (error: any) {
         console.log(error);
+        toast.current.show({
+          severity: "error",
+          summary: "Error",
+          detail: error?.error || error?.data?.message || error?.data?.error,
+        });
       }
     },
   });
