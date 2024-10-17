@@ -51,6 +51,8 @@ const Personal = ({
   auth,
   states,
   setCountry,
+  changeEmail,
+  setChangeEmail,
 }: {
   formik: any;
   sectors: residentSector[];
@@ -64,6 +66,8 @@ const Personal = ({
   auth: boolean;
   states: any;
   setCountry: any;
+  changeEmail: boolean;
+  setChangeEmail: any;
 }) => {
   return (
     <div className="grid grid-cols-2 gap-3">
@@ -131,12 +135,24 @@ const Personal = ({
           defaultValue={usr?.email}
           className="w-full p-3"
           type="text"
-          disabled={usr?.role?.name === "ADMIN" ? true : false}
+          disabled={changeEmail}
           placeholder="Email"
           value={formik.values.email}
           onChange={(e) => formik.setFieldValue("email", e.target.value)}
           required
         />
+        <p className="text-mainBlue text-xs italic">
+          <b>Note:</b> Updating the email will change your login credentials!
+          Proceed with caution.{" "}
+          <span
+            className="underline cursor-pointer"
+            onClick={() => {
+              setChangeEmail(!changeEmail);
+            }}
+          >
+            {!changeEmail ? "Disable" : "Enable"}
+          </span>
+        </p>
         {formik.errors.email && formik.touched.email && (
           <InputError error={formik.errors.email} />
         )}
@@ -160,18 +176,16 @@ const Personal = ({
       </div>
       <div className="field">
         <label>WhatsApp Number:</label>
-        <InputText
-          variant="filled"
-          defaultValue={usr?.whatsappNumber}
-          className="w-full p-3"
-          disabled={auth}
-          type="text"
-          placeholder="WhatsApp Number"
+        <PhoneInputWithCountrySelect
+          international
+          countryCallingCodeEditable={false}
+          defaultCountry="RW"
+          className="w-full p-3 rounded border border-main bg-gray-100"
           value={formik.values.whatsAppNumber}
-          onChange={(e) =>
-            formik.setFieldValue("whatsAppNumber", e.target.value)
-          }
-          required
+          onChange={(e: any) => {
+            formik.setFieldValue("whatsAppNumber", e);
+          }}
+          placeholder="Edit WhatsApp number"
         />
         {formik.errors.whatsAppNumber && formik.touched.whatsAppNumber && (
           <InputError error={formik.errors.whatsAppNumber} />
@@ -754,6 +768,7 @@ function UpdateProfilepage() {
   const [employedStates, setEmployedStates] = useState("");
   const [foundedCountry, setFoundedCountry] = useState("");
   const [foundedStates, setFoundedStates] = useState("");
+  const [changeEmail, setChangeEmail] = useState(true);
 
   const [updatedUser] = useUpdatedUserMutation();
   const { data: UserData, refetch } = useGetOneUserQuery<{ data: User }>(
@@ -1089,6 +1104,8 @@ function UpdateProfilepage() {
           auth={authorized}
           states={states}
           setCountry={setCountry}
+          changeEmail={changeEmail}
+          setChangeEmail={setChangeEmail}
         />
       ),
     },

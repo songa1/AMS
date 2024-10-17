@@ -121,16 +121,16 @@ const Personal = ({
       </div>
       <div className="field">
         <label>WhatsApp Number:</label>
-        <InputText
-          variant="filled"
-          className="w-full p-3"
-          type="text"
-          placeholder="WhatsApp Number"
+        <PhoneInputWithCountrySelect
+          international
+          countryCallingCodeEditable={false}
+          defaultCountry="RW"
+          className="w-full p-3 rounded border border-main p-3 bg-gray-100"
           value={formik.values.whatsAppNumber}
-          onChange={(e) =>
-            formik.setFieldValue("whatsAppNumber", e.target.value)
-          }
-          required
+          onChange={(e: any) => {
+            formik.setFieldValue("whatsAppNumber", e);
+          }}
+          placeholder="Enter WhatsApp number"
         />
         {formik.errors.whatsAppNumber && formik.touched.whatsAppNumber && (
           <InputError error={formik.errors.whatsAppNumber} />
