@@ -6,14 +6,15 @@ import * as Yup from "yup";
 import dayjs from "dayjs";
 import { Toast } from "primereact/toast";
 import relativeTime from "dayjs/plugin/relativeTime";
-import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import {
   useNotSetupsQuery,
   useUpdateSetupMutation,
 } from "@/lib/features/notificationSlice";
 import Button from "../Other/Button";
-import { Checkbox } from "primereact/checkbox";
+import dynamic from "next/dynamic";
+
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 export const notificationTypes = {
   SIGNUP: "signup",
@@ -32,8 +33,6 @@ export const actionOptions = [
 
 function NotificationSetup() {
   const toast: any = useRef(null);
-  const [error, setError] = useState();
-  const [loading, setLoading] = useState();
   dayjs.extend(relativeTime);
   const [notifications, setNotifications] = useState<any>([]);
   const [currentNotification, setCurrentNotification] = useState<string>();
