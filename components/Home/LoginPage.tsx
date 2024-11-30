@@ -59,9 +59,8 @@ const LoginPage = () => {
       } catch (err: any) {
         if (err?.status === 401) {
           setError(err?.data?.error);
-        } else {
-          setError("Login Failed! Try again, or contact the administrator!");
         }
+        console.log(err);
       } finally {
         setIsLoading(false);
       }
