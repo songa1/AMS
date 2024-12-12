@@ -5,9 +5,12 @@ upstream web {
 }
 
 server {
-  listen ${NGINX_PORT};
+  listen ${NGINX_PORT} ssl;
 
   server_name ${NGINX_SERVER_NAME};
+
+  ssl_certificate /etc/letsencrypt/live/example.com/fullchain.pem;
+	ssl_certificate_key /etc/letsencrypt/live/example.com/privkey.pem;
 
   server_tokens off;
 
