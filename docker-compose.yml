@@ -21,6 +21,9 @@ services:
       - .env
     networks:
       - yali-network
+
+    volumes:
+      - ~/certs:/etc/certs
 networks:
   yali-network:
     name: yali-network
