@@ -7,6 +7,9 @@ import { useRouter } from "next/navigation";
 import React from "react";
 import { BsEnvelope } from "react-icons/bs";
 import { GoDotFill } from "react-icons/go";
+import Avatar from "@mui/material/Avatar";
+import { Badge } from "@mui/material";
+import MailIcon from "@mui/icons-material/Mail";
 
 function TopTitle({ title }: { title: string }) {
   const router = useRouter();
@@ -16,12 +19,14 @@ function TopTitle({ title }: { title: string }) {
       <h1 className="text-xl text-mainBlue font-bold">{title}</h1>
       <div className="flex gap-3 items-center">
         <div
-          className="rounded-full text-white bg-mainBlue p-2 mx-2"
+          className="p-2 mx-2"
           onClick={() => {
             router.push("/dashboard/chat");
           }}
         >
-          <BsEnvelope />
+          <Badge badgeContent={4} color="secondary">
+            <MailIcon color="action" />
+          </Badge>
         </div>
         <div className="flex flex-col items-start">
           <div className="flex gap-0 items-center">
@@ -30,16 +35,13 @@ function TopTitle({ title }: { title: string }) {
           </div>
           <p className="text-xs text-mainBlue">{user?.role?.name}</p>
         </div>
-        <Image
+        <Avatar
+          alt={user?.firstName + " " + user?.lastName}
           src={
             user?.profileImage?.link
               ? user?.profileImage?.link
-              : "/placeholder.svg"
+              : user.firstName[0].toUpperCase()
           }
-          width={50}
-          height={50}
-          className="rounded-full object-cover"
-          alt="Profile"
         />
       </div>
     </div>

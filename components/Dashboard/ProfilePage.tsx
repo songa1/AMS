@@ -16,6 +16,7 @@ import { Toast } from "primereact/toast";
 import ConfirmModal from "../Other/confirmModal";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import { Button, Chip } from "@mui/material";
 
 const Personal = ({ user }: { user: User | null }) => {
   return (
@@ -282,12 +283,13 @@ function ProfilePage() {
                   }`
                 : ""}
               &nbsp;
-              <span
+              <Chip
                 onClick={handleChangeRole}
-                className="text-xs border-2 border-gray-200 p-1 rounded-md cursor-pointer"
-              >
-                {user?.role?.name}
-              </span>
+                label={user?.role?.name}
+                color="primary"
+                size="small"
+                variant="outlined"
+              />
             </h2>
             <p>{user?.bio}</p>
             <p className="text-gray-500 text-xs">
@@ -301,9 +303,9 @@ function ProfilePage() {
                   : "/dashboard/update-profile"
               }`}
             >
-              <button className="right-1 top-1 z-10 select-none rounded bg-mainBlue py-2 px-4 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md transition-all hover:shadow-md focus:shadow-lg active:shadow-md">
+              <Button size="small" variant="contained">
                 Update Profile
-              </button>
+              </Button>
             </Link>
           </div>
         </div>

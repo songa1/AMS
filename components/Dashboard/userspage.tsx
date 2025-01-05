@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { Avatar } from "primereact/avatar";
 import SearchInput from "../Other/SearchInput";
 import FullScreenModal from "../Other/FullScreenModal";
 import {
@@ -19,6 +18,7 @@ import { getUser } from "@/helpers/auth";
 import Loading from "@/app/loading";
 import FullScreenExport from "../Other/FullScreenExport";
 import { Menu } from "primereact/menu";
+import { Avatar, Button, ButtonGroup } from "@mui/material";
 
 const UsersPage = () => {
   const [searchText, setSearchText] = useState("");
@@ -145,22 +145,24 @@ const UsersPage = () => {
         />
         {isAdmin && (
           <div className="flex gap-2 items-center">
-            <button
-              className=" right-1 top-1 select-none rounded bg-mainBlue py-2 px-4 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md transition-all hover:shadow-md focus:shadow-lg active:shadow-md"
-              type="submit"
-              onClick={() => setIsOpen(!isOpen)}
+            <ButtonGroup
+              size="small"
+              variant="outlined"
+              aria-label="Basic button group"
             >
-              <BiUpload />
-            </button>
-            <button
-              className=" right-1 top-1 select-none rounded bg-mainBlue py-2 px-4 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md transition-all hover:shadow-md focus:shadow-lg active:shadow-md"
-              type="submit"
-              onClick={() =>
-                (globalThis.location.href = "/dashboard/add-new-user")
-              }
-            >
-              <CgAdd />
-            </button>
+              <Button onClick={() => setIsOpen(!isOpen)}>Upload</Button>
+              <Button
+                onClick={() =>
+                  (globalThis.location.href = "/dashboard/add-new-user")
+                }
+              >
+                Add
+              </Button>
+              <Button onClick={(event: any) => menuRight.current.toggle(event)}>
+                Export
+              </Button>
+            </ButtonGroup>
+
             <Menu
               model={items}
               popup
@@ -168,26 +170,19 @@ const UsersPage = () => {
               id="popup_menu_right"
               popupAlignment="right"
             />
-            <button
-              className=" right-1 top-1 select-none rounded bg-mainBlue py-2 px-4 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md transition-all hover:shadow-md focus:shadow-lg active:shadow-md"
-              type="submit"
-              onClick={(event: any) => menuRight.current.toggle(event)}
-              aria-controls="popup_menu_right"
-              aria-haspopup
-            >
-              <BiDownload />
-            </button>
           </div>
         )}
       </div>
-      <div className="overflow-x-scroll">
+      <div>
         <table className="min-w-full bg-white border border-gray-200">
           <thead>
             <tr>
               <th className="py-2 px-4 border-b">Picture</th>
               <th className="py-2 px-4 border-b">Name</th>
-              {isAdmin && <th className="py-2 px-4 border-b">Email</th>}
+              {/* {isAdmin && <th className="py-2 px-4 border-b">Email</th>} */}
               <th className="py-2 px-4 border-b">Phone</th>
+              <th className="py-2 px-4 border-b">Cohort</th>
+              <th className="py-2 px-4 border-b">Track</th>
               {isAdmin && <th className="py-2 px-4 border-b">Gender</th>}
               <th className="py-2 px-4 border-b">Actions</th>
             </tr>
@@ -197,24 +192,30 @@ const UsersPage = () => {
               <tr key={user.id}>
                 <td className="py-2 px-4 border-b text-center">
                   <Avatar
-                    image={
+                    alt={user?.firstName + " " + user?.lastName}
+                    src={
                       user?.profileImage?.link
                         ? user?.profileImage?.link
-                        : "/placeholder.svg"
+                        : user.firstName[0].toUpperCase()
                     }
-                    shape="circle"
                   />
                 </td>
                 <td className="py-2 px-4 border-b text-start">
                   {user.firstName + " " + user.lastName}
                 </td>
-                {isAdmin && (
+                {/* {isAdmin && (
                   <td className="py-2 px-4 border-b text-start">
                     {user.email}
                   </td>
-                )}
+                )} */}
                 <td className="py-2 px-4 border-b text-center">
                   {user.phoneNumber}
+                </td>
+                <td className="py-2 px-4 border-b text-center">
+                  {user.cohort.name}
+                </td>
+                <td className="py-2 px-4 border-b text-center">
+                  {user.track?.name}
                 </td>
                 {isAdmin && (
                   <td className="py-2 px-4 border-b text-center">
