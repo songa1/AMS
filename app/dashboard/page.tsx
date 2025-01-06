@@ -5,7 +5,6 @@ import { OnlyAdmin } from "@/components/Other/AccessDashboard";
 function page() {
   return (
     <div>
-      <TopTitle title="Dashboard" />
       <OnlyAdmin>
         <DashboardHome />
       </OnlyAdmin>

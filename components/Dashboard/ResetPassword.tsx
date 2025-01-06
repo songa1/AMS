@@ -4,10 +4,11 @@
 import { useFormik } from "formik";
 import React, { useState } from "react";
 import * as Yup from "yup";
-import InputError from "../Other/InputError";
 import { useChangePasswordMutation } from "@/lib/features/authSlice";
 import { AUTH_STORED_DATA, getUser } from "@/helpers/auth";
 import Cookies from "js-cookie";
+import { Button, TextField, Typography } from "@mui/material";
+import TopTitle from "../Other/TopTitle";
 
 const ChangePasswordPage = () => {
   const [message, setMessage] = useState("");
@@ -47,76 +48,99 @@ const ChangePasswordPage = () => {
         console.log(error);
         if (error?.status == 401) {
           formik.setFieldError("oldPassword", error?.error);
+          setError(error?.error);
         }
       }
     },
   });
 
   return (
-    <div className="flex items-center justify-center  w-full p-10 ">
-      <div className="p-6 bg-white rounded shadow-md">
-        <form onSubmit={formik.handleSubmit}>
-          <label
-            htmlFor="old-password"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Old Password:
-          </label>
-          <input
+    <div className="flex items-center justify-center flex-col w-full p-10 ">
+      <TopTitle title="Change Password" />
+
+      <div className="p-6 rounded shadow-md w-full">
+        <form
+          onSubmit={formik.handleSubmit}
+          className="w-full flex flex-col gap-3"
+        >
+          <TextField
+            id="filled-password-input"
+            label="Old Password"
             type="password"
-            id="Old-password"
+            autoComplete="old-password"
+            variant="filled"
+            fullWidth={true}
             value={formik.values.oldPassword}
             onChange={(e) =>
               formik.setFieldValue("oldPassword", e.target.value)
             }
-            className="w-full p-2 mt-1 border rounded"
+            error={
+              formik.errors.oldPassword && formik.touched.oldPassword
+                ? true
+                : false
+            }
+            helperText={
+              formik.errors.oldPassword && formik.touched.oldPassword
+                ? formik.errors.oldPassword
+                : ""
+            }
           />
-          {formik.errors.oldPassword && formik.touched.oldPassword && (
-            <InputError error={formik.errors.oldPassword} />
-          )}
-          <label
-            htmlFor="password"
-            className="block text-sm font-medium text-gray-700"
-          >
-            New Password:
-          </label>
-          <input
+
+          <TextField
+            id="filled-password-input-1"
+            label="New Password"
             type="password"
-            id="password"
+            autoComplete="new-password"
+            variant="filled"
+            fullWidth={true}
             value={formik.values.newPassword}
             onChange={(e) =>
               formik.setFieldValue("newPassword", e.target.value)
             }
-            className="w-full p-2 mt-1 border rounded"
+            error={
+              formik.errors.newPassword && formik.touched.newPassword
+                ? true
+                : false
+            }
+            helperText={
+              formik.errors.newPassword && formik.touched.newPassword
+                ? formik.errors.newPassword
+                : ""
+            }
           />
-          {formik.errors.newPassword && formik.touched.newPassword && (
-            <InputError error={formik.errors.newPassword} />
-          )}
-          <label
-            htmlFor="confirm-password"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Confirm Password:
-          </label>
-          <input
+
+          <TextField
+            id="filled-password-input-1"
+            label="New Password"
             type="password"
-            id="confirm-password"
+            autoComplete="new-password"
+            variant="filled"
+            fullWidth={true}
             value={formik.values.confirmPassword}
             onChange={(e) =>
               formik.setFieldValue("confirmPassword", e.target.value)
             }
-            className="w-full p-2 mt-1 border rounded"
+            error={
+              formik.errors.confirmPassword && formik.touched.confirmPassword
+                ? true
+                : false
+            }
+            helperText={
+              formik.errors.confirmPassword && formik.touched.confirmPassword
+                ? formik.errors.confirmPassword
+                : ""
+            }
           />
-          {formik.errors.confirmPassword && formik.touched.confirmPassword && (
-            <InputError error={formik.errors.confirmPassword} />
-          )}
-          <button
+
+          <Button
             type="submit"
             className="w-full px-4 py-2 mt-4 font-bold text-white bg-mainBlue  rounded hover:bg-blue-700"
             disabled={loading}
+            variant="contained"
+            size="large"
           >
             {loading ? "Changing..." : "Change Password"}
-          </button>
+          </Button>
         </form>
         {message && <p className="mt-4 text-green-500">{message}</p>}
         {error && <p className="mt-4 text-red-500">{error}</p>}

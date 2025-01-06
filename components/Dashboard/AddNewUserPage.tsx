@@ -21,12 +21,44 @@ import {
   useUploadPictureMutation,
 } from "@/lib/features/userSlice";
 import Loading from "@/app/loading";
-import Button from "../Other/Button";
 import { getUser } from "@/helpers/auth";
 import { Toast } from "primereact/toast";
 import InputError from "../Other/InputError";
 import PhoneInputWithCountrySelect from "react-phone-number-input";
 import "react-phone-number-input/style.css";
+import TopTitle from "../Other/TopTitle";
+import {
+  Button,
+  FormControl,
+  FormHelperText,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+} from "@mui/material";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import { styled } from "@mui/material/styles";
+import {
+  cohort,
+  Country,
+  gender,
+  residentDistrict,
+  residentSector,
+  State,
+  Track,
+} from "@/types/user";
+
+const VisuallyHiddenInput = styled("input")({
+  clip: "rect(0 0 0 0)",
+  clipPath: "inset(50%)",
+  height: 1,
+  overflow: "hidden",
+  position: "absolute",
+  bottom: 0,
+  left: 0,
+  whiteSpace: "nowrap",
+  width: 1,
+});
 
 const Personal = ({
   formik,
@@ -660,7 +692,7 @@ function NewProfile() {
   const [imageData, setImageData] = useState<any>(null);
   const [uploadSuccess, setUploadSuccess] = useState(false);
   const [country, setCountry] = useState("");
-  const [states, setStates] = useState("");
+  const [states, setStates] = useState([]);
   const [employedCountry, setEmployedCountry] = useState("");
   const [employedStates, setEmployedStates] = useState("");
   const [foundedCountry, setFoundedCountry] = useState("");
@@ -847,7 +879,6 @@ function NewProfile() {
       ),
       districtName: Yup.string(),
       sectorId: Yup.string(),
-      residentCountryId: Yup.string().required("Resident country is required"),
       whatsAppNumber: Yup.string().matches(
         /^[0-9]+$/,
         "WhatsApp number must be digits only"
@@ -1060,7 +1091,9 @@ function NewProfile() {
   return (
     <div className="">
       <Toast ref={toast}></Toast>
+
       <div className="w-full">
+        <TopTitle title="Add New Member" />
         {error && (
           <p className="bg-red-500 text-white rounded-md text-center p-2 w-full my-3">
             {error}
@@ -1074,12 +1107,16 @@ function NewProfile() {
         <div className="relative">
           <div className="flex items-start justify-between p-2">
             <div>
-              <div>
-                <label>
-                  Profile Picture:<br></br>
-                </label>
-                <input type="file" onChange={handlePreview} />
-              </div>
+              <Button
+                component="label"
+                role={undefined}
+                variant="contained"
+                tabIndex={-1}
+                startIcon={<CloudUploadIcon />}
+              >
+                Upload Profile Picture
+                <VisuallyHiddenInput type="file" onChange={handlePreview} />
+              </Button>
               {imagePreview && (
                 <img
                   src={imagePreview}
@@ -1090,7 +1127,14 @@ function NewProfile() {
               {imagePreview && (
                 <div className="flex gap-1 items-center my-1">
                   {!uploadSuccess && (
-                    <Button onClick={handleFileUpload} title="Upload" />
+                    <Button
+                      onClick={handleFileUpload}
+                      variant="contained"
+                      color="success"
+                      size="small"
+                    >
+                      Upload
+                    </Button>
                   )}
                   <Button
                     onClick={() => {
@@ -1100,32 +1144,431 @@ function NewProfile() {
                       if (formik.values.profileImageId)
                         formik.setFieldValue("profileImageId", "");
                     }}
-                    title="Clear"
-                  />
+                    variant="contained"
+                    color="error"
+                    size="small"
+                  >
+                    Clear
+                  </Button>
                 </div>
               )}
             </div>
-            <button
-              className="right-1 top-1 z-10 select-none rounded bg-mainBlue py-2 px-4 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md transition-all hover:shadow-md focus:shadow-lg active:shadow-md"
+            <Button
               type="submit"
               onClick={() => handleSubmit()}
+              variant="contained"
+              size="medium"
             >
-              Save
-            </button>
+              Submit
+            </Button>
           </div>
         </div>
         <div className="p-3">
-          <label>Biography:</label>
-          <textarea
+          <TextField
+            label="Biography"
+            multiline
             rows={5}
-            className="w-full p-3 bg-gray-100 border-2 border-gray-200 outline-none rounded-md"
-            placeholder="Enter the user's BIO..."
             value={formik.values.bio}
             onChange={(e) => formik.setFieldValue("bio", e.target.value)}
-            required
+            className="w-full"
+            placeholder="Enter the user's BIO..."
           />
+          <div className="grid sm:grid-cols-1 md:grid-cols-2 gap-3 py-4">
+            <TextField
+              label="First Name:"
+              variant="filled"
+              value={formik.values.firstName}
+              onChange={(e) =>
+                formik.setFieldValue("firstName", e.target.value)
+              }
+              placeholder="First Name"
+              error={
+                formik.errors.firstName && formik.touched.firstName
+                  ? true
+                  : false
+              }
+              helperText={
+                formik.errors.firstName && formik.touched.firstName
+                  ? formik.errors.firstName
+                  : ""
+              }
+            />
+            <TextField
+              label="Middle Name:"
+              variant="filled"
+              value={formik.values.middleName}
+              onChange={(e) =>
+                formik.setFieldValue("middleName", e.target.value)
+              }
+              placeholder="Middle Name"
+              error={
+                formik.errors.middleName && formik.touched.middleName
+                  ? true
+                  : false
+              }
+              helperText={
+                formik.errors.middleName && formik.touched.middleName
+                  ? formik.errors.middleName
+                  : ""
+              }
+            />
+            <TextField
+              label="Last Name:"
+              variant="filled"
+              value={formik.values.lastName}
+              onChange={(e) => formik.setFieldValue("lastName", e.target.value)}
+              placeholder="Last Name"
+              error={
+                formik.errors.lastName && formik.touched.lastName ? true : false
+              }
+              helperText={
+                formik.errors.lastName && formik.touched.lastName
+                  ? formik.errors.lastName
+                  : ""
+              }
+            />
+            <TextField
+              label="Email:"
+              variant="filled"
+              value={formik.values.email}
+              onChange={(e) => formik.setFieldValue("email", e.target.value)}
+              placeholder="Email"
+              required
+              error={formik.errors.email && formik.touched.email ? true : false}
+              helperText={
+                formik.errors.email && formik.touched.email
+                  ? formik.errors.email
+                  : ""
+              }
+            />
+            <PhoneInputWithCountrySelect
+              international
+              countryCallingCodeEditable={false}
+              defaultCountry="RW"
+              className="w-full"
+              value={formik.values.phoneNumber}
+              onChange={(e: any) => {
+                formik.setFieldValue("phoneNumber", e);
+              }}
+              inputComponent={TextField}
+              variant="filled"
+              label="Phone Number:"
+              error={
+                formik.errors.phoneNumber && formik.touched.phoneNumber
+                  ? true
+                  : false
+              }
+              helperText={
+                formik.errors.phoneNumber && formik.touched.phoneNumber
+                  ? formik.errors.phoneNumber
+                  : ""
+              }
+              placeholder="Enter phone number"
+            />
+            <PhoneInputWithCountrySelect
+              international
+              countryCallingCodeEditable={false}
+              defaultCountry="RW"
+              className="w-full"
+              value={formik.values.whatsAppNumber}
+              onChange={(e: any) => {
+                formik.setFieldValue("whatsAppNumber", e);
+              }}
+              inputComponent={TextField}
+              variant="filled"
+              label="WhatsApp Number:"
+              error={
+                formik.errors.whatsAppNumber && formik.touched.whatsAppNumber
+                  ? true
+                  : false
+              }
+              helperText={
+                formik.errors.whatsAppNumber && formik.touched.whatsAppNumber
+                  ? formik.errors.whatsAppNumber
+                  : ""
+              }
+              placeholder="Enter WhatsApp number"
+            />
+            <FormControl
+              variant="filled"
+              error={
+                formik.errors.gender && formik.touched.gender ? true : false
+              }
+              sx={{ minWidth: 120, width: "100%" }}
+            >
+              <InputLabel id="gender">Gender</InputLabel>
+              <Select
+                labelId="gender-label"
+                id="gender"
+                value={formik.values.gender}
+                onChange={(e) => formik.setFieldValue("gender", e.target.value)}
+              >
+                {genders.map((gen: gender) => (
+                  <MenuItem key={gen?.id} value={gen}>
+                    {gen?.name}
+                  </MenuItem>
+                ))}
+              </Select>
+              {formik.errors.gender && formik.touched.gender && (
+                <FormHelperText>{formik.errors.gender}</FormHelperText>
+              )}
+            </FormControl>
+            <FormControl
+              variant="filled"
+              error={
+                formik.errors.residentCountryId &&
+                formik.touched.residentCountryId
+                  ? true
+                  : false
+              }
+              sx={{ minWidth: 120, width: "100%" }}
+            >
+              <InputLabel id="gender">Resident Country</InputLabel>
+              <Select
+                labelId="country-label"
+                id="country"
+                value={formik.values.residentCountryId}
+                onChange={(e) => {
+                  formik.setFieldValue("residentCountryId", e.target.value);
+                  setCountry(e.target.value.id);
+                }}
+              >
+                {countries.map((item: Country) => (
+                  <MenuItem key={item?.id} value={item}>
+                    {item?.name}
+                  </MenuItem>
+                ))}
+              </Select>
+              {formik.errors.residentCountryId &&
+                formik.touched.residentCountryId && (
+                  <FormHelperText>
+                    {formik.errors.residentCountryId}
+                  </FormHelperText>
+                )}
+            </FormControl>
+            {formik.values.residentCountryId.id !== "RW" && (
+              <FormControl
+                variant="filled"
+                error={
+                  formik.errors.state && formik.touched.state ? true : false
+                }
+                sx={{ minWidth: 120, width: "100%" }}
+              >
+                <InputLabel>State</InputLabel>
+                <Select
+                  labelId="state-label"
+                  value={formik.values.state}
+                  onChange={(e) => {
+                    formik.setFieldValue("state", e.value);
+                  }}
+                >
+                  {states.map((item: State) => (
+                    <MenuItem key={item?.id} value={item}>
+                      {item?.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+                {formik.errors.state && formik.touched.state && (
+                  <FormHelperText>{formik.errors.state}</FormHelperText>
+                )}
+              </FormControl>
+            )}
+            {formik.values.residentCountryId.id === "RW" && (
+              <FormControl
+                variant="filled"
+                error={
+                  formik.errors.districtName && formik.touched.districtName
+                    ? true
+                    : false
+                }
+                sx={{ minWidth: 120, width: "100%" }}
+              >
+                <InputLabel>District</InputLabel>
+                <Select
+                  labelId="district-label"
+                  value={formik.values.districtName}
+                  onChange={(e) => {
+                    setSelectedDistrict(e.value.name);
+                    formik.setFieldValue("districtName", e.value);
+                    formik.setFieldValue("sectorId", "");
+                  }}
+                >
+                  {districts.map((item: residentDistrict) => (
+                    <MenuItem key={item?.id} value={item}>
+                      {item?.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+                {formik.errors.districtName && formik.touched.districtName && (
+                  <FormHelperText>{formik.errors.districtName}</FormHelperText>
+                )}
+              </FormControl>
+            )}
+            {formik.values.residentCountryId.id === "RW" && (
+              <FormControl
+                variant="filled"
+                error={
+                  formik.errors.sectorId && formik.touched.sectorId
+                    ? true
+                    : false
+                }
+                sx={{ minWidth: 120, width: "100%" }}
+              >
+                <InputLabel>Sector</InputLabel>
+                <Select
+                  labelId="sector-label"
+                  value={formik.values.sectorId}
+                  onChange={(e) =>
+                    formik.setFieldValue("sectorId", e.target.value)
+                  }
+                >
+                  {sectors.map((item: residentSector) => (
+                    <MenuItem key={item?.id} value={item}>
+                      {item?.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+                {formik.errors.sectorId && formik.touched.sectorId && (
+                  <FormHelperText>{formik.errors.sectorId}</FormHelperText>
+                )}
+              </FormControl>
+            )}
+
+            <FormControl
+              variant="filled"
+              error={
+                formik.errors.cohortId && formik.touched.cohortId ? true : false
+              }
+              sx={{ minWidth: 120, width: "100%" }}
+            >
+              <InputLabel>Cohort</InputLabel>
+              <Select
+                labelId="cohort-label"
+                value={formik.values.cohortId}
+                onChange={(e) =>
+                  formik.setFieldValue("cohortId", e.target.value)
+                }
+              >
+                {cohorts.map((item: cohort) => (
+                  <MenuItem key={item?.id} value={item}>
+                    {item?.name}
+                  </MenuItem>
+                ))}
+              </Select>
+              {formik.errors.cohortId && formik.touched.cohortId && (
+                <FormHelperText>{formik.errors.cohortId}</FormHelperText>
+              )}
+            </FormControl>
+            <FormControl
+              variant="filled"
+              error={formik.errors.track && formik.touched.track ? true : false}
+              sx={{ minWidth: 120, width: "100%" }}
+            >
+              <InputLabel>Track</InputLabel>
+              <Select
+                labelId="track-label"
+                value={formik.values.track}
+                onChange={(e) => formik.setFieldValue("track", e.target.value)}
+              >
+                {tracks.map((item: Track) => (
+                  <MenuItem key={item?.id} value={item}>
+                    {item?.name}
+                  </MenuItem>
+                ))}
+              </Select>
+              {formik.errors.track && formik.touched.track && (
+                <FormHelperText>{formik.errors.track}</FormHelperText>
+              )}
+            </FormControl>
+            <TextField
+              label="Nearest Landmark:"
+              variant="filled"
+              value={formik.values.nearlestLandmark}
+              onChange={(e) =>
+                formik.setFieldValue("nearestLandmark", e.target.value)
+              }
+              placeholder="What's the popular place near you?"
+              error={
+                formik.errors.nearlestLandmark &&
+                formik.touched.nearlestLandmark
+                  ? true
+                  : false
+              }
+              helperText={
+                formik.errors.nearlestLandmark &&
+                formik.touched.nearlestLandmark
+                  ? formik.errors.nearlestLandmark
+                  : ""
+              }
+            />
+            <TextField
+              label="LinkedIn Account:"
+              variant="filled"
+              value={formik.values.linkedin}
+              onChange={(e) => formik.setFieldValue("linkedin", e.target.value)}
+              placeholder="https://linkedin.com/in/..."
+              error={
+                formik.errors.linkedin && formik.touched.linkedin ? true : false
+              }
+              helperText={
+                formik.errors.linkedin && formik.touched.linkedin
+                  ? formik.errors.linkedin
+                  : ""
+              }
+            />
+            <TextField
+              label="X (Twitter) Account:"
+              variant="filled"
+              value={formik.values.twitter}
+              onChange={(e) => formik.setFieldValue("twitter", e.target.value)}
+              placeholder="https://x.com/..."
+              error={
+                formik.errors.twitter && formik.touched.twitter ? true : false
+              }
+              helperText={
+                formik.errors.twitter && formik.touched.twitter
+                  ? formik.errors.twitter
+                  : ""
+              }
+            />
+            <TextField
+              label="Instagram Account:"
+              variant="filled"
+              value={formik.values.instagram}
+              onChange={(e) =>
+                formik.setFieldValue("instagram", e.target.value)
+              }
+              placeholder="https://instagram.com/..."
+              error={
+                formik.errors.instagram && formik.touched.instagram
+                  ? true
+                  : false
+              }
+              helperText={
+                formik.errors.instagram && formik.touched.instagram
+                  ? formik.errors.instagram
+                  : ""
+              }
+            />
+            <TextField
+              label="Facebook Account:"
+              variant="filled"
+              value={formik.values.facebook}
+              onChange={(e) => formik.setFieldValue("facebook", e.target.value)}
+              placeholder="https://facebook.com/..."
+              error={
+                formik.errors.facebook && formik.touched.facebook ? true : false
+              }
+              helperText={
+                formik.errors.facebook && formik.touched.facebook
+                  ? formik.errors.facebook
+                  : ""
+              }
+            />
+          </div>
         </div>
-        <div className="p-5 text-justify">
+
+        {/* <div className="p-5 text-justify">
           <div className="my-5">
             <ul className="-mb-px flex items-center gap-4 text-sm font-medium">
               {tabs.map((tab, index) => (
@@ -1150,7 +1593,7 @@ function NewProfile() {
             </ul>
             <div className="mt-4">{tabs[activeTab].content}</div>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );

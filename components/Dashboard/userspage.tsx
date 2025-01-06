@@ -10,15 +10,17 @@ import {
 } from "@/lib/features/userSlice";
 import { User } from "@/types/user";
 import ConfirmModal from "../Other/confirmModal";
-import { BiDownload, BiEdit, BiMessage, BiUpload } from "react-icons/bi";
-import { CgAdd } from "react-icons/cg";
-import { BsEye } from "react-icons/bs";
-import { FiDelete } from "react-icons/fi";
 import { getUser } from "@/helpers/auth";
 import Loading from "@/app/loading";
 import FullScreenExport from "../Other/FullScreenExport";
 import { Menu } from "primereact/menu";
-import { Avatar, Button, ButtonGroup } from "@mui/material";
+import { Button, ButtonGroup } from "@mui/material";
+import { DataGrid, GridActionsCellItem } from "@mui/x-data-grid";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import EmailIcon from "@mui/icons-material/Email";
+import TopTitle from "../Other/TopTitle";
 
 const UsersPage = () => {
   const [searchText, setSearchText] = useState("");
@@ -114,6 +116,75 @@ const UsersPage = () => {
     return <Loading />;
   }
 
+  const columns = [
+    { field: "name", headerName: "Name", width: 200 },
+    { field: "email", headerName: "Email", width: 200 },
+    { field: "phone", headerName: "Phone Number", width: 150 },
+    { field: "gender", headerName: "Gender", width: 130 },
+    { field: "cohort", headerName: "Cohort", width: 70 },
+    { field: "track", headerName: "Track", width: 140 },
+    {
+      field: "actions",
+      type: "actions",
+      headerName: "Actions",
+      width: 150,
+      cellClassName: "actions",
+      getActions: ({ id }: { id: string }) => {
+        return [
+          <GridActionsCellItem
+            icon={<VisibilityIcon />}
+            label="View"
+            className="textPrimary"
+            onClick={() =>
+              (globalThis.location.href = "/dashboard/users/" + user.id)
+            }
+            color="inherit"
+          />,
+          <GridActionsCellItem
+            icon={<EditIcon />}
+            label="Edit"
+            className="textPrimary"
+            onClick={() =>
+              (globalThis.location.href = "update-profile/" + user.id)
+            }
+            color="inherit"
+          />,
+          <GridActionsCellItem
+            icon={<DeleteIcon />}
+            label="Delete"
+            onClick={async (e) => {
+              e.preventDefault();
+              setIdToDelete(user?.id);
+              setModal(true);
+            }}
+            color="inherit"
+          />,
+          <GridActionsCellItem
+            icon={<EmailIcon />}
+            label="Message"
+            onClick={async (e) => {
+              e.preventDefault();
+              globalThis.location.href = `/dashboard/chat/${user?.id}`;
+            }}
+            color="inherit"
+          />,
+        ];
+      },
+    },
+  ];
+
+  const rows = filteredUsers.map((user) => {
+    return {
+      id: user.id,
+      name: user?.firstName + " " + user?.lastName,
+      email: user.email,
+      phone: user.phoneNumber,
+      gender: user.genderName,
+      cohort: user.cohort.name,
+      track: user.track?.name,
+    };
+  });
+
   return (
     <div className="container mx-auto p-4">
       <FullScreenModal
@@ -137,6 +208,7 @@ const UsersPage = () => {
           action={handleDeleteUser}
         />
       )}
+      <TopTitle title="Members List" />
       <div className="flex justify-between items-center my-2">
         <SearchInput
           value={searchText}
@@ -174,102 +246,30 @@ const UsersPage = () => {
         )}
       </div>
       <div>
-        <table className="min-w-full bg-white border border-gray-200">
-          <thead>
-            <tr>
-              <th className="py-2 px-4 border-b">Picture</th>
-              <th className="py-2 px-4 border-b">Name</th>
-              {/* {isAdmin && <th className="py-2 px-4 border-b">Email</th>} */}
-              <th className="py-2 px-4 border-b">Phone</th>
-              <th className="py-2 px-4 border-b">Cohort</th>
-              <th className="py-2 px-4 border-b">Track</th>
-              {isAdmin && <th className="py-2 px-4 border-b">Gender</th>}
-              <th className="py-2 px-4 border-b">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredUsers.map((user) => (
-              <tr key={user.id}>
-                <td className="py-2 px-4 border-b text-center">
-                  <Avatar
-                    alt={user?.firstName + " " + user?.lastName}
-                    src={
-                      user?.profileImage?.link
-                        ? user?.profileImage?.link
-                        : user.firstName[0].toUpperCase()
-                    }
-                  />
-                </td>
-                <td className="py-2 px-4 border-b text-start">
-                  {user.firstName + " " + user.lastName}
-                </td>
-                {/* {isAdmin && (
-                  <td className="py-2 px-4 border-b text-start">
-                    {user.email}
-                  </td>
-                )} */}
-                <td className="py-2 px-4 border-b text-center">
-                  {user.phoneNumber}
-                </td>
-                <td className="py-2 px-4 border-b text-center">
-                  {user.cohort.name}
-                </td>
-                <td className="py-2 px-4 border-b text-center">
-                  {user.track?.name}
-                </td>
-                {isAdmin && (
-                  <td className="py-2 px-4 border-b text-center">
-                    {user.genderName}
-                  </td>
-                )}
-                <td className="py-2 px-4 flex items-center justify-center gap-1 mt-1 text-white">
-                  {isAdmin && (
-                    <button
-                      className=" bg-mainBlue text-xs p-1  rounded"
-                      onClick={() =>
-                        (globalThis.location.href =
-                          "/dashboard/users/" + user.id)
-                      }
-                    >
-                      <BsEye />
-                    </button>
-                  )}
-                  {isAdmin && (
-                    <button
-                      className=" bg-green-400 text-xs p-1 rounded"
-                      onClick={() =>
-                        (globalThis.location.href = "update-profile/" + user.id)
-                      }
-                    >
-                      <BiEdit />
-                    </button>
-                  )}
-                  {isAdmin && (
-                    <button
-                      className=" bg-red-600 text-xs p-1 rounded"
-                      onClick={async (e) => {
-                        e.preventDefault();
-                        setIdToDelete(user?.id);
-                        setModal(true);
-                      }}
-                    >
-                      <FiDelete />
-                    </button>
-                  )}
-                  <button
-                    className=" bg-gray-600 text-xs p-1 rounded"
-                    onClick={async (e) => {
-                      e.preventDefault();
-                      globalThis.location.href = `/dashboard/chat/${user?.id}`;
-                    }}
-                  >
-                    <BiMessage />
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <DataGrid
+          checkboxSelection
+          rows={rows}
+          columns={columns}
+          getRowClassName={(params) =>
+            params.indexRelativeToCurrentPage % 2 === 0 ? "even" : "odd"
+          }
+          initialState={{
+            pagination: { paginationModel: { pageSize: 20 } },
+          }}
+          sx={(theme) => ({
+            borderColor:
+              theme.palette.mode === "dark"
+                ? theme.palette.grey[700]
+                : theme.palette.grey[200],
+            "& .MuiDataGrid-cell": {
+              borderColor:
+                theme.palette.mode === "dark"
+                  ? theme.palette.grey[700]
+                  : theme.palette.grey[200],
+            },
+          })}
+          pageSizeOptions={[10, 20, 50, 100]}
+        />
       </div>
     </div>
   );
