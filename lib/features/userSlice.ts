@@ -42,6 +42,13 @@ export const usersSlices = createApi({
         body: credentials,
       }),
     }),
+    createUserProfile: builder.mutation({
+      query: (credentials) => ({
+        url: "users/profile",
+        method: "POST",
+        body: credentials,
+      }),
+    }),
     bulkAddUsers: builder.mutation({
       query: (credentials) => ({
         url: "users/bulk",
@@ -83,4 +90,5 @@ export const {
   useChangeMutation,
   useImportUsersMutation,
   useExportUsersMutation,
+  useCreateUserProfileMutation,
 } = usersSlices;

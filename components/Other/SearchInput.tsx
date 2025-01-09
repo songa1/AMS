@@ -1,7 +1,8 @@
 "use client";
 
+import { InputAdornment, TextField } from "@mui/material";
 import React from "react";
-import { BiSearch } from "react-icons/bi";
+import SearchIcon from "@mui/icons-material/Search";
 
 function SearchInput({
   value,
@@ -14,19 +15,22 @@ function SearchInput({
 }) {
   return (
     <div className="relative flex h-10 w-full max-w-[300px]">
-      <button
-        className="!absolute right-1 top-1 select-none rounded bg-mainBlue py-2 px-4 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md transition-all hover:shadow-md focus:shadow-lg active:shadow-md"
-        type="submit"
-        onClick={onSubmit}
-      >
-        <BiSearch />
-      </button>
-      <input
-        type="text"
+      <TextField
+        label="Search Members"
+        sx={{ width: "30ch" }}
         value={value}
         onChange={setValue}
-        className="h-full w-full rounded-md border border-mainBlue bg-transparent px-3 py-2.5 pr-20 text-sm font-normal outline-0 transition-all"
-        placeholder="Search"
+        placeholder="Type the name or email of member"
+        size="small"
+        slotProps={{
+          input: {
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon />
+              </InputAdornment>
+            ),
+          },
+        }}
       />
     </div>
   );

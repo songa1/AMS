@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import TopTitle from "../Other/TopTitle";
 import {
   Box,
@@ -23,6 +23,8 @@ const steps = [
 function NewProfile() {
   const [activeStep, setActiveStep] = React.useState(0);
   const [skipped, setSkipped] = React.useState(new Set<number>());
+
+  const [canMove, setCanMove] = useState(false);
 
   const isStepOptional = (step: number) => {
     return step === 1;
@@ -112,17 +114,17 @@ function NewProfile() {
             <React.Fragment>
               {activeStep === 0 && (
                 <div className="py-5">
-                  <AddPersonalInfo />
+                  <AddPersonalInfo canMove={setCanMove} />
                 </div>
               )}
               {activeStep === 1 && (
                 <div className="py-5">
-                  <AddFoundedInfo />
+                  <AddFoundedInfo canMove={setCanMove} />
                 </div>
               )}
               {activeStep === 2 && (
                 <div className="py-5">
-                  <AddEmployedInfo />
+                  <AddEmployedInfo canMove={setCanMove} />
                 </div>
               )}
               <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
@@ -140,7 +142,11 @@ function NewProfile() {
                     Skip
                   </Button>
                 )}
-                <Button onClick={handleNext} variant="contained">
+                <Button
+                  disabled={!canMove}
+                  onClick={handleNext}
+                  variant="contained"
+                >
                   {activeStep === steps.length - 1 ? "Finish" : "Next"}
                 </Button>
               </Box>

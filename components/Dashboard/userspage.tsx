@@ -21,6 +21,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import EmailIcon from "@mui/icons-material/Email";
 import TopTitle from "../Other/TopTitle";
+import PrintIcon from "@mui/icons-material/Print";
 
 const UsersPage = () => {
   const [searchText, setSearchText] = useState("");
@@ -230,7 +231,10 @@ const UsersPage = () => {
               >
                 Add
               </Button>
-              <Button onClick={(event: any) => menuRight.current.toggle(event)}>
+              <Button
+                onClick={(event: any) => menuRight.current.toggle(event)}
+                startIcon={<PrintIcon fontSize="inherit" />}
+              >
                 Export
               </Button>
             </ButtonGroup>

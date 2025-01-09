@@ -1,6 +1,7 @@
 "use strict";
 
 import {
+  Alert,
   Button,
   FormControl,
   FormHelperText,
@@ -30,7 +31,10 @@ import {
   useStatesByCountryQuery,
   useTracksQuery,
 } from "@/lib/features/otherSlice";
-import { useUploadPictureMutation } from "@/lib/features/userSlice";
+import {
+  useCreateUserProfileMutation,
+  useUploadPictureMutation,
+} from "@/lib/features/userSlice";
 import { getUser } from "@/helpers/auth";
 import * as Yup from "yup";
 import { useFormik } from "formik";
@@ -49,14 +53,17 @@ const VisuallyHiddenInput = styled("input")({
   width: 1,
 });
 
-function AddPersonalInfo() {
+function AddPersonalInfo({ canMove }: { canMove: any }) {
   const user = getUser();
+
   const [country, setCountry] = useState("");
   const [districts, setDistricts] = useState([]);
   const [states, setStates] = useState([]);
   const [sectors, setSectors] = useState([]);
-  const [selectedDistrict, setSelectedDistrict] = useState(null);
+  const [selectedDistrict, setSelectedDistrict] = useState("");
   const [countries, setCountries] = useState([]);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [imageData, setImageData] = useState<any>(null);
@@ -78,6 +85,8 @@ function AddPersonalInfo() {
   });
 
   const { data: TracksData } = useTracksQuery("");
+
+  const [createUserProfile] = useCreateUserProfileMutation();
 
   const [uploadPicture] = useUploadPictureMutation();
 
@@ -123,6 +132,15 @@ function AddPersonalInfo() {
     }
   }, [CountryData]);
 
+  useEffect(() => {
+    if (success || error) {
+      setInterval(() => {
+        setSuccess("");
+        setError("");
+      }, 10000);
+    }
+  }, [success, error]);
+
   const handlePreview = async (e: any) => {
     const file = e.target.files[0];
     if (file) {
@@ -145,20 +163,12 @@ function AddPersonalInfo() {
         const data = await uploadPicture(formData).unwrap();
 
         if (data?.image) {
-          toast.current.show({
-            severity: "info",
-            summary: "Success",
-            detail: "Image uploaded successfully!",
-          });
+          setSuccess("Image uploaded successfully!");
           formik.setFieldValue("profileImageId", data?.image?.id);
           setUploadSuccess(true);
         }
       } catch (error: any) {
-        toast.current.show({
-          severity: "error",
-          summary: "Error",
-          detail: error?.error,
-        });
+        setError(error?.error);
       }
     }
   };
@@ -184,23 +194,9 @@ function AddPersonalInfo() {
       track: "",
       cohortId: null,
       state: null,
-      initiativeName: "",
-      mainSector: "",
       foundedPosition: "",
       foundedDistrictName: "",
-      foundedSectorId: "",
-      foundedWebsite: "",
-      foundedCountry: "",
-      companyName: "",
-      companySector: "",
-      companyPosition: "",
-      companyWebsite: "",
-      companyDistrictName: "",
-      companySectorId: "",
-      companyCountry: "",
       profileImageId: "",
-      companyState: null,
-      foundedState: null,
     },
     validationSchema: Yup.object({
       bio: Yup.string().max(500, "Bio cannot exceed 500 characters"),
@@ -222,8 +218,6 @@ function AddPersonalInfo() {
         /^[0-9]+$/,
         "Phone number must be digits only"
       ),
-      districtName: Yup.string(),
-      sectorId: Yup.string(),
       whatsAppNumber: Yup.string().matches(
         /^[0-9]+$/,
         "WhatsApp number must be digits only"
@@ -234,99 +228,63 @@ function AddPersonalInfo() {
       ),
       track: Yup.string().required("Track is required"),
       cohortId: Yup.number().nullable(),
-      initiativeName: Yup.string(),
-      mainSector: Yup.string(),
-      foundedPosition: Yup.string(),
-      foundedDistrictName: Yup.string(),
-      foundedSectorId: Yup.string(),
-      foundedWebsite: Yup.string().url("Invalid website URL"),
-      foundedCountry: Yup.string(),
-      companyName: Yup.string(),
-      companySector: Yup.string(),
-      companyPosition: Yup.string(),
-      companyWebsite: Yup.string().url("Invalid website URL"),
-      companyDistrictName: Yup.string(),
-      companySectorId: Yup.string(),
-      companyCountry: Yup.string(),
       profileImageId: Yup.string(),
     }),
-    onSubmit: async (values) => {
-      // Being done in another function
-    },
+    onSubmit: async (values) => {},
   });
 
   const handleSubmit = async () => {
-    // const values: any = formik.values;
-    // try {
-    //   const res = await addUser({
-    //     user: {
-    //       firstName: values.firstName,
-    //       middleName: values.middleName,
-    //       lastName: values.lastName,
-    //       email: values.email,
-    //       linkedin: values?.linkedin,
-    //       instagram: values?.instagram,
-    //       twitter: values?.twitter,
-    //       facebook: values?.facebook,
-    //       bio: values?.bio,
-    //       phoneNumber: values.phoneNumber,
-    //       whatsappNumber: values.whatsAppNumber,
-    //       genderName: values.gender.name,
-    //       nearestLandmark: values.nearlestLandmark,
-    //       cohortId: values?.cohortId?.id,
-    //       trackId: values?.track?.id,
-    //       residentDistrictId: values?.districtName.id,
-    //       residentSectorId: values?.sectorId.id,
-    //       state: values?.state?.id,
-    //       residentCountryId: values?.residentCountryId.id,
-    //       positionInFounded: values?.foundedPosition,
-    //       positionInEmployed: values?.companyPosition,
-    //       profileImageId: values?.profileImageId,
-    //     },
-    //     organizationFounded: {
-    //       name: values?.initiativeName,
-    //       workingSector: values?.mainSector?.id,
-    //       countryId: values?.foundedCountry?.id,
-    //       state: values?.foundedState?.id,
-    //       districtId: values.foundedDistrictName.name,
-    //       sectorId: values?.foundedSectorId.id,
-    //       website: values?.foundedWebsite,
-    //     },
-    //     organizationEmployed: {
-    //       name: values?.companyName,
-    //       workingSector: values?.companySector?.id,
-    //       countryId: values?.companyCountry?.id,
-    //       state: values?.companyState?.id,
-    //       districtId: values?.companyDistrictName.name,
-    //       sectorId: values?.companySectorId.id,
-    //       website: values?.companyWebsite,
-    //     },
-    //   }).unwrap();
-    //   if (res.message) {
-    //     formik.resetForm();
-    //     setImagePreview(null);
-    //     setImageData(null);
-    //     setUploadSuccess(false);
-    //     if (formik.values.profileImageId)
-    //       formik.setFieldValue("profileImageId", "");
-    //     setSuccess("User added successfully!");
-    //   }
-    // } catch (error: any) {
-    //   console.log(error);
-    //   if (error?.status === 409) {
-    //     setError(error?.data?.error);
-    //   } else {
-    //     setError(
-    //       "Adding user Failed! Try again, or contact the administrator!"
-    //     );
-    //   }
-    // } finally {
-    //   setIsLoading(false);
-    // }
+    const values: any = formik.values;
+    try {
+      const res = await createUserProfile({
+        user: {
+          firstName: values.firstName,
+          middleName: values.middleName,
+          lastName: values.lastName,
+          email: values.email,
+          linkedin: values?.linkedin,
+          instagram: values?.instagram,
+          twitter: values?.twitter,
+          facebook: values?.facebook,
+          bio: values?.bio,
+          phoneNumber: values.phoneNumber,
+          whatsappNumber: values.whatsAppNumber,
+          genderName: values.gender.name,
+          nearestLandmark: values.nearlestLandmark,
+          cohortId: values?.cohortId?.id,
+          trackId: values?.track?.id,
+          residentDistrictId: values?.districtName,
+          residentSectorId: values?.sectorId.id,
+          state: values?.state?.id,
+          residentCountryId: values?.residentCountryId,
+          profileImageId: values?.profileImageId,
+        },
+      }).unwrap();
+      if (res.message) {
+        formik.resetForm();
+        setImagePreview(null);
+        setImageData(null);
+        setUploadSuccess(false);
+        if (formik.values.profileImageId)
+          formik.setFieldValue("profileImageId", "");
+        setSuccess("User added successfully!");
+        canMove(true);
+      }
+    } catch (error: any) {
+      if (error?.status === 409) {
+        setError(error?.data?.error);
+      } else {
+        setError(
+          "Adding user Failed! Try again, or contact the administrator!"
+        );
+      }
+    }
   };
 
   return (
     <div>
+      {success && <Alert severity="success">{success}</Alert>}
+      {error && <Alert severity="error">{error}</Alert>}
       <div className="relative">
         <div className="flex items-start justify-between p-2">
           <div>
@@ -465,7 +423,8 @@ function AddPersonalInfo() {
             className="w-full"
             value={formik.values.phoneNumber}
             onChange={(e: any) => {
-              formik.setFieldValue("phoneNumber", e);
+              console.log(e);
+              formik.setFieldValue("phoneNumber", e.target.value);
             }}
             inputComponent={TextField}
             variant="filled"
@@ -519,7 +478,7 @@ function AddPersonalInfo() {
               onChange={(e) => formik.setFieldValue("gender", e.target.value)}
             >
               {genders.map((gen: gender) => (
-                <MenuItem key={gen?.id} value={gen}>
+                <MenuItem key={gen?.id} value={gen.id}>
                   {gen?.name}
                 </MenuItem>
               ))}
@@ -545,11 +504,12 @@ function AddPersonalInfo() {
               value={formik.values.residentCountryId}
               onChange={(e) => {
                 formik.setFieldValue("residentCountryId", e.target.value);
-                setCountry(e.target.value.id);
+                setCountry(e.target.value);
+                console.log(country);
               }}
             >
               {countries.map((item: Country) => (
-                <MenuItem key={item?.id} value={item}>
+                <MenuItem key={item?.id} value={item.id}>
                   {item?.name}
                 </MenuItem>
               ))}
@@ -561,7 +521,7 @@ function AddPersonalInfo() {
                 </FormHelperText>
               )}
           </FormControl>
-          {formik.values.residentCountryId.id !== "RW" && (
+          {formik.values.residentCountryId !== "RW" && (
             <FormControl
               variant="filled"
               error={formik.errors.state && formik.touched.state ? true : false}
@@ -572,11 +532,12 @@ function AddPersonalInfo() {
                 labelId="state-label"
                 value={formik.values.state}
                 onChange={(e) => {
-                  formik.setFieldValue("state", e.value);
+                  console.log(e);
+                  formik.setFieldValue("state", e.target.value);
                 }}
               >
                 {states.map((item: State) => (
-                  <MenuItem key={item?.id} value={item}>
+                  <MenuItem key={item?.id} value={item.id}>
                     {item?.name}
                   </MenuItem>
                 ))}
@@ -586,7 +547,7 @@ function AddPersonalInfo() {
               )}
             </FormControl>
           )}
-          {formik.values.residentCountryId.id === "RW" && (
+          {formik.values.residentCountryId === "RW" && (
             <FormControl
               variant="filled"
               error={
@@ -601,13 +562,13 @@ function AddPersonalInfo() {
                 labelId="district-label"
                 value={formik.values.districtName}
                 onChange={(e) => {
-                  setSelectedDistrict(e.value.name);
-                  formik.setFieldValue("districtName", e.value);
+                  setSelectedDistrict(e.target.value);
+                  formik.setFieldValue("districtName", e.target.value);
                   formik.setFieldValue("sectorId", "");
                 }}
               >
                 {districts.map((item: residentDistrict) => (
-                  <MenuItem key={item?.id} value={item}>
+                  <MenuItem key={item?.id} value={item.name}>
                     {item?.name}
                   </MenuItem>
                 ))}
@@ -617,7 +578,7 @@ function AddPersonalInfo() {
               )}
             </FormControl>
           )}
-          {formik.values.residentCountryId.id === "RW" && (
+          {formik.values.residentCountryId === "RW" && (
             <FormControl
               variant="filled"
               error={
@@ -634,7 +595,7 @@ function AddPersonalInfo() {
                 }
               >
                 {sectors.map((item: residentSector) => (
-                  <MenuItem key={item?.id} value={item}>
+                  <MenuItem key={item?.id} value={item.id}>
                     {item?.name}
                   </MenuItem>
                 ))}
@@ -659,7 +620,7 @@ function AddPersonalInfo() {
               onChange={(e) => formik.setFieldValue("cohortId", e.target.value)}
             >
               {cohorts.map((item: cohort) => (
-                <MenuItem key={item?.id} value={item}>
+                <MenuItem key={item?.id} value={item.id}>
                   {item?.name}
                 </MenuItem>
               ))}
@@ -680,7 +641,7 @@ function AddPersonalInfo() {
               onChange={(e) => formik.setFieldValue("track", e.target.value)}
             >
               {tracks.map((item: Track) => (
-                <MenuItem key={item?.id} value={item}>
+                <MenuItem key={item?.id} value={item.id}>
                   {item?.name}
                 </MenuItem>
               ))}
@@ -694,7 +655,7 @@ function AddPersonalInfo() {
             variant="filled"
             value={formik.values.nearlestLandmark}
             onChange={(e) =>
-              formik.setFieldValue("nearestLandmark", e.target.value)
+              formik.setFieldValue("nearlestLandmark", e.target.value)
             }
             placeholder="What's the popular place near you?"
             error={

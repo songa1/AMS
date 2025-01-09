@@ -5,6 +5,7 @@ import { otherSlices } from "./features/otherSlice";
 import { chatSlices } from "./features/chatSlice";
 import { notificationSlices } from "./features/notificationSlice";
 import { statSlice } from "./features/statsSlice";
+import { orgsSlices } from "./features/orgSlice";
 
 export const makeStore = () => {
   return configureStore({
@@ -15,6 +16,7 @@ export const makeStore = () => {
       [chatSlices.reducerPath]: chatSlices.reducer,
       [notificationSlices.reducerPath]: notificationSlices.reducer,
       [statSlice.reducerPath]: statSlice.reducer,
+      [orgsSlices.reducerPath]: orgsSlices.reducer,
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware().concat([
@@ -24,6 +26,7 @@ export const makeStore = () => {
         chatSlices.middleware,
         notificationSlices.middleware,
         statSlice.middleware,
+        orgsSlices.middleware,
       ]),
   });
 };

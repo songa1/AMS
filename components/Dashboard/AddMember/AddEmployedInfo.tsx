@@ -25,7 +25,7 @@ import {
   WorkingSector,
 } from "@/types/user";
 
-function AddEmployedInfo(props) {
+function AddEmployedInfo({ canMove }: { canMove: any }) {
   const [employedCountry, setEmployedCountry] = useState("");
   const [employedStates, setEmployedStates] = useState([]);
   const [countriesEmployed, setCountriesEmployed] = useState([]);
