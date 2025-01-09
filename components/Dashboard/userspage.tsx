@@ -15,7 +15,7 @@ import Loading from "@/app/loading";
 import FullScreenExport from "../Other/FullScreenExport";
 import { Menu } from "primereact/menu";
 import { Button, ButtonGroup } from "@mui/material";
-import { DataGrid, GridActionsCellItem } from "@mui/x-data-grid";
+import { DataGrid, GridActionsCellItem, GridColDef, GridRowParams } from "@mui/x-data-grid";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import VisibilityIcon from "@mui/icons-material/Visibility";
@@ -117,7 +117,7 @@ const UsersPage = () => {
     return <Loading />;
   }
 
-  const columns = [
+  const columns: GridColDef[] = [
     { field: "name", headerName: "Name", width: 200 },
     { field: "email", headerName: "Email", width: 200 },
     { field: "phone", headerName: "Phone Number", width: 150 },
@@ -130,7 +130,8 @@ const UsersPage = () => {
       headerName: "Actions",
       width: 150,
       cellClassName: "actions",
-      getActions: ({ id }: { id: string }) => {
+      getActions: (params: GridRowParams<any>) => {
+        const id = params.id;
         return [
           <GridActionsCellItem
             icon={<VisibilityIcon />}
@@ -140,6 +141,7 @@ const UsersPage = () => {
               (globalThis.location.href = "/dashboard/users/" + user.id)
             }
             color="inherit"
+            key="view"
           />,
           <GridActionsCellItem
             icon={<EditIcon />}
@@ -149,6 +151,7 @@ const UsersPage = () => {
               (globalThis.location.href = "update-profile/" + user.id)
             }
             color="inherit"
+            key="edit"
           />,
           <GridActionsCellItem
             icon={<DeleteIcon />}
@@ -159,6 +162,7 @@ const UsersPage = () => {
               setModal(true);
             }}
             color="inherit"
+            key="delete"
           />,
           <GridActionsCellItem
             icon={<EmailIcon />}
@@ -168,6 +172,7 @@ const UsersPage = () => {
               globalThis.location.href = `/dashboard/chat/${user?.id}`;
             }}
             color="inherit"
+            key="message"
           />,
         ];
       },

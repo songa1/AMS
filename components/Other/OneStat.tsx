@@ -1,9 +1,7 @@
 "use client";
 
 import { Card, CardActionArea, CardContent, Typography } from "@mui/material";
-import Link from "next/link";
 import React from "react";
-import { BsEye } from "react-icons/bs";
 
 function OneStat({
   title,
@@ -44,7 +42,7 @@ function OneStat({
             >
               {numbers}
             </Typography>
-            <Typography variant="p">{title}</Typography>
+            <Typography variant="body1">{title}</Typography>
           </div>
         </CardContent>
       </CardActionArea>
