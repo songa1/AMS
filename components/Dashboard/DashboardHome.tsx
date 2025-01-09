@@ -7,37 +7,69 @@ import { MdOutlinePending } from "react-icons/md";
 import { FaMessage } from "react-icons/fa6";
 import { useStatsQuery } from "@/lib/features/statsSlice";
 import Loading from "@/app/loading";
+import { Box } from "@mui/material";
+import GroupIcon from "@mui/icons-material/Group";
+import CorporateFareIcon from "@mui/icons-material/CorporateFare";
+import MessageIcon from "@mui/icons-material/Message";
+import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
+import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 
 function DashboardHome() {
   const { data: StatsData, isLoading } = useStatsQuery("");
   const stats = [
     {
       id: 1,
-      icon: <BiUser className="text-mainBlue" size={30} />,
+      icon: (
+        <GroupIcon color="primary" sx={{ width: "70px", height: "70px" }} />
+      ),
       number: StatsData?.users,
       title: "Users",
       link: "/dashboard/users",
     },
     {
       id: 2,
-      icon: <BiEnvelope className="text-mainBlue" size={30} />,
-      number: StatsData?.messages,
-      title: "Messages",
-      link: "/dashboard/chat",
+      icon: (
+        <CorporateFareIcon
+          color="primary"
+          sx={{ width: "70px", height: "70px" }}
+        />
+      ),
+      number: StatsData?.organizations,
+      title: "Organizations",
+      link: "#",
     },
     {
       id: 3,
-      icon: <MdOutlinePending className="text-mainBlue" size={30} />,
+      icon: (
+        <NotificationsActiveIcon
+          color="primary"
+          sx={{ width: "70px", height: "70px" }}
+        />
+      ),
       number: StatsData?.notificationsUnopened,
-      title: "Pending Updates",
+      title: "Pending Notifications",
       link: "#",
     },
     {
       id: 4,
-      icon: <BiNotification className="text-mainBlue" size={30} />,
+      icon: (
+        <NotificationsNoneIcon
+          color="primary"
+          sx={{ width: "70px", height: "70px" }}
+        />
+      ),
       number: StatsData?.sentNotifications,
-      title: "Notifications",
+      title: "All Notifications",
       link: "/dashboard/notifications",
+    },
+    {
+      id: 5,
+      icon: (
+        <MessageIcon color="primary" sx={{ width: "70px", height: "70px" }} />
+      ),
+      number: StatsData?.messages,
+      title: "All Messages sent",
+      link: "#",
     },
   ];
 
@@ -46,20 +78,25 @@ function DashboardHome() {
   }
 
   return (
-    <div>
-      <div className="grid justify-between items-center gap-5 md:grid-cols-4 sm:grid-cols-3 xs:grid-cols-1">
-        {stats &&
-          stats.map((stat) => (
-            <OneStat
-              link={stat.link}
-              icon={stat.icon}
-              title={stat.title}
-              numbers={stat.number}
-              key={stat.id}
-            />
-          ))}
-      </div>
-    </div>
+    <Box
+      sx={{
+        width: "100%",
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fill, minmax(min(200px, 100%), 1fr))",
+        gap: 2,
+      }}
+    >
+      {stats &&
+        stats.map((stat) => (
+          <OneStat
+            link={stat.link}
+            icon={stat.icon}
+            title={stat.title}
+            numbers={stat.number}
+            key={stat.id}
+          />
+        ))}
+    </Box>
   );
 }
 

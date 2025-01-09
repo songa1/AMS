@@ -1,5 +1,6 @@
 "use client";
 
+import { Card, CardActionArea, CardContent, Typography } from "@mui/material";
 import Link from "next/link";
 import React from "react";
 import { BsEye } from "react-icons/bs";
@@ -16,15 +17,38 @@ function OneStat({
   link: string;
 }) {
   return (
-    <Link href={link}>
-      <div className="bg-white rounded shadow p-10 flex flex-col items-center justify-center text-center gap-3 cursor-pointer">
-        <div className="bg-blue-100 p-5 rounded-full">{icon}</div>
-        <div>
-          <h1 className="font-black text-3xl text-mainBlue">{numbers}</h1>
-          <p className="text-gray-600">{title}</p>
-        </div>
-      </div>
-    </Link>
+    <Card>
+      <CardActionArea
+        sx={{
+          height: "100%",
+          "&[data-active]": {
+            backgroundColor: "action.selected",
+            "&:hover": {
+              backgroundColor: "action.selectedHover",
+            },
+          },
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          textAlign: "center",
+        }}
+      >
+        <CardContent sx={{ height: "100%" }}>
+          {icon}
+          <div>
+            <Typography
+              color="primary"
+              variant="h3"
+              component="div"
+              fontWeight={800}
+            >
+              {numbers}
+            </Typography>
+            <Typography variant="p">{title}</Typography>
+          </div>
+        </CardContent>
+      </CardActionArea>
+    </Card>
   );
 }
 
