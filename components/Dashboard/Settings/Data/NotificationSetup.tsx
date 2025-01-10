@@ -10,8 +10,8 @@ import {
   useNotSetupsQuery,
   useUpdateSetupMutation,
 } from "@/lib/features/notificationSlice";
-import Button from "../../../Other/Button";
 import dynamic from "next/dynamic";
+import { Button } from "@mui/material";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
@@ -177,7 +177,9 @@ function NotificationSetup() {
                     }`
                   : "No notification selected!"}
               </div>
-              <Button title="Save" onClick={formik.handleSubmit} />
+              {/* <Button color="primary" onClick={formik.handleSubmit}>
+                Save
+              </Button> */}
             </div>
           </div>
           <div className="p-5">
