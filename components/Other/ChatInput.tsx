@@ -1,7 +1,8 @@
 "use client";
 
+import { IconButton, InputAdornment, TextField } from "@mui/material";
 import React from "react";
-import { BiSend } from "react-icons/bi";
+import SendIcon from "@mui/icons-material/Send";
 
 function ChatInput({
   value,
@@ -13,23 +14,30 @@ function ChatInput({
   onSubmit: any;
 }) {
   return (
-    <div className="relative flex h-10 w-full min-w-[200px]">
-      <button
-        className="!absolute right-1 top-1 select-none rounded bg-mainBlue py-2 px-4 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md transition-all hover:shadow-md focus:shadow-lg active:shadow-md"
-        type="submit"
-        onClick={(e) => {
-          e.preventDefault();
-          onSubmit();
-        }}
-      >
-        <BiSend />
-      </button>
-      <input
-        type="text"
+    <div className="relative w-full min-w-[200px]">
+      <TextField
         value={value}
         onChange={setValue}
-        className="h-full w-full rounded-md border border-mainBlue bg-transparent px-3 py-2.5 pr-20 text-sm font-normal outline-0 transition-all"
+        label="Type your message here"
+        className="w-full"
         placeholder="Enter your message"
+        variant="filled"
+        slotProps={{
+          input: {
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onSubmit();
+                  }}
+                >
+                  <SendIcon />
+                </IconButton>
+              </InputAdornment>
+            ),
+          },
+        }}
       />
     </div>
   );

@@ -6,7 +6,6 @@ import { User } from "@/types/user";
 
 import Loading from "@/app/loading";
 import { getUser } from "@/helpers/auth";
-import DisplayField from "../Other/DisplayField";
 import Link from "next/link";
 import {
   useChangeMutation,
@@ -16,168 +15,20 @@ import { Toast } from "primereact/toast";
 import ConfirmModal from "../Other/confirmModal";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { Button, Chip } from "@mui/material";
-
-const Personal = ({ user }: { user: User | null }) => {
-  return (
-    <div className="grid grid-cols-2 gap-3">
-      <div className="field">
-        <label>Email:</label>
-        <DisplayField text={user?.email} />
-      </div>
-      <div className="field">
-        <label>Phone Number:</label>
-        <DisplayField text={user?.phoneNumber} />
-      </div>
-      <div className="field">
-        <label>WhatsApp Number:</label>
-        <DisplayField text={user?.whatsappNumber} />
-      </div>
-      <div className="field">
-        <label>Gender:</label>
-        <DisplayField text={user?.genderName} />
-      </div>
-      <div className="field">
-        <label>Resident Country:</label>
-        <DisplayField text={user?.residentCountry?.name} />
-      </div>
-      {user?.residentCountry && user?.residentCountry?.id === "rwanda" && (
-        <div className="field">
-          <label>Resident District:</label>
-          <DisplayField text={user?.residentDistrict?.name} />
-        </div>
-      )}
-      {user?.residentCountry && user?.residentCountry?.id === "rwanda" && (
-        <div className="field">
-          <label>Resident Sector:</label>
-          <DisplayField text={user?.residentSector?.name} />
-        </div>
-      )}
-      <div className="field">
-        <label>Cohort:</label>
-        <DisplayField text={user?.cohort?.name} />
-      </div>
-      <div className="field">
-        <label>Nearest Landmark:</label>
-        <DisplayField
-          text={user?.nearestLandmark ? user?.nearestLandmark : ""}
-        />
-      </div>
-      <div className="field">
-        <label>Track:</label>
-        <DisplayField text={user?.track ? user?.track?.name : ""} />
-      </div>
-      <div className="field">
-        <label>Facebook Account:</label>
-        <DisplayField text={user?.facebook ? user?.facebook : "--"} />
-      </div>
-      <div className="field">
-        <label>Instagram Account:</label>
-        <DisplayField text={user?.instagram ? user?.instagram : "--"} />
-      </div>
-      <div className="field">
-        <label>LinkedIn Account:</label>
-        <DisplayField text={user?.linkedin ? user?.linkedin : "--"} />
-      </div>
-      <div className="field">
-        <label>Twitter Account:</label>
-        <DisplayField text={user?.twitter ? user?.twitter : "--"} />
-      </div>
-    </div>
-  );
-};
-
-const Founded = ({ user }: { user: User | null }) => (
-  <div className="grid grid-cols-2 gap-3">
-    <div className="field">
-      <label>Your Initiative Name:</label>
-      <DisplayField text={user?.organizationFounded?.name} />
-    </div>
-    <div className="field">
-      <label>Main Sector:</label>
-      <DisplayField text={user?.organizationFounded?.workingSector?.name} />
-    </div>
-    <div className="field">
-      <label>Your Position:</label>
-      <DisplayField
-        text={user?.positionInFounded ? user?.positionInFounded : ""}
-      />
-    </div>
-    <div className="field">
-      <label>Website:</label>
-      <DisplayField text={user?.organizationFounded?.website} />
-    </div>
-    <div className="field">
-      <label>Country:</label>
-      <DisplayField text={user?.organizationFounded?.district?.name} />
-    </div>
-    {user?.organizationFounded &&
-      user?.organizationFounded?.country?.name == "rwanda" && (
-        <div className="field">
-          <label>District:</label>
-          <DisplayField text={user?.organizationFounded?.district?.name} />
-        </div>
-      )}
-    {user?.organizationFounded &&
-      user?.organizationFounded?.country?.name == "rwanda" && (
-        <div className="field">
-          <label>Sector:</label>
-          <DisplayField text={user?.organizationFounded?.sector?.name} />
-        </div>
-      )}
-  </div>
-);
-
-const Employment = ({ user }: { user: User | null }) => (
-  <div className="grid grid-cols-2 gap-3">
-    <div className="field">
-      <label>Company Name:</label>
-      <DisplayField text={user?.organizationEmployed?.name} />
-    </div>
-    <div className="field">
-      <label>Company Sector:</label>
-      <DisplayField text={user?.organizationEmployed?.workingSector?.name} />
-    </div>
-    <div className="field">
-      <label>Your Position:</label>
-      <DisplayField text={user?.positionInEmployed || ""} />
-    </div>
-    <div className="field">
-      <label>Website:</label>
-      <DisplayField text={user?.organizationEmployed?.website} />
-    </div>
-    <div className="field">
-      <label>Country:</label>
-      <DisplayField text={user?.organizationEmployed?.country?.name} />
-    </div>
-    {user?.organizationEmployed &&
-      user?.organizationEmployed?.country?.id == "rwanda" && (
-        <div className="field">
-          <label>District:</label>
-          <DisplayField text={user?.organizationEmployed?.district?.name} />
-        </div>
-      )}
-    {user?.organizationEmployed &&
-      user?.organizationEmployed?.country?.name == "rwanda" && (
-        <div className="field">
-          <label>Sector:</label>
-          <DisplayField text={user?.organizationEmployed?.district?.name} />
-        </div>
-      )}
-  </div>
-);
+import { Box, Button, Chip, TextField, Typography } from "@mui/material";
+import TopTitle from "../Other/TopTitle";
 
 function ProfilePage() {
   dayjs.extend(relativeTime);
   const { id } = useParams();
   const toast: any = useRef(null);
-  const [activeTab, setActiveTab] = useState(0);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [roleModal, setRoleModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [userData, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(false);
+  const [edit, setEdit] = useState(false);
 
   const userProfile = useGetOneUserQuery(id || userData?.id);
   const [change] = useChangeMutation();
@@ -193,25 +44,6 @@ function ProfilePage() {
   useEffect(() => {
     getUserData();
   }, []);
-
-  const handleTabClick = (index: number) => {
-    setActiveTab(index);
-  };
-
-  const tabs = [
-    {
-      label: "Personal",
-      content: <Personal user={user} />,
-    },
-    {
-      label: "Your Initiative",
-      content: <Founded user={user} />,
-    },
-    {
-      label: "Employment",
-      content: <Employment user={user} />,
-    },
-  ];
 
   if (isLoading || !user) {
     return <Loading />;
@@ -266,7 +98,7 @@ function ProfilePage() {
         />
       )}
       <div className="w-full">
-        <div className="flex gap-3 items-center">
+        <Box className="flex gap-3 items-center">
           <img
             src={`${
               user?.profileImage?.link
@@ -276,7 +108,7 @@ function ProfilePage() {
             className="w-48 h-48 object-cover rounded-full"
           />
           <div className="flex flex-col gap-3">
-            <h2 className="font-bold text-2xl">
+            <Typography variant="h5" fontWeight={700}>
               {user
                 ? `${user?.firstName || ""} ${user?.middleName || ""} ${
                     user?.lastName || ""
@@ -290,8 +122,8 @@ function ProfilePage() {
                 size="small"
                 variant="outlined"
               />
-            </h2>
-            <p>{user?.bio}</p>
+            </Typography>
+            <Typography variant="body1">{user?.bio}</Typography>
             <p className="text-gray-500 text-xs">
               Profile created at {dayjs(user?.createdAt).format("DD MMM YYYY")},
               Last updated {dayjs(user?.updatedAt).fromNow()}
@@ -308,7 +140,7 @@ function ProfilePage() {
               </Button>
             </Link>
           </div>
-        </div>
+        </Box>
         {error && (
           <p className="bg-red-500 text-white rounded-md text-center p-2 w-full my-3">
             {error}
@@ -319,32 +151,254 @@ function ProfilePage() {
             {success}
           </p>
         )}
-        <div className="p-5 text-justify">
-          <div className="my-2">
-            <ul className="-mb-px flex items-center gap-4 text-sm font-medium">
-              {tabs.map((tab, index) => (
-                <li
-                  key={index}
-                  className={`flex-1 ${
-                    index === activeTab
-                      ? "border-b border-blue-700 cursor-pointer"
-                      : "cursor-pointer"
-                  }`}
-                  onClick={() => handleTabClick(index)}
-                >
-                  <a
-                    className={`relative flex items-center justify-center gap-2 px-1 py-3 text-gray-500 hover:text-blue-700 font-bold ${
-                      index === activeTab ? "text-blue-700" : ""
-                    }`}
-                  >
-                    {tab.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-            <div className="mt-4">{tabs[activeTab].content}</div>
-          </div>
-        </div>
+        <Box
+          sx={{
+            width: "100%",
+            display: "grid",
+            gridTemplateColumns: {
+              xs: "1fr",
+              sm: "repeat(2, 1fr)",
+            },
+            gap: 2,
+            paddingTop: "30px",
+          }}
+        >
+          <TextField label="Email" value={user?.email} disabled={!edit} />
+          <TextField
+            value={user?.phoneNumber}
+            label="Phone Number"
+            disabled={!edit}
+          />
+          <TextField
+            label="WhatsApp Number"
+            value={user?.whatsappNumber}
+            disabled={!edit}
+          />
+          <TextField
+            value={user?.genderName ? user?.genderName : "--"}
+            label="Gender"
+            disabled={!edit}
+          />
+
+          <TextField
+            label="Resident Country"
+            value={
+              user?.residentCountry?.name ? user?.residentCountry?.name : "--"
+            }
+            disabled={!edit}
+          />
+          {user?.residentCountry && user?.residentCountry?.id === "RW" && (
+            <TextField
+              label="Resident District"
+              value={
+                user?.residentDistrict?.name
+                  ? user?.residentDistrict?.name
+                  : "--"
+              }
+              disabled={!edit}
+            />
+          )}
+          {user?.residentCountry && user?.residentCountry?.id === "RW" && (
+            <TextField
+              label="Resident Sector"
+              value={
+                user?.residentSector?.name ? user?.residentSector?.name : "--"
+              }
+              disabled={!edit}
+            />
+          )}
+          <TextField
+            label="Cohort"
+            value={user?.cohort?.name ? user?.cohort?.name : "--"}
+            disabled={!edit}
+          />
+
+          <TextField
+            label="Nearest Landmark"
+            value={user?.nearestLandmark ? user?.nearestLandmark : "--"}
+            disabled={!edit}
+          />
+          <TextField
+            label="Track"
+            value={user?.track ? user?.track?.name : "--"}
+            disabled={!edit}
+          />
+          <TextField
+            label="Facebook Account"
+            value={user?.facebook ? user?.facebook : "--"}
+            disabled={!edit}
+          />
+          <TextField
+            label="Instagram Account"
+            value={user?.instagram ? user?.instagram : "--"}
+            disabled={!edit}
+          />
+          <TextField
+            label="LinkedIn Account"
+            value={user?.linkedin ? user?.linkedin : "--"}
+            disabled={!edit}
+          />
+          <TextField
+            label="Twitter Account"
+            value={user?.twitter ? user?.twitter : "--"}
+            disabled={!edit}
+          />
+        </Box>
+        <TopTitle title="Organization I founded" />
+        <Box
+          sx={{
+            width: "100%",
+            display: "grid",
+            gridTemplateColumns: {
+              xs: "1fr",
+              sm: "repeat(2, 1fr)",
+            },
+            gap: 2,
+            paddingTop: "10px",
+          }}
+        >
+          <TextField
+            label="Initiative Name"
+            value={
+              user?.organizationFounded?.name
+                ? user?.organizationFounded?.name
+                : "--"
+            }
+            disabled={!edit}
+          />
+          <TextField
+            label="Main Sector"
+            value={
+              user?.organizationFounded?.workingSector?.name
+                ? user?.organizationFounded?.workingSector?.name
+                : "--"
+            }
+            disabled={!edit}
+          />
+          <TextField
+            value={user?.positionInFounded ? user?.positionInFounded : "--"}
+            label="Position"
+            disabled={!edit}
+          />
+          <TextField
+            disabled={!edit}
+            label="Website"
+            value={
+              user?.organizationFounded?.website
+                ? user?.organizationFounded?.website
+                : "--"
+            }
+          />
+          <TextField
+            label="Country"
+            value={
+              user?.organizationFounded?.district?.name
+                ? user?.organizationFounded?.district?.name
+                : "--"
+            }
+            disabled={!edit}
+          />
+          {user?.organizationFounded &&
+            user?.organizationFounded?.country?.id == "RW" && (
+              <TextField
+                value={
+                  user?.organizationFounded?.district?.name
+                    ? user?.organizationFounded?.district?.name
+                    : "--"
+                }
+                disabled={!edit}
+                label="District"
+              />
+            )}
+          {user?.organizationFounded &&
+            user?.organizationFounded?.country?.id == "RW" && (
+              <TextField
+                label="Sector"
+                disabled={!edit}
+                value={user?.organizationFounded?.sector?.name}
+              />
+            )}
+        </Box>
+        <TopTitle title="Organization I work for" />
+        <Box
+          sx={{
+            width: "100%",
+            display: "grid",
+            gridTemplateColumns: {
+              xs: "1fr",
+              sm: "repeat(2, 1fr)",
+            },
+            gap: 2,
+            paddingTop: "10px",
+          }}
+        >
+          <TextField
+            label="Company Name"
+            value={
+              user?.organizationEmployed?.name
+                ? user?.organizationEmployed?.name
+                : "--"
+            }
+            disabled={!edit}
+          />
+
+          <TextField
+            value={
+              user?.organizationEmployed?.workingSector?.name
+                ? user?.organizationEmployed?.workingSector?.name
+                : "--"
+            }
+            disabled={!edit}
+            label="Company Sector"
+          />
+          <TextField
+            value={user?.positionInEmployed ? user?.positionInEmployed : "--"}
+            disabled={!edit}
+            label="Position"
+          />
+          <TextField
+            value={
+              user?.organizationEmployed?.website
+                ? user?.organizationEmployed?.website
+                : "--"
+            }
+            disabled={!edit}
+            label="Website"
+          />
+          <TextField
+            value={
+              user?.organizationEmployed?.country?.name
+                ? user?.organizationEmployed?.country?.name
+                : "--"
+            }
+            disabled={!edit}
+            label="Country"
+          />
+          {user?.organizationEmployed &&
+            user?.organizationEmployed?.country?.id == "RW" && (
+              <TextField
+                value={
+                  user?.organizationEmployed?.district?.name
+                    ? user?.organizationEmployed?.district?.name
+                    : "--"
+                }
+                disabled={!edit}
+                label="District"
+              />
+            )}
+          {user?.organizationEmployed &&
+            user?.organizationEmployed?.country?.id == "RW" && (
+              <TextField
+                value={
+                  user?.organizationEmployed?.sector?.name
+                    ? user?.organizationEmployed?.sector?.name
+                    : "--"
+                }
+                disabled={!edit}
+                label="Sector"
+              />
+            )}
+        </Box>
       </div>
     </div>
   );
