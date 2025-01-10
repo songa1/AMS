@@ -15,7 +15,12 @@ import Loading from "@/app/loading";
 import FullScreenExport from "../Other/FullScreenExport";
 import { Menu } from "primereact/menu";
 import { Button, ButtonGroup } from "@mui/material";
-import { DataGrid, GridActionsCellItem, GridColDef, GridRowParams } from "@mui/x-data-grid";
+import {
+  DataGrid,
+  GridActionsCellItem,
+  GridColDef,
+  GridRowParams,
+} from "@mui/x-data-grid";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import VisibilityIcon from "@mui/icons-material/Visibility";
@@ -138,7 +143,7 @@ const UsersPage = () => {
             label="View"
             className="textPrimary"
             onClick={() =>
-              (globalThis.location.href = "/dashboard/users/" + user.id)
+              (globalThis.location.href = "/dashboard/users/" + id)
             }
             color="inherit"
             key="view"
@@ -147,9 +152,7 @@ const UsersPage = () => {
             icon={<EditIcon />}
             label="Edit"
             className="textPrimary"
-            onClick={() =>
-              (globalThis.location.href = "update-profile/" + user.id)
-            }
+            onClick={() => (globalThis.location.href = "update-profile/" + id)}
             color="inherit"
             key="edit"
           />,
@@ -158,7 +161,7 @@ const UsersPage = () => {
             label="Delete"
             onClick={async (e) => {
               e.preventDefault();
-              setIdToDelete(user?.id);
+              setIdToDelete(id);
               setModal(true);
             }}
             color="inherit"
@@ -169,7 +172,7 @@ const UsersPage = () => {
             label="Message"
             onClick={async (e) => {
               e.preventDefault();
-              globalThis.location.href = `/dashboard/chat/${user?.id}`;
+              globalThis.location.href = `/dashboard/chat/${id}`;
             }}
             color="inherit"
             key="message"
