@@ -11,6 +11,7 @@ import React, { useEffect, useState } from "react";
 import * as Yup from "yup";
 import { useFormik } from "formik";
 import {
+  Box,
   FormControl,
   FormHelperText,
   InputLabel,
@@ -35,7 +36,7 @@ function AddFoundedInfo({ canMove }: { canMove: any }) {
   const [sectorsFounded, setSectorsFounded] = useState([]);
   const [districtsFounded, setDistrictsFounded] = useState([]);
   const [organizations, setOrganizations] = useState([]);
-  const [selectedDistrictFounded, setSelectedDistrictFounded] = useState(null);
+  const [selectedDistrictFounded, setSelectedDistrictFounded] = useState("");
   const [newOrg, setNewOrg] = useState("");
 
   const [workingSectors, setWorkingSectors] = useState([]);
@@ -195,12 +196,9 @@ function AddFoundedInfo({ canMove }: { canMove: any }) {
   };
 
   return (
-    <div>
+    <Box sx={{ marginTop: "15px" }}>
       <FormControl
         variant="filled"
-        error={
-          formik.errors.mainSector && formik.touched.mainSector ? true : false
-        }
         sx={{ minWidth: 120, width: "100%", marginBottom: "15px" }}
       >
         <InputLabel>Choose your organization:</InputLabel>
@@ -214,12 +212,20 @@ function AddFoundedInfo({ canMove }: { canMove: any }) {
             </MenuItem>
           ))}
         </Select>
-        {formik.errors.mainSector && formik.touched.mainSector && (
-          <FormHelperText>{formik.errors.mainSector}</FormHelperText>
-        )}
       </FormControl>
       {newOrg === "new" && (
-        <div className="grid grid-cols-2 gap-3">
+        <Box
+          sx={{
+            width: "100%",
+            display: "grid",
+            gridTemplateColumns: {
+              xs: "1fr",
+              sm: "repeat(2, 1fr)",
+            },
+            gap: 2,
+            paddingTop: "30px",
+          }}
+        >
           <TextField
             label="Your Initiative Name:"
             variant="filled"
@@ -255,9 +261,9 @@ function AddFoundedInfo({ canMove }: { canMove: any }) {
                 formik.setFieldValue("mainSector", e.target.value)
               }
             >
-              {workingSectors.map((gen: WorkingSector) => (
-                <MenuItem key={gen?.id} value={gen}>
-                  {gen?.name}
+              {workingSectors.map((item: WorkingSector) => (
+                <MenuItem key={item?.id} value={item?.id}>
+                  {item?.name}
                 </MenuItem>
               ))}
             </Select>
@@ -317,12 +323,12 @@ function AddFoundedInfo({ canMove }: { canMove: any }) {
               value={formik.values.foundedCountry}
               onChange={(e) => {
                 formik.setFieldValue("foundedCountry", e.target.value);
-                setFoundedCountry(e.target.value?.id);
+                setFoundedCountry(e.target.value);
               }}
             >
-              {countriesFounded.map((gen: Country) => (
-                <MenuItem key={gen?.id} value={gen}>
-                  {gen?.name}
+              {countriesFounded.map((item: Country) => (
+                <MenuItem key={item?.id} value={item?.id}>
+                  {item?.name}
                 </MenuItem>
               ))}
             </Select>
@@ -331,7 +337,7 @@ function AddFoundedInfo({ canMove }: { canMove: any }) {
             )}
           </FormControl>
           {formik.values.foundedCountry &&
-            formik.values.foundedCountry.id !== "RW" && (
+            formik.values.foundedCountry !== "RW" && (
               <FormControl
                 variant="filled"
                 error={
@@ -345,12 +351,12 @@ function AddFoundedInfo({ canMove }: { canMove: any }) {
                 <Select
                   value={formik.values.foundedState}
                   onChange={(e) => {
-                    formik.setFieldValue("foundedState", e.value);
+                    formik.setFieldValue("foundedState", e.target.value);
                   }}
                 >
-                  {foundedStates.map((gen: State) => (
-                    <MenuItem key={gen?.id} value={gen}>
-                      {gen?.name}
+                  {foundedStates.map((item: State) => (
+                    <MenuItem key={item?.id} value={item?.id}>
+                      {item?.name}
                     </MenuItem>
                   ))}
                 </Select>
@@ -359,7 +365,7 @@ function AddFoundedInfo({ canMove }: { canMove: any }) {
                 )}
               </FormControl>
             )}
-          {formik.values.foundedCountry.id == "RW" && (
+          {formik.values.foundedCountry == "RW" && (
             <FormControl
               variant="filled"
               error={
@@ -374,14 +380,14 @@ function AddFoundedInfo({ canMove }: { canMove: any }) {
               <Select
                 value={formik.values.foundedDistrictName}
                 onChange={(e) => {
-                  setSelectedDistrictFounded(e.value.name);
-                  formik.setFieldValue("foundedDistrictName", e.value);
+                  setSelectedDistrictFounded(e.target.value);
+                  formik.setFieldValue("foundedDistrictName", e.target.value);
                   formik.setFieldValue("foundedSectorId", "");
                 }}
               >
-                {districtsFounded.map((gen: residentDistrict) => (
-                  <MenuItem key={gen?.id} value={gen}>
-                    {gen?.name}
+                {districtsFounded.map((item: residentDistrict) => (
+                  <MenuItem key={item?.id} value={item?.id}>
+                    {item?.name}
                   </MenuItem>
                 ))}
               </Select>
@@ -393,7 +399,7 @@ function AddFoundedInfo({ canMove }: { canMove: any }) {
                 )}
             </FormControl>
           )}
-          {formik.values.foundedCountry.id == "RW" && (
+          {formik.values.foundedCountry == "RW" && (
             <FormControl
               variant="filled"
               error={
@@ -410,9 +416,9 @@ function AddFoundedInfo({ canMove }: { canMove: any }) {
                   formik.setFieldValue("foundedSectorId", e.target.value);
                 }}
               >
-                {sectorsFounded.map((gen: residentSector) => (
-                  <MenuItem key={gen?.id} value={gen}>
-                    {gen?.name}
+                {sectorsFounded.map((item: residentSector) => (
+                  <MenuItem key={item?.id} value={item?.id}>
+                    {item?.name}
                   </MenuItem>
                 ))}
               </Select>
@@ -424,9 +430,9 @@ function AddFoundedInfo({ canMove }: { canMove: any }) {
                 )}
             </FormControl>
           )}
-        </div>
+        </Box>
       )}
-    </div>
+    </Box>
   );
 }
 

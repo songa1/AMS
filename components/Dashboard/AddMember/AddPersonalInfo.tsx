@@ -2,6 +2,7 @@
 
 import {
   Alert,
+  Box,
   Button,
   FormControl,
   FormHelperText,
@@ -354,7 +355,18 @@ function AddPersonalInfo({ canMove }: { canMove: any }) {
           className="w-full"
           placeholder="Enter the user's BIO..."
         />
-        <div className="grid sm:grid-cols-1 md:grid-cols-2 gap-3 py-4">
+        <Box
+          sx={{
+            width: "100%",
+            display: "grid",
+            gridTemplateColumns: {
+              xs: "1fr",
+              sm: "repeat(2, 1fr)",
+            },
+            gap: 2,
+            paddingTop: "30px",
+          }}
+        >
           <TextField
             label="First Name:"
             variant="filled"
@@ -729,7 +741,7 @@ function AddPersonalInfo({ canMove }: { canMove: any }) {
                 : ""
             }
           />
-        </div>
+        </Box>
       </div>
     </div>
   );
