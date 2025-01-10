@@ -1,7 +1,7 @@
 import TopTitle from "@/components/Other/TopTitle";
 import dynamic from "next/dynamic";
 const IndividualChatPage = dynamic(
-  () => import("@/components/Dashboard/IndividualChatPage"),
+  () => import("@/components/Dashboard/Communications/IndividualChatPage"),
   { ssr: false }
 );
 

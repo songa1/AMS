@@ -8,9 +8,9 @@ import {
 import { useFormik } from "formik";
 import React, { useEffect, useRef, useState } from "react";
 import * as Yup from "yup";
-import InputError from "../../../Other/InputError";
 import dayjs from "dayjs";
 import { FiDelete } from "react-icons/fi";
+import { Button } from "@mui/material";
 
 function WorkingSector() {
   const toast: any = useRef(null);
@@ -112,12 +112,9 @@ function WorkingSector() {
               required
               className="w-full p-2 mt-1 border rounded"
             />
-            {formik.errors.name && formik.touched.name && (
-              <InputError error={formik.errors.name} />
-            )}
-            <button
-              type="submit"
-              className="w-full px-4 py-2 mt-4 font-bold text-white bg-mainBlue rounded hover:bg-mainblue-700"
+
+            <Button
+              color="primary"
               disabled={loading}
               onClick={(e) => {
                 e.preventDefault();
@@ -125,7 +122,7 @@ function WorkingSector() {
               }}
             >
               {loading ? "Adding..." : "Add"}
-            </button>
+            </Button>
           </form>
         </div>
         <div className="notifications-right">

@@ -20,10 +20,29 @@ import {
 } from "@/lib/features/userSlice";
 import Loading from "@/app/loading";
 import { getUser } from "@/helpers/auth";
-import { User } from "@/types/user";
+import {
+  cohort,
+  Country,
+  gender,
+  residentDistrict,
+  residentSector,
+  State,
+  Track,
+  User,
+} from "@/types/user";
 import PhoneInputWithCountrySelect from "react-phone-number-input";
 import "react-phone-number-input/style.css";
-import { Alert, Box, Button, TextField } from "@mui/material";
+import {
+  Alert,
+  Box,
+  Button,
+  FormControl,
+  FormHelperText,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+} from "@mui/material";
 
 function UpdateProfilepage() {
   const { id } = useParams();
@@ -31,34 +50,15 @@ function UpdateProfilepage() {
   const [genders, setGenders] = useState([]);
   const [cohorts, setCohorts] = useState([]);
   const [districts, setDistricts] = useState([]);
-  const [districtsFounded, setDistrictsFounded] = useState([]);
-  const [districtsEmployed, setDistrictsEmployed] = useState([]);
   const [countries, setCountries] = useState([]);
-  const [countriesFounded, setCountriesFounded] = useState([]);
-  const [countriesEmployed, setCountriesEmployed] = useState([]);
   const [sectors, setSectors] = useState([]);
-  const [sectorsEmployed, setSectorsEmployed] = useState([]);
-  const [sectorsFounded, setSectorsFounded] = useState([]);
   const [tracks, setTracks] = useState([]);
-  const [workingSectors, setWorkingSectors] = useState([]);
-  const [workingSectorsEmployed, setWorkingSectorsEmployed] = useState([]);
-  const [selectedDistrict, setSelectedDistrict] = useState(null);
-  const [selectedDistrictFounded, setSelectedDistrictFounded] = useState(null);
-  const [selectedDistrictEmployed, setSelectedDistrictEmployed] =
-    useState(null);
+  const [selectedDistrict, setSelectedDistrict] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [imageData, setImageData] = useState<any>(null);
-  const [uploadSuccess, setUploadSuccess] = useState(false);
   const [country, setCountry] = useState("");
-  const [states, setStates] = useState("");
-  const [employedCountry, setEmployedCountry] = useState("");
-  const [employedStates, setEmployedStates] = useState("");
-  const [foundedCountry, setFoundedCountry] = useState("");
-  const [foundedStates, setFoundedStates] = useState("");
-  const [changeEmail, setChangeEmail] = useState(true);
+  const [states, setStates] = useState([]);
 
   const [updatedUser] = useUpdatedUserMutation();
   const { data: UserData, refetch } = useGetOneUserQuery<{ data: User }>(
@@ -71,46 +71,14 @@ function UpdateProfilepage() {
   const { data: SectorsData } = useSectorsByDistrictQuery(selectedDistrict, {
     skip: !selectedDistrict,
   });
-  const { data: SectorsDataFounded } = useSectorsByDistrictQuery(
-    selectedDistrictFounded,
-    {
-      skip: !selectedDistrictFounded,
-    }
-  );
-  const { data: SectorsDataEmployed } = useSectorsByDistrictQuery(
-    selectedDistrictEmployed,
-    {
-      skip: !selectedDistrictEmployed,
-    }
-  );
 
   const authorized = false;
-
-  const { data: WorkingSectorsData } = useWorkingSectorQuery("");
 
   const { data: TracksData } = useTracksQuery("");
 
   const { data: StatesData } = useStatesByCountryQuery(country, {
     skip: !country,
   });
-
-  const { data: EmployedStatesData } = useStatesByCountryQuery(
-    employedCountry,
-    {
-      skip: !employedCountry,
-    }
-  );
-
-  const { data: FoundedStatesData } = useStatesByCountryQuery(foundedCountry, {
-    skip: !foundedCountry,
-  });
-
-  useEffect(() => {
-    if (WorkingSectorsData) {
-      setWorkingSectors(WorkingSectorsData?.data);
-      setWorkingSectorsEmployed(WorkingSectorsData?.data);
-    }
-  }, [WorkingSectorsData]);
 
   useEffect(() => {
     if (TracksData) {
@@ -137,30 +105,14 @@ function UpdateProfilepage() {
   }, [SectorsData]);
 
   useEffect(() => {
-    if (SectorsDataEmployed) {
-      setSectorsEmployed(SectorsDataEmployed?.data);
-    }
-  }, [SectorsDataEmployed]);
-
-  useEffect(() => {
-    if (SectorsDataFounded) {
-      setSectorsFounded(SectorsDataFounded?.data);
-    }
-  }, [SectorsDataFounded]);
-
-  useEffect(() => {
     if (DistrictData) {
       setDistricts(DistrictData?.data);
-      setDistrictsEmployed(DistrictData?.data);
-      setDistrictsFounded(DistrictData?.data);
     }
   }, [DistrictData]);
 
   useEffect(() => {
     if (CountryData) {
       setCountries(CountryData?.data);
-      setCountriesEmployed(CountryData?.data);
-      setCountriesFounded(CountryData?.data);
     }
   }, [CountryData]);
 
@@ -169,18 +121,6 @@ function UpdateProfilepage() {
       setStates(StatesData?.data);
     }
   }, [StatesData]);
-
-  useEffect(() => {
-    if (EmployedStatesData) {
-      setEmployedStates(EmployedStatesData?.data);
-    }
-  }, [EmployedStatesData]);
-
-  useEffect(() => {
-    if (FoundedStatesData) {
-      setFoundedStates(FoundedStatesData?.data);
-    }
-  }, [FoundedStatesData]);
 
   const usr = UserData;
 
@@ -197,31 +137,14 @@ function UpdateProfilepage() {
       bio: usr?.bio,
       gender: usr?.gender,
       phoneNumber: usr?.phoneNumber,
-      districtName: usr?.residentDistrict,
-      sectorId: usr?.residentSector,
-      residentCountryId: usr?.residentCountry,
-      state: usr?.state,
+      districtName: usr?.residentDistrict?.name,
+      sectorId: usr?.residentSector?.id,
+      residentCountryId: usr?.residentCountry?.id,
+      state: usr?.state?.id,
       whatsAppNumber: usr?.whatsappNumber,
       nearlestLandmark: usr?.nearestLandmark,
-      track: usr?.track,
-      cohortId: usr?.cohort,
-      initiativeName: usr?.organizationFounded?.name,
-      mainSector: usr?.organizationFounded?.workingSector,
-      foundedPosition: usr?.positionInFounded,
-      foundedDistrictName: usr?.organizationFounded?.district,
-      foundedSectorId: usr?.organizationFounded?.sector,
-      foundedWebsite: usr?.organizationFounded?.website,
-      foundedCountry: usr?.organizationFounded?.country,
-      companyName: usr?.organizationEmployed?.name,
-      companySector: usr?.organizationEmployed?.workingSector,
-      companyPosition: usr?.positionInEmployed,
-      companyWebsite: usr?.organizationEmployed?.website,
-      companyDistrictName: usr?.organizationEmployed?.district,
-      companySectorId: usr?.organizationEmployed?.sector,
-      companyState: usr?.organizationEmployed?.state,
-      foundedState: usr?.organizationFounded?.state,
-      companyCountry: usr?.organizationEmployed?.country,
-      profileImageId: usr?.profileImage,
+      track: usr?.track?.id,
+      cohortId: usr?.cohort?.id,
     },
     validationSchema: Yup.object({
       bio: Yup.string().max(500, "Bio cannot exceed 500 characters"),
@@ -256,21 +179,6 @@ function UpdateProfilepage() {
       ),
       track: Yup.string(),
       cohortId: Yup.number().nullable(),
-      initiativeName: Yup.string(),
-      mainSector: Yup.string(),
-      foundedPosition: Yup.string(),
-      foundedDistrictName: Yup.string(),
-      foundedSectorId: Yup.string(),
-      foundedWebsite: Yup.string().url("Invalid website URL"),
-      foundedCountry: Yup.string(),
-      companyName: Yup.string(),
-      companySector: Yup.string(),
-      companyPosition: Yup.string(),
-      companyWebsite: Yup.string().url("Invalid website URL"),
-      companyDistrictName: Yup.string(),
-      companySectorId: Yup.string(),
-      companyCountry: Yup.string(),
-      profileImageId: Yup.string(),
     }),
     onSubmit: async (values) => {
       // Being done in another function
@@ -316,8 +224,6 @@ function UpdateProfilepage() {
           residentSectorId: values?.sectorId?.id,
           residentCountryId: values?.residentCountryId?.id,
           state: values?.state?.id,
-          positionInFounded: values?.foundedPosition,
-          positionInEmployed: values?.companyPosition,
           profileImageId: values?.profileImageId?.id,
         },
       }).unwrap();
@@ -328,12 +234,6 @@ function UpdateProfilepage() {
           globalThis.location.href = "/dashboard/profile";
         }
         formik.resetForm();
-        setImagePreview(null);
-        setImageData(null);
-        setUploadSuccess(false);
-
-        if (formik.values.profileImageId)
-          formik.setFieldValue("profileImageId", "");
         setSuccess("User updated successfully!");
         refetch();
       }
@@ -419,46 +319,150 @@ function UpdateProfilepage() {
             value={formik.values.whatsAppNumber}
             defaultValue={user?.whatsappNumber}
           />
-          <TextField value={user?.genderName} label="Gender" />
+          <FormControl variant="outlined" sx={{ minWidth: 120, width: "100%" }}>
+            <InputLabel id="gender">Gender</InputLabel>
+            <Select
+              labelId="gender-label"
+              id="gender"
+              defaultValue={user?.gender?.id}
+              value={formik.values.gender}
+              onChange={(e) => formik.setFieldValue("gender", e.target.value)}
+            >
+              {genders.map((gen: gender) => (
+                <MenuItem key={gen?.id} value={gen.id}>
+                  {gen?.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
 
-          <TextField
-            label="Resident Country"
-            value={
-              user?.residentCountry?.name ? user?.residentCountry?.name : "--"
-            }
-          />
-          {user?.residentCountry && user?.residentCountry?.id === "RW" && (
-            <TextField
-              label="Resident District"
-              value={
-                user?.residentDistrict?.name
-                  ? user?.residentDistrict?.name
-                  : "--"
-              }
-            />
-          )}
-          {user?.residentCountry && user?.residentCountry?.id === "RW" && (
-            <TextField
-              label="Resident Sector"
-              value={
-                user?.residentSector?.name ? user?.residentSector?.name : "--"
-              }
-            />
-          )}
-          <TextField
-            label="Cohort"
-            value={user?.cohort?.name ? user?.cohort?.name : "--"}
-          />
+          <FormControl variant="outlined" sx={{ minWidth: 120, width: "100%" }}>
+            <InputLabel id="gender">Resident Country</InputLabel>
+            <Select
+              labelId="country-label"
+              id="country"
+              defaultValue={user?.residentCountry?.id}
+              value={formik.values.residentCountryId}
+              onChange={(e) => {
+                formik.setFieldValue("residentCountryId", e.target.value);
+                setCountry(e.target.value);
+              }}
+            >
+              {countries.map((item: Country) => (
+                <MenuItem key={item?.id} value={item.id}>
+                  {item?.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          {(user?.residentCountry && user?.residentCountry?.id !== "RW") ||
+            (formik.values.residentCountryId !== "RW" && (
+              <FormControl
+                variant="outlined"
+                sx={{ minWidth: 120, width: "100%" }}
+              >
+                <InputLabel>State</InputLabel>
+                <Select
+                  labelId="state-label"
+                  value={formik.values.state}
+                  defaultValue={user?.state?.id}
+                  onChange={(e) => {
+                    console.log(e);
+                    formik.setFieldValue("state", e.target.value);
+                  }}
+                >
+                  {states.map((item: State) => (
+                    <MenuItem key={item?.id} value={item.id}>
+                      {item?.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            ))}
+          {(user?.residentCountry && user?.residentCountry?.id === "RW") ||
+            (formik.values.residentCountryId === "RW" && (
+              <FormControl
+                variant="outlined"
+                sx={{ minWidth: 120, width: "100%" }}
+              >
+                <InputLabel>District</InputLabel>
+                <Select
+                  labelId="district-label"
+                  value={formik.values.districtName}
+                  defaultValue={user?.residentDistrict?.name}
+                  onChange={(e) => {
+                    setSelectedDistrict(e.target.value);
+                    formik.setFieldValue("districtName", e.target.value);
+                    formik.setFieldValue("sectorId", "");
+                  }}
+                >
+                  {districts.map((item: residentDistrict) => (
+                    <MenuItem key={item?.id} value={item.name}>
+                      {item?.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            ))}
+          {(user?.residentCountry && user?.residentCountry?.id === "RW") ||
+            (formik.values.residentCountryId === "RW" && (
+              <FormControl
+                variant="outlined"
+                sx={{ minWidth: 120, width: "100%" }}
+              >
+                <InputLabel>Sector</InputLabel>
+                <Select
+                  labelId="sector-label"
+                  value={formik.values.sectorId}
+                  defaultValue={user?.residentSector?.id}
+                  onChange={(e) =>
+                    formik.setFieldValue("sectorId", e.target.value)
+                  }
+                >
+                  {sectors.map((item: residentSector) => (
+                    <MenuItem key={item?.id} value={item.id}>
+                      {item?.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            ))}
+          <FormControl variant="outlined" sx={{ minWidth: 120, width: "100%" }}>
+            <InputLabel>Cohort</InputLabel>
+            <Select
+              labelId="cohort-label"
+              value={formik.values.cohortId}
+              defaultValue={user?.cohort?.id}
+              onChange={(e) => formik.setFieldValue("cohortId", e.target.value)}
+            >
+              {cohorts.map((item: cohort) => (
+                <MenuItem key={item?.id} value={item.id}>
+                  {item?.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
 
           <TextField
             label="Nearest Landmark"
             value={formik.values.nearlestLandmark}
             defaultValue={user?.nearestLandmark}
           />
-          <TextField
-            label="Track"
-            value={user?.track ? user?.track?.name : "--"}
-          />
+          <FormControl variant="outlined" sx={{ minWidth: 120, width: "100%" }}>
+            <InputLabel>Track</InputLabel>
+            <Select
+              labelId="track-label"
+              value={formik.values.track}
+              defaultValue={user?.track?.id}
+              onChange={(e) => formik.setFieldValue("track", e.target.value)}
+            >
+              {tracks.map((item: Track) => (
+                <MenuItem key={item?.id} value={item.id}>
+                  {item?.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
           <TextField
             label="Facebook Account"
             defaultValue={user?.facebook}

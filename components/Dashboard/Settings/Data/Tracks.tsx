@@ -8,7 +8,6 @@ import {
 import { useFormik } from "formik";
 import React, { useEffect, useRef, useState } from "react";
 import * as Yup from "yup";
-import InputError from "../../../Other/InputError";
 import dayjs from "dayjs";
 import { FiDelete } from "react-icons/fi";
 
@@ -112,9 +111,6 @@ function Tracks() {
               required
               className="w-full p-2 mt-1 border rounded"
             />
-            {formik.errors.name && formik.touched.name && (
-              <InputError error={formik.errors.name} />
-            )}
             <button
               type="submit"
               className="w-full px-4 py-2 mt-4 font-bold text-white bg-mainBlue rounded hover:bg-mainblue-700"

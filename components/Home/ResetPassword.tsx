@@ -1,18 +1,12 @@
 "use client";
 
 import Header from "@/components/Home/Header";
-import InputError from "@/components/Other/InputError";
-import {
-  useLoginMutation,
-  useResetPasswordMutation,
-} from "@/lib/features/authSlice";
+import { useResetPasswordMutation } from "@/lib/features/authSlice";
 import { useFormik } from "formik";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import * as Yup from "yup";
-import Cookies from "js-cookie";
-import { AUTH_STORED_DATA } from "@/helpers/auth";
 
 const ResetPassword = () => {
   const { token } = useParams();
@@ -41,10 +35,8 @@ const ResetPassword = () => {
           newPassword: values.password,
         }).unwrap();
 
-        // if (result?.status == 201) {
         formik.resetForm();
         setSuccess(result.message);
-        // }
       } catch (err: any) {
         console.error("Failed to reset:", err);
         if (err?.status === 401) {
@@ -73,7 +65,7 @@ const ResetPassword = () => {
         <div className="w-full space-y-8 mt-20">
           <h1 className="mb-4 text-2xl font-bold">Change your Password</h1>
           {success && (
-            <div className="flex flex-col gap-3 items-center jsutify-center items-center">
+            <div className="flex flex-col gap-3 justify-center items-center">
               {" "}
               <p className="bg-green-500 text-white rounded-md text-center p-2 w-full">
                 {success}
@@ -107,9 +99,6 @@ const ResetPassword = () => {
                   className="mt-1 p-2 w-full border rounded-md"
                   placeholder="Enter the new password"
                 />
-                {formik.errors.password && formik.touched.password && (
-                  <InputError error={formik.errors.password} />
-                )}
               </div>
               <div>
                 <label
@@ -128,9 +117,6 @@ const ResetPassword = () => {
                   className="mt-1 p-2 w-full border rounded-md"
                   placeholder="Repeat the new password"
                 />
-                {formik.errors.cPassword && formik.touched.cPassword && (
-                  <InputError error={formik.errors.cPassword} />
-                )}
               </div>
 
               <div>

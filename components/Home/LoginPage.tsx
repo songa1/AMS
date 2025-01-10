@@ -2,7 +2,6 @@
 "use client";
 
 import Header from "@/components/Home/Header";
-import InputError from "@/components/Other/InputError";
 import { useLoginMutation } from "@/lib/features/authSlice";
 import { useFormik } from "formik";
 import Link from "next/link";
@@ -104,9 +103,7 @@ const LoginPage = () => {
                 className="mt-1 p-2 w-full border rounded-md"
                 placeholder="Enter your email address"
               />
-              {formik.errors.email && formik.touched.email && (
-                <InputError error={formik.errors.email} />
-              )}
+            
             </div>
             <div>
               <label
@@ -127,9 +124,7 @@ const LoginPage = () => {
                 className="mt-1 p-2 w-full border rounded-md"
                 placeholder="Enter your password"
               />
-              {formik.errors.password && formik.touched.password && (
-                <InputError error={formik.errors.password} />
-              )}
+              
               <div className="flex justify-between items-center mt-1">
                 <div></div>
                 <Link

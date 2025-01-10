@@ -3,7 +3,7 @@ import { createPortal } from "react-dom";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { User } from "@/types/user";
-import Button from "./Button";
+import { Button } from "@mui/material";
 
 const FullScreenExport = ({
   isOpen,
@@ -12,7 +12,6 @@ const FullScreenExport = ({
 }: {
   isOpen: boolean;
   setIsOpen: any;
-  refetch: any;
   users: User[];
 }) => {
   const generatePDF = () => {
@@ -106,7 +105,13 @@ const FullScreenExport = ({
               <div className=" border border-gray-200 rounded-md">
                 <div className="w-[90%] mx-auto items-center justify-between flex p-2">
                   <div></div>
-                  <Button title="Export" onClick={generatePDF} />
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={generatePDF}
+                  >
+                    Export
+                  </Button>
                 </div>
               </div>
               <div

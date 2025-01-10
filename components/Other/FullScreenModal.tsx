@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
-import Button from "./Button";
 import { useImportUsersMutation } from "@/lib/features/userSlice";
 import Loading from "@/app/loading";
+import { Button } from "@mui/material";
 
 const acceptedCSVTypes = [
   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -139,7 +139,7 @@ const FullScreenModal = ({
                     onChange={handleFileUpload}
                     accept={acceptedCSVTypes.join(",")}
                   />
-                  <Button title="Save" onClick={handleFileUpload} />
+                  <Button onClick={handleFileUpload}>Save</Button>
                 </div>
               </div>
 

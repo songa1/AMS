@@ -5,7 +5,6 @@ import { useRequestResetMutation } from "@/lib/features/authSlice";
 import { useFormik } from "formik";
 import React, { useEffect, useState } from "react";
 import * as Yup from "yup";
-import InputError from "../Other/InputError";
 import Header from "./Header";
 
 const ForgotPasswordPage = () => {
@@ -81,9 +80,6 @@ const ForgotPasswordPage = () => {
               required
               className="w-full p-2 mt-1 border rounded"
             />
-            {formik.errors.email && formik.touched.email && (
-              <InputError error={formik.errors.email} />
-            )}
             <button
               type="submit"
               className="w-full px-4 py-2 mt-4 font-bold text-white bg-mainBlue rounded hover:bg-mainblue-700"
