@@ -9,7 +9,37 @@ export const orgsSlices = createApi({
     organizations: builder.query({
       query: (code) => `organizations`,
     }),
+    organization: builder.query({
+      query: (code) => `organizations/${code}`,
+    }),
+    addOrg: builder.mutation({
+      query: (credentials) => ({
+        url: "organizations",
+        method: "POST",
+        body: credentials,
+      }),
+    }),
+    assignOrg: builder.mutation({
+      query: (credentials) => ({
+        url: "organizations",
+        method: "PATCH",
+        body: credentials,
+      }),
+    }),
+    updateOrg: builder.mutation({
+      query: (credentials) => ({
+        url: "organizations",
+        method: "PUT",
+        body: credentials,
+      }),
+    }),
   }),
 });
 
-export const { useOrganizationsQuery } = orgsSlices;
+export const {
+  useOrganizationsQuery,
+  useOrganizationQuery,
+  useAddOrgMutation,
+  useAssignOrgMutation,
+  useUpdateOrgMutation,
+} = orgsSlices;

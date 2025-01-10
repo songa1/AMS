@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { BiUser } from "react-icons/bi";
 import ChatInput from "../../Other/ChatInput";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -52,8 +51,6 @@ function ChatPage() {
       setMessages(privateChatsData?.data);
     }
   }, [privateChatsData, username]);
-
-  // const messages = username ? privateChatsData?.data : chatsData?.data;
 
   const messagesEndRef: any = useRef(null);
 

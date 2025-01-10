@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 import ChatPage from "./ChatPage";
 import relativeTime from "dayjs/plugin/relativeTime";
 import dayjs from "dayjs";
-import { useParams } from "next/navigation";
 import { usePrivateChatsQuery } from "@/lib/features/chatSlice";
 import { getUser } from "@/helpers/auth";
 import { Message } from "@/types/message";
