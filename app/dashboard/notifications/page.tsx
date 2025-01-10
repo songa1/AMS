@@ -1,4 +1,4 @@
-import Notifications from "@/components/Dashboard/Notifications";
+import Notifications from "@/components/Dashboard/Communications/Notifications";
 import Button from "@/components/Other/Button";
 import TopTitle from "@/components/Other/TopTitle";
 import Link from "next/link";

@@ -1,11 +1,11 @@
-import { ProgressSpinner } from "primereact/progressspinner";
+import { Box, CircularProgress } from "@mui/material";
 import React from "react";
 
 function Loading() {
   return (
-    <div className="h-screen w-full flex justify-center items-center">
-      <ProgressSpinner />
-    </div>
+    <Box className="h-screen w-screen flex justify-center items-center z-50">
+      <CircularProgress />
+    </Box>
   );
 }
 

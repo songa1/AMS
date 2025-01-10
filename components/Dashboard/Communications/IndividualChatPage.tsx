@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import ChatPage from "./ChatPage";
+import ChatPage from "./Chat/ChatPage";
 import relativeTime from "dayjs/plugin/relativeTime";
 import dayjs from "dayjs";
 import { useParams } from "next/navigation";

@@ -11,12 +11,11 @@ import {
   useChangeMutation,
   useGetOneUserQuery,
 } from "@/lib/features/userSlice";
-import { Toast } from "primereact/toast";
-import ConfirmModal from "../Other/confirmModal";
+import ConfirmModal from "../../Other/confirmModal";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { Box, Button, Chip, TextField, Typography } from "@mui/material";
-import TopTitle from "../Other/TopTitle";
+import TopTitle from "../../Other/TopTitle";
 
 function ProfilePage() {
   dayjs.extend(relativeTime);
@@ -86,7 +85,6 @@ function ProfilePage() {
 
   return (
     <div className="">
-      <Toast ref={toast} />
       {roleModal && (
         <ConfirmModal
           cancelText="Cancel"

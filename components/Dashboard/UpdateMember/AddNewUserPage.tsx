@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import TopTitle from "../Other/TopTitle";
+import TopTitle from "../../../Other/TopTitle";
 import {
   Box,
   Button,
@@ -10,9 +10,9 @@ import {
   Stepper,
   Typography,
 } from "@mui/material";
-import AddPersonalInfo from "./AddMember/AddPersonalInfo";
-import AddFoundedInfo from "./AddMember/AddFoundedInfo";
-import AddEmployedInfo from "./AddMember/AddEmployedInfo";
+import AddPersonalInfo from "./AddPersonalInfo";
+import AddFoundedInfo from "./AddFoundedInfo";
+import AddEmployedInfo from "./AddEmployedInfo";
 
 const steps = [
   "Personal Information",

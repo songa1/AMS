@@ -1,19 +1,18 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import SearchInput from "../Other/SearchInput";
-import FullScreenModal from "../Other/FullScreenModal";
+import SearchInput from "../../Other/SearchInput";
+import FullScreenModal from "../../Other/FullScreenModal";
 import {
   useDeleteUserMutation,
   useExportUsersMutation,
   useUsersQuery,
 } from "@/lib/features/userSlice";
 import { User } from "@/types/user";
-import ConfirmModal from "../Other/confirmModal";
+import ConfirmModal from "../../Other/confirmModal";
 import { getUser } from "@/helpers/auth";
 import Loading from "@/app/loading";
-import FullScreenExport from "../Other/FullScreenExport";
-import { Menu } from "primereact/menu";
+import FullScreenExport from "../../Other/FullScreenExport";
 import { Button, ButtonGroup } from "@mui/material";
 import {
   DataGrid,
@@ -25,7 +24,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import EmailIcon from "@mui/icons-material/Email";
-import TopTitle from "../Other/TopTitle";
+import TopTitle from "../../Other/TopTitle";
 import PrintIcon from "@mui/icons-material/Print";
 
 const UsersPage = () => {
@@ -136,7 +135,7 @@ const UsersPage = () => {
       width: 150,
       cellClassName: "actions",
       getActions: (params: GridRowParams<any>) => {
-        const id = params.id;
+        const id: any = params.id;
         return [
           <GridActionsCellItem
             icon={<VisibilityIcon />}
@@ -247,13 +246,13 @@ const UsersPage = () => {
               </Button>
             </ButtonGroup>
 
-            <Menu
+            {/* <Menu
               model={items}
               popup
               ref={menuRight}
               id="popup_menu_right"
               popupAlignment="right"
-            />
+            /> */}
           </div>
         )}
       </div>

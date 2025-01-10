@@ -1,4 +1,4 @@
-import DataNeededPage from "@/components/Dashboard/DataNeededPage";
+import DataNeededPage from "@/components/Dashboard/Settings/DataNeededPage";
 import { OnlyAdmin } from "@/components/Other/AccessDashboard";
 import TopTitle from "@/components/Other/TopTitle";
 

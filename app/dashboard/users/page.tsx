@@ -1,4 +1,4 @@
-import UsersPage from "@/components/Dashboard/userspage";
+import UsersPage from "@/components/Dashboard/Members/userspage";
 
 function page() {
   return (

@@ -4,14 +4,13 @@ import { useFormik } from "formik";
 import React, { useEffect, useRef, useState } from "react";
 import * as Yup from "yup";
 import dayjs from "dayjs";
-import { Toast } from "primereact/toast";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "react-quill/dist/quill.snow.css";
 import {
   useNotSetupsQuery,
   useUpdateSetupMutation,
 } from "@/lib/features/notificationSlice";
-import Button from "../Other/Button";
+import Button from "../../../Other/Button";
 import dynamic from "next/dynamic";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
@@ -140,7 +139,6 @@ function NotificationSetup() {
 
   return (
     <div>
-      <Toast ref={toast}></Toast>
       <div className="data-hold">
         <div className="notifications-left">
           <h1 className="noti-sticky-header">Notification Type</h1>

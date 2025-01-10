@@ -1,6 +1,5 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import { createPortal } from "react-dom";
-import { Toast } from "primereact/toast";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { User } from "@/types/user";
@@ -9,7 +8,6 @@ import Button from "./Button";
 const FullScreenExport = ({
   isOpen,
   setIsOpen,
-  refetch,
   users,
 }: {
   isOpen: boolean;
@@ -17,15 +15,6 @@ const FullScreenExport = ({
   refetch: any;
   users: User[];
 }) => {
-  const toast: any = useRef(null);
-
-  const show = () => {
-    toast.current.show({
-      severity: "success",
-      summary: "Success",
-      detail: "Users added successfully",
-    });
-  };
   const generatePDF = () => {
     const input: any = document.getElementById("user-list");
 
@@ -81,7 +70,6 @@ const FullScreenExport = ({
 
   return (
     <div>
-      <Toast ref={toast} />
       {isOpen &&
         createPortal(
           <div className="modal fixed w-full h-full top-0 left-0 flex items-center justify-center">

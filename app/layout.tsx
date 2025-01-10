@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import { PrimeReactProvider, PrimeReactContext } from "primereact/api";
 import "./globals.css";
-import "primereact/resources/themes/lara-light-cyan/theme.css";
 import StoreProvider from "./StoreProvider";
 import AuthProvider from "@/helpers/provider";
 
@@ -21,11 +19,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <AuthProvider>
-        <PrimeReactProvider>
           <StoreProvider>
             <body className={inter.className}>{children}</body>
           </StoreProvider>
-        </PrimeReactProvider>
       </AuthProvider>
     </html>
   );

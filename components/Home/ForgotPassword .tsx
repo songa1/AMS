@@ -6,7 +6,7 @@ import { useFormik } from "formik";
 import React, { useEffect, useState } from "react";
 import * as Yup from "yup";
 import InputError from "../Other/InputError";
-import Header from "../Home/Header";
+import Header from "./Header";
 
 const ForgotPasswordPage = () => {
   const [error, setError] = useState("");

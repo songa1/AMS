@@ -2,8 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import Button from "./Button";
 import { useImportUsersMutation } from "@/lib/features/userSlice";
-import { Toast } from "primereact/toast";
-import { ProgressSpinner } from "primereact/progressspinner";
+import Loading from "@/app/loading";
 
 const acceptedCSVTypes = [
   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -99,7 +98,6 @@ const FullScreenModal = ({
 
   return (
     <div>
-      <Toast ref={toast} />
       {isOpen &&
         createPortal(
           <div className="modal fixed w-full h-full top-0 left-0 flex items-center justify-center">
@@ -146,11 +144,7 @@ const FullScreenModal = ({
               </div>
 
               <div className="w-[90%] mx-auto h-[90vh] overflow-scroll no-scrollbar flex items-center justify-center">
-                {isLoading && (
-                  <div className="p-10">
-                    <ProgressSpinner />
-                  </div>
-                )}
+                {isLoading && <Loading />}
               </div>
             </div>
           </div>,

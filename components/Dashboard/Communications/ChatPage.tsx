@@ -1,9 +1,8 @@
 "use client";
 
-import { Avatar } from "primereact/avatar";
 import React, { useEffect, useRef, useState } from "react";
 import { BiUser } from "react-icons/bi";
-import ChatInput from "../Other/ChatInput";
+import ChatInput from "../../Other/ChatInput";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import {
@@ -18,6 +17,7 @@ import { User } from "@/types/user";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { useParams } from "next/navigation";
+import { Avatar } from "@mui/material";
 
 function ChatPage() {
   const user = getUser();
@@ -91,7 +91,7 @@ function ChatPage() {
         className="bg-gray-100 left-0 right-0 top-0 p-4 rounded-t-xl flex items-center gap-3"
         style={{ zIndex: 1 }}
       >
-        <Avatar icon={<BiUser />} />
+        <Avatar />
         <div className="flex flex-col">
           <h2 className="font-bold text-mainBlue">
             {username
@@ -131,8 +131,7 @@ function ChatPage() {
                   }`}
                 >
                   <Avatar
-                    icon={<BiUser />}
-                    image={message?.senderId === user?.id ? user?.picture : ""}
+                    src={message?.senderId === user?.id ? user?.picture : ""}
                   />
                   <div
                     className={`message ${

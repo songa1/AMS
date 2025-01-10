@@ -1,7 +1,7 @@
 "use client";
 
 import TopTitle from "@/components/Other/TopTitle";
-import UpdateProfile from "@/components/Dashboard/UpdateProfilepage";
+import UpdateProfile from "@/components/Dashboard/Members/UpdateMember/UpdateProfilepage";
 import { OnlyAdmin } from "@/components/Other/AccessDashboard";
 import React from "react";
 

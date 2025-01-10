@@ -1,24 +1,15 @@
 "use client";
 
 import {
-  useAddCohortMutation,
-  useAddTrackMutation,
   useAddWorkingSectorMutation,
-  useCohortsQuery,
-  useDeleteCohortMutation,
-  useDeleteTrackMutation,
   useDeleteWorkingSectorMutation,
-  useTracksQuery,
   useWorkingSectorQuery,
 } from "@/lib/features/otherSlice";
 import { useFormik } from "formik";
 import React, { useEffect, useRef, useState } from "react";
 import * as Yup from "yup";
-import InputError from "../Other/InputError";
-import { DataTable } from "primereact/datatable";
-import { Column } from "primereact/column";
+import InputError from "../../../Other/InputError";
 import dayjs from "dayjs";
-import { Toast } from "primereact/toast";
 import { FiDelete } from "react-icons/fi";
 
 function WorkingSector() {
@@ -101,7 +92,6 @@ function WorkingSector() {
 
   return (
     <div>
-      <Toast ref={toast}></Toast>
       <div className="data-hold">
         <div className="notifications-left">
           <h1 className="noti-sticky-header">Add Working Sector</h1>
@@ -140,7 +130,7 @@ function WorkingSector() {
         </div>
         <div className="notifications-right">
           <div className="noti-sticky-header">Working Sectors</div>
-          <DataTable
+          {/* <DataTable
             value={data}
             tableStyle={{ minWidth: "50rem" }}
             editMode="cell"
@@ -149,7 +139,7 @@ function WorkingSector() {
               Object.keys(data[0]).map((key) => (
                 <Column key={key} field={key} header={key}></Column>
               ))}
-          </DataTable>
+          </DataTable> */}
         </div>
       </div>
     </div>

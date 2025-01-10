@@ -36,17 +36,17 @@ export const NAVIGATION: Navigation = [
     icon: <EditIcon />,
     children: [
       {
-        segment: "#",
+        segment: "/",
         title: "Personal Info",
         icon: <SettingsAccessibilityIcon />,
       },
       {
-        segment: "#",
-        title: "Organization Info",
+        segment: "/organization-founded",
+        title: "Organization Founded",
         icon: <FoundationIcon />,
       },
       {
-        segment: "#",
+        segment: "/organization-employed",
         title: "Employment Info",
         icon: <CorporateFareIcon />,
       },
