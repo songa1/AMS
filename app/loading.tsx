@@ -3,7 +3,7 @@ import React from "react";
 
 function Loading() {
   return (
-    <Box className="h-screen w-screen flex justify-center items-center z-50">
+    <Box className="h-screen w-full flex justify-center items-center z-50">
       <CircularProgress />
     </Box>
   );

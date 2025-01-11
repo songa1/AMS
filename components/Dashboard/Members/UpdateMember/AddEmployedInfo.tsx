@@ -11,10 +11,7 @@ import {
   useStatesByCountryQuery,
   useWorkingSectorQuery,
 } from "@/lib/features/otherSlice";
-import {
-  useGetOneUserQuery,
-  useUpdatedUserMutation,
-} from "@/lib/features/userSlice";
+import { useGetOneUserQuery } from "@/lib/features/userSlice";
 import Loading from "@/app/loading";
 import { getUser } from "@/helpers/auth";
 import {
@@ -37,8 +34,11 @@ import {
   TextField,
 } from "@mui/material";
 import {
+  useAddOrgMutation,
+  useAssignOrgMutation,
   useOrganizationQuery,
   useOrganizationsQuery,
+  useUpdateOrgMutation,
 } from "@/lib/features/orgSlice";
 
 function UpdateEmployedInfo() {
@@ -59,13 +59,16 @@ function UpdateEmployedInfo() {
 
   const [organizations, setOrganizations] = useState([]);
 
-  const [updatedUser] = useUpdatedUserMutation();
-  const { data: UserData, refetch } = useGetOneUserQuery<{ data: User }>(
-    id || user?.id
-  );
+  const [addOrg] = useAddOrgMutation();
+  const [assignOrg] = useAssignOrgMutation();
+  const [updateOrg] = useUpdateOrgMutation();
+  const { data: UserData, refetch: RefetchUser } = useGetOneUserQuery<{
+    data: User;
+  }>(id || user?.id);
   const { data: CountryData } = useCountriesQuery("");
   const { data: DistrictData } = useDistrictsQuery("");
-  const { data: OrganizationsData } = useOrganizationsQuery("");
+  const { data: OrganizationsData, refetch: RefetchAll } =
+    useOrganizationsQuery("");
 
   const { data: SectorsDataEmployed } = useSectorsByDistrictQuery(
     selectedDistrictEmployed,
@@ -89,6 +92,26 @@ function UpdateEmployedInfo() {
       skip: !user?.organizationFounded?.id,
     }
   );
+
+  useEffect(() => {
+    if (
+      !UserData ||
+      !OrganizationsData ||
+      !CountryData ||
+      !DistrictData ||
+      !WorkingSectorsData
+    ) {
+      setIsLoading(true);
+    } else {
+      setIsLoading(false);
+    }
+  }, [
+    UserData,
+    OrganizationsData,
+    CountryData,
+    DistrictData,
+    WorkingSectorsData,
+  ]);
 
   useEffect(() => {
     if (OrganizationData) {
@@ -185,27 +208,43 @@ function UpdateEmployedInfo() {
     setIsLoading(true);
     const values: any = formik.values;
     try {
-      const res = await updatedUser({
-        userId: usr?.id,
-        organizationEmployed: {
-          id: usr?.organizationEmployed?.id,
+      let res;
+      if (organization) {
+        res = await updateOrg({
+          id: organization?.id,
           name: values?.companyName,
-          workingSector: values?.companySector?.id,
-          countryId: values?.companyCountry?.id,
-          state: values?.companyState?.id,
-          districtId: values?.companyDistrictName?.name,
-          sectorId: values?.companySectorId?.id,
+          workingSector: values?.companySector,
+          countryId: values?.companyCountry,
+          state: values?.companyState,
+          districtId: values?.companyDistrictName,
+          sectorId: values?.companySectorId,
           website: values?.companyWebsite,
-        },
-      }).unwrap();
+        }).unwrap();
+      } else {
+        res = await addOrg({
+          name: formik.values?.companyName,
+          workingSectorId: values?.companySector,
+          countryId: values?.companyCountry,
+          stateId: values?.companyState,
+          districtId: values?.companyDistrictName,
+          sectorId: values?.companySectorId,
+          website: values?.companyWebsite,
+        }).unwrap();
+      }
       if (res.message) {
-        if (id) {
-          globalThis.location.href = "/dashboard/users/" + id;
-        } else {
-          globalThis.location.href = "/dashboard/profile";
+        RefetchAll();
+        RefetchOne();
+        const assign = await assignOrg({
+          userId: usr?.id,
+          organizationId: res?.data?.id,
+          relationshipType: "employed",
+          position: formik.values.companyPosition,
+        }).unwrap();
+
+        if (assign.status === 200) {
+          setSuccess("Organization updated successfully!");
+          RefetchUser();
         }
-        formik.resetForm();
-        refetch();
       }
     } catch (error: any) {
       console.log(error);
@@ -256,7 +295,15 @@ function UpdateEmployedInfo() {
           sx={{ minWidth: 120, width: "100%", marginBottom: "15px" }}
         >
           <InputLabel>Choose your organization:</InputLabel>
-          <Select value={newOrg} onChange={(e) => setNewOrg(e.target.value)}>
+          <Select
+            value={newOrg}
+            onChange={(e) => {
+              setNewOrg(e.target.value);
+              setOrganization(
+                organizations.find((org: organization) => org?.id === newOrg)
+              );
+            }}
+          >
             <MenuItem key={100} value="new">
               Add a new company
             </MenuItem>
@@ -305,7 +352,7 @@ function UpdateEmployedInfo() {
             </Select>
           </FormControl>
           <TextField
-            defaultValue={user?.positionInEmployed}
+            defaultValue={usr?.positionInEmployed}
             label="Position"
             value={formik.values.companyPosition}
             onChange={(e) =>

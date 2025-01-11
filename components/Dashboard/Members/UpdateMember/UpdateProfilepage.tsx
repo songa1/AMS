@@ -2,7 +2,7 @@
 
 import { useFormik } from "formik";
 import { useParams } from "next/navigation";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import * as Yup from "yup";
 import {
   useCohortsQuery,
@@ -12,7 +12,6 @@ import {
   useSectorsByDistrictQuery,
   useStatesByCountryQuery,
   useTracksQuery,
-  useWorkingSectorQuery,
 } from "@/lib/features/otherSlice";
 import {
   useGetOneUserQuery,
@@ -60,9 +59,9 @@ function UpdateProfilepage() {
   const [states, setStates] = useState([]);
 
   const [updatedUser] = useUpdatedUserMutation();
-  const { data: UserData, refetch } = useGetOneUserQuery<{ data: User }>(
-    id || user?.id
-  );
+  const { data: UserData, refetch: RefetchUser } = useGetOneUserQuery<{
+    data: User;
+  }>(id || user?.id);
   const { data: GenderData } = useGenderQuery("");
   const { data: CountryData } = useCountriesQuery("");
   const { data: DistrictData } = useDistrictsQuery("");
@@ -71,13 +70,33 @@ function UpdateProfilepage() {
     skip: !selectedDistrict,
   });
 
-  const authorized = false;
-
   const { data: TracksData } = useTracksQuery("");
 
   const { data: StatesData } = useStatesByCountryQuery(country, {
     skip: !country,
   });
+
+  useEffect(() => {
+    if (
+      !UserData ||
+      !GenderData ||
+      !CountryData ||
+      !DistrictData ||
+      !CohortsData ||
+      !TracksData
+    ) {
+      setIsLoading(true);
+    } else {
+      setIsLoading(false);
+    }
+  }, [
+    UserData,
+    GenderData,
+    CountryData,
+    DistrictData,
+    CohortsData,
+    TracksData,
+  ]);
 
   useEffect(() => {
     if (TracksData) {
@@ -134,9 +153,9 @@ function UpdateProfilepage() {
       twitter: usr?.twitter,
       facebook: usr?.facebook,
       bio: usr?.bio,
-      gender: usr?.gender,
+      gender: usr?.gender?.id,
       phoneNumber: usr?.phoneNumber,
-      districtName: usr?.residentDistrict?.name,
+      districtName: usr?.residentDistrict?.id,
       sectorId: usr?.residentSector?.id,
       residentCountryId: usr?.residentCountry?.id,
       state: usr?.state?.id,
@@ -202,8 +221,8 @@ function UpdateProfilepage() {
     const values: any = formik.values;
     try {
       const res = await updatedUser({
-        userId: usr?.id,
         user: {
+          id: usr?.id,
           firstName: values?.firstName,
           middleName: values?.middleName,
           lastName: values?.lastName,
@@ -215,15 +234,14 @@ function UpdateProfilepage() {
           bio: values?.bio,
           phoneNumber: values?.phoneNumber,
           whatsappNumber: values?.whatsAppNumber,
-          genderName: values?.gender?.name,
+          genderId: values?.gender,
           nearestLandmark: values?.nearlestLandmark,
-          cohortId: values?.cohortId?.id,
-          trackId: values?.track?.id,
-          residentDistrictId: values?.districtName?.id,
-          residentSectorId: values?.sectorId?.id,
-          residentCountryId: values?.residentCountryId?.id,
-          state: values?.state?.id,
-          profileImageId: values?.profileImageId?.id,
+          cohortId: values?.cohortId,
+          trackId: values?.track,
+          residentDistrictId: values?.districtName,
+          residentSectorId: values?.sectorId,
+          residentCountryId: values?.residentCountryId,
+          state: values?.state,
         },
       }).unwrap();
       if (res.message) {
@@ -234,7 +252,7 @@ function UpdateProfilepage() {
         }
         formik.resetForm();
         setSuccess("User updated successfully!");
-        refetch();
+        RefetchUser();
       }
     } catch (error: any) {
       console.log(error);
@@ -286,7 +304,6 @@ function UpdateProfilepage() {
           rows={5}
           defaultValue={usr?.bio}
           value={formik.values.bio}
-          disabled={authorized}
           onChange={(e) => formik.setFieldValue("bio", e.target.value)}
           className="w-full"
           placeholder="Enter the user's BIO..."
@@ -305,25 +322,32 @@ function UpdateProfilepage() {
         >
           <TextField
             label="Email"
-            defaultValue={user?.email}
+            defaultValue={usr?.email}
             value={formik.values.email}
+            onChange={(e) => formik.setFieldValue("email", e.target.value)}
           />
           <TextField
-            defaultValue={user?.phoneNumber}
+            defaultValue={usr?.phoneNumber}
             value={formik.values.phoneNumber}
             label="Phone Number"
+            onChange={(e) =>
+              formik.setFieldValue("phoneNumber", e.target.value)
+            }
           />
           <TextField
             label="WhatsApp Number"
             value={formik.values.whatsAppNumber}
-            defaultValue={user?.whatsappNumber}
+            defaultValue={usr?.whatsappNumber}
+            onChange={(e) =>
+              formik.setFieldValue("whatsAppNumber", e.target.value)
+            }
           />
           <FormControl variant="outlined" sx={{ minWidth: 120, width: "100%" }}>
             <InputLabel id="gender">Gender</InputLabel>
             <Select
               labelId="gender-label"
               id="gender"
-              defaultValue={user?.gender?.id}
+              defaultValue={usr?.gender?.id}
               value={formik.values.gender}
               onChange={(e) => formik.setFieldValue("gender", e.target.value)}
             >
@@ -340,7 +364,7 @@ function UpdateProfilepage() {
             <Select
               labelId="country-label"
               id="country"
-              defaultValue={user?.residentCountry?.id}
+              defaultValue={usr?.residentCountry?.id}
               value={formik.values.residentCountryId}
               onChange={(e) => {
                 formik.setFieldValue("residentCountryId", e.target.value);
@@ -364,7 +388,7 @@ function UpdateProfilepage() {
                 <Select
                   labelId="state-label"
                   value={formik.values.state}
-                  defaultValue={user?.state?.id}
+                  defaultValue={usr?.state?.id}
                   onChange={(e) => {
                     console.log(e);
                     formik.setFieldValue("state", e.target.value);
@@ -388,7 +412,7 @@ function UpdateProfilepage() {
                 <Select
                   labelId="district-label"
                   value={formik.values.districtName}
-                  defaultValue={user?.residentDistrict?.name}
+                  defaultValue={usr?.residentDistrict?.id}
                   onChange={(e) => {
                     setSelectedDistrict(e.target.value);
                     formik.setFieldValue("districtName", e.target.value);
@@ -396,7 +420,7 @@ function UpdateProfilepage() {
                   }}
                 >
                   {districts.map((item: residentDistrict) => (
-                    <MenuItem key={item?.id} value={item.name}>
+                    <MenuItem key={item?.id} value={item.id}>
                       {item?.name}
                     </MenuItem>
                   ))}
@@ -413,7 +437,7 @@ function UpdateProfilepage() {
                 <Select
                   labelId="sector-label"
                   value={formik.values.sectorId}
-                  defaultValue={user?.residentSector?.id}
+                  defaultValue={usr?.residentSector?.id}
                   onChange={(e) =>
                     formik.setFieldValue("sectorId", e.target.value)
                   }
@@ -431,7 +455,7 @@ function UpdateProfilepage() {
             <Select
               labelId="cohort-label"
               value={formik.values.cohortId}
-              defaultValue={user?.cohort?.id}
+              defaultValue={usr?.cohort?.id}
               onChange={(e) => formik.setFieldValue("cohortId", e.target.value)}
             >
               {cohorts.map((item: cohort) => (
@@ -445,14 +469,17 @@ function UpdateProfilepage() {
           <TextField
             label="Nearest Landmark"
             value={formik.values.nearlestLandmark}
-            defaultValue={user?.nearestLandmark}
+            defaultValue={usr?.nearestLandmark}
+            onChange={(e) =>
+              formik.setFieldValue("nearestLandmark", e.target.value)
+            }
           />
           <FormControl variant="outlined" sx={{ minWidth: 120, width: "100%" }}>
             <InputLabel>Track</InputLabel>
             <Select
               labelId="track-label"
               value={formik.values.track}
-              defaultValue={user?.track?.id}
+              defaultValue={usr?.track?.id}
               onChange={(e) => formik.setFieldValue("track", e.target.value)}
             >
               {tracks.map((item: Track) => (
@@ -464,23 +491,27 @@ function UpdateProfilepage() {
           </FormControl>
           <TextField
             label="Facebook Account"
-            defaultValue={user?.facebook}
+            defaultValue={usr?.facebook}
             value={formik.values.facebook}
+            onChange={(e) => formik.setFieldValue("facebook", e.target.value)}
           />
           <TextField
             label="Instagram Account"
-            defaultValue={user?.instagram}
+            defaultValue={usr?.instagram}
             value={formik.values.instagram}
+            onChange={(e) => formik.setFieldValue("instagram", e.target.value)}
           />
           <TextField
             label="LinkedIn Account"
-            defaultValue={user?.linkedin}
+            defaultValue={usr?.linkedin}
             value={formik.values.linkedin}
+            onChange={(e) => formik.setFieldValue("linkedin", e.target.value)}
           />
           <TextField
             label="Twitter Account"
-            defaultValue={user?.twitter}
+            defaultValue={usr?.twitter}
             value={formik.values.twitter}
+            onChange={(e) => formik.setFieldValue("twitter", e.target.value)}
           />
         </Box>
       </div>

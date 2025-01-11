@@ -101,7 +101,7 @@ export const NAVIGATION: Navigation = [
     icon: <EnhancedEncryptionIcon />,
   },
   {
-    segment: "logout",
+    segment: "dashboard/logout",
     title: "Logout",
     icon: <LogoutIcon />,
   },

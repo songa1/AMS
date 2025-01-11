@@ -11,10 +11,7 @@ import {
   useStatesByCountryQuery,
   useWorkingSectorQuery,
 } from "@/lib/features/otherSlice";
-import {
-  useGetOneUserQuery,
-  useUpdatedUserMutation,
-} from "@/lib/features/userSlice";
+import { useGetOneUserQuery } from "@/lib/features/userSlice";
 import Loading from "@/app/loading";
 import { getUser } from "@/helpers/auth";
 import {
@@ -41,6 +38,7 @@ import {
   useAssignOrgMutation,
   useOrganizationQuery,
   useOrganizationsQuery,
+  useUpdateOrgMutation,
 } from "@/lib/features/orgSlice";
 
 function UpdateFoundedInfo() {
@@ -62,10 +60,10 @@ function UpdateFoundedInfo() {
 
   const [addOrg] = useAddOrgMutation();
   const [assignOrg] = useAssignOrgMutation();
-  const [updateOrg] = useUpdatedUserMutation();
-  const { data: UserData, refetch } = useGetOneUserQuery<{ data: User }>(
-    id || user?.id
-  );
+  const [updateOrg] = useUpdateOrgMutation();
+  const { data: UserData, refetch: RefetchUser } = useGetOneUserQuery<{
+    data: User;
+  }>(id || user?.id);
   const { data: CountryData } = useCountriesQuery("");
   const { data: DistrictData } = useDistrictsQuery("");
   const { data: OrganizationsData, refetch: RefetchAll } =
@@ -88,6 +86,26 @@ function UpdateFoundedInfo() {
   const { data: FoundedStatesData } = useStatesByCountryQuery(foundedCountry, {
     skip: !foundedCountry,
   });
+
+  useEffect(() => {
+    if (
+      !UserData ||
+      !OrganizationsData ||
+      !CountryData ||
+      !DistrictData ||
+      !WorkingSectorsData
+    ) {
+      setIsLoading(true);
+    } else {
+      setIsLoading(false);
+    }
+  }, [
+    UserData,
+    OrganizationsData,
+    CountryData,
+    DistrictData,
+    WorkingSectorsData,
+  ]);
 
   useEffect(() => {
     if (OrganizationsData) {
@@ -201,18 +219,13 @@ function UpdateFoundedInfo() {
           name: formik.values?.initiativeName,
           workingSectorId: values?.mainSector,
           countryId: values?.foundedCountry,
-          stateId: values?.foundedState?.id,
+          stateId: values?.foundedState,
           districtId: values?.foundedDistrictName,
           sectorId: values?.foundedSectorId,
           website: values?.foundedWebsite,
         }).unwrap();
       }
       if (res.status === 200) {
-        if (id) {
-          globalThis.location.href = "/dashboard/users/" + id;
-        } else {
-          globalThis.location.href = "/dashboard/profile";
-        }
         RefetchAll();
         RefetchOne();
         const assign = await assignOrg({
@@ -224,6 +237,7 @@ function UpdateFoundedInfo() {
 
         if (assign.status === 200) {
           setSuccess("Organization updated successfully!");
+          RefetchUser();
         }
       }
     } catch (error: any) {
@@ -269,7 +283,15 @@ function UpdateFoundedInfo() {
           sx={{ minWidth: 120, width: "100%", marginBottom: "15px" }}
         >
           <InputLabel>Choose your organization:</InputLabel>
-          <Select value={newOrg} onChange={(e) => setNewOrg(e.target.value)}>
+          <Select
+            value={newOrg}
+            onChange={(e) => {
+              setNewOrg(e.target.value);
+              setOrganization(
+                organizations.find((org: organization) => org?.id === newOrg)
+              );
+            }}
+          >
             <MenuItem key={100} value="new">
               Add a new company
             </MenuItem>
@@ -317,7 +339,7 @@ function UpdateFoundedInfo() {
             </Select>
           </FormControl>
           <TextField
-            defaultValue={user?.positionInFounded}
+            defaultValue={usr?.positionInFounded}
             label="Position"
             value={formik.values.foundedPosition}
             onChange={(e) =>
