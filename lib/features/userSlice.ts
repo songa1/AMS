@@ -63,6 +63,13 @@ export const usersSlices = createApi({
         body: credentials,
       }),
     }),
+    updateProfilePicture: builder.mutation({
+      query: (credentials) => ({
+        url: "users/picture",
+        method: "POST",
+        body: credentials,
+      }),
+    }),
     importUsers: builder.mutation({
       query: (data) => ({
         url: "users/import",
@@ -91,4 +98,5 @@ export const {
   useImportUsersMutation,
   useExportUsersMutation,
   useCreateUserProfileMutation,
+  useUpdateProfilePictureMutation,
 } = usersSlices;

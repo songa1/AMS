@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { User } from "@/types/user";
 
 import Loading from "@/app/loading";
@@ -10,27 +10,27 @@ import Link from "next/link";
 import {
   useChangeMutation,
   useGetOneUserQuery,
+  useUpdateProfilePictureMutation,
 } from "@/lib/features/userSlice";
 import ConfirmModal from "../../Other/confirmModal";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { Box, Button, Chip, TextField, Typography } from "@mui/material";
+import { Alert, Box, Button, Chip, TextField, Typography } from "@mui/material";
 import TopTitle from "../../Other/TopTitle";
 
 function ProfilePage() {
   dayjs.extend(relativeTime);
   const { id } = useParams();
-  const toast: any = useRef(null);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [roleModal, setRoleModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [userData, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(false);
   const [edit, setEdit] = useState(false);
 
   const userProfile = useGetOneUserQuery(id || userData?.id);
   const [change] = useChangeMutation();
+  const [updateProfilePicture] = useUpdateProfilePictureMutation();
   const user: User = userProfile?.data;
 
   const getUserData = async () => {
@@ -53,11 +53,7 @@ function ProfilePage() {
       if (userData?.role?.name === "ADMIN") {
         setRoleModal(true);
       } else {
-        toast.current.show({
-          severity: "error",
-          summary: "Permission Issue",
-          detail: "You can not change user's role. Contact ADMIN!",
-        });
+        setError("You can not change user's role. Contact ADMIN!");
       }
     } catch (error) {
       console.log(error);
@@ -67,17 +63,9 @@ function ProfilePage() {
   const changeRole = async () => {
     try {
       const res = await change(id || userData?.id).unwrap();
-      toast.current.show({
-        severity: "success",
-        summary: "Change Role",
-        detail: "You have changed the user's role.",
-      });
+      setSuccess("You have changed the user's role.");
     } catch (error: any) {
-      toast.current.show({
-        severity: "error",
-        summary: "Error",
-        detail: error.message,
-      });
+      setError(error.message);
     }
   };
 
@@ -88,12 +76,22 @@ function ProfilePage() {
       {roleModal && (
         <ConfirmModal
           cancelText="Cancel"
-          confirmText={loading ? "Changing..." : "Change"}
+          confirmText={isLoading ? "Changing..." : "Change"}
           title="Changing a user's role"
           description="Are you sure you want to change the user's role a user? Note that if the user was the ADMIN, the user will become a normal USER, and if a user was a normal USER, the user will become an ADMIN."
           closeModal={() => setRoleModal(false)}
           action={changeRole}
         />
+      )}
+      {error && (
+        <Alert variant="filled" severity="error">
+          {error}
+        </Alert>
+      )}
+      {success && (
+        <Alert variant="filled" severity="success">
+          {success}
+        </Alert>
       )}
       <div className="w-full">
         <Box className="flex gap-3 items-center">
