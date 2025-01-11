@@ -203,9 +203,9 @@ function UpdateFoundedInfo() {
     const values: any = formik.values;
     try {
       let res;
-      if (organization) {
+      if (usr?.organizationFounded) {
         res = await updateOrg({
-          id: organization?.id,
+          id: usr?.organizationFounded?.id,
           name: values?.initiativeName,
           workingSector: values?.mainSector,
           countryId: values?.foundedCountry,

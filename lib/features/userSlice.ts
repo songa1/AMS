@@ -26,7 +26,7 @@ export const usersSlices = createApi({
     }),
     updatedUser: builder.mutation({
       query: (data) => ({
-        url: `users/${data?.userId}`,
+        url: `users/${data?.user?.id}`,
         method: "PUT",
         body: {
           user: data?.user,

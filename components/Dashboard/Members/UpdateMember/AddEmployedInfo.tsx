@@ -209,9 +209,9 @@ function UpdateEmployedInfo() {
     const values: any = formik.values;
     try {
       let res;
-      if (organization) {
+      if (usr?.organizationEmployed) {
         res = await updateOrg({
-          id: organization?.id,
+          id: usr?.organizationEmployed?.id,
           name: values?.companyName,
           workingSector: values?.companySector,
           countryId: values?.companyCountry,
