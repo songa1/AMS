@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import TopTitle from "@/components/Other/TopTitle";
 import {
   Box,
   Button,
@@ -69,7 +68,6 @@ function NewProfile() {
   return (
     <div className="">
       <div className="w-full">
-        <TopTitle title="Add New Member" />
         <Box sx={{ width: "100%" }}>
           <Stepper activeStep={activeStep}>
             {steps.map((label, index) => {

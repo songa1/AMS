@@ -5,10 +5,12 @@ const NewProfile = dynamic(
   { ssr: false }
 );
 import { OnlyAdmin } from "@/components/Other/AccessDashboard";
+import TopTitle from "@/components/Other/TopTitle";
 
 function page() {
   return (
     <div>
+      <TopTitle title="Add New Member" />
       <OnlyAdmin>
         <NewProfile />
       </OnlyAdmin>
