@@ -201,7 +201,6 @@ const UsersPage = () => {
         isOpen={isOpen}
       />
       <FullScreenExport
-        refetch={refetch}
         setIsOpen={setExportOpen}
         isOpen={exportOpen}
         users={filteredUsers}
