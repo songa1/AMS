@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import TopTitle from "../../../Other/TopTitle";
+import TopTitle from "@/components/Other/TopTitle";
 import {
   Box,
   Button,
