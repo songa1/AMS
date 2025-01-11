@@ -138,7 +138,7 @@ function UpdateFoundedInfo() {
         organizations.find((org: organization) => org.id === newOrg)
       );
     }
-  }, []);
+  }, [newOrg, organizations]);
 
   const usr = UserData;
 

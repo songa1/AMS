@@ -1,6 +1,6 @@
 "use client";
 
-import Button from "./Button";
+import { Button } from "@mui/material";
 
 function ConfirmModal({
   closeModal,
@@ -62,8 +62,8 @@ function ConfirmModal({
               </div>
             </div>
             <div className="bg-gray-50 flex gap-2 items-center px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
-              <Button onClick={action} title={confirmText} />
-              <Button title={cancelText} onClick={closeModal} />
+              <Button onClick={action}>{confirmText}</Button>
+              <Button onClick={closeModal}>{cancelText}</Button>
             </div>
           </div>
         </div>

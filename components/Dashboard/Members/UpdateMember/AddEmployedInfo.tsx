@@ -36,7 +36,10 @@ import {
   Select,
   TextField,
 } from "@mui/material";
-import { useOrganizationsQuery } from "@/lib/features/orgSlice";
+import {
+  useOrganizationQuery,
+  useOrganizationsQuery,
+} from "@/lib/features/orgSlice";
 
 function UpdateEmployedInfo() {
   const { id } = useParams();
@@ -51,7 +54,8 @@ function UpdateEmployedInfo() {
   const [isLoading, setIsLoading] = useState(false);
   const [employedCountry, setEmployedCountry] = useState("");
   const [employedStates, setEmployedStates] = useState([]);
-  const [newOrg, setNewOrg] = useState("");
+  const [newOrg, setNewOrg] = useState("new");
+  const [organization, setOrganization] = useState<organization>();
 
   const [organizations, setOrganizations] = useState([]);
 
@@ -78,6 +82,20 @@ function UpdateEmployedInfo() {
       skip: !employedCountry,
     }
   );
+
+  const { data: OrganizationData, refetch: RefetchOne } = useOrganizationQuery(
+    user?.organizationFounded?.id,
+    {
+      skip: !user?.organizationFounded?.id,
+    }
+  );
+
+  useEffect(() => {
+    if (OrganizationData) {
+      setOrganization(OrganizationData?.data);
+      setNewOrg(OrganizationData?.data?.id);
+    }
+  }, [OrganizationData]);
 
   useEffect(() => {
     if (WorkingSectorsData) {
@@ -114,6 +132,14 @@ function UpdateEmployedInfo() {
       setEmployedStates(EmployedStatesData?.data);
     }
   }, [EmployedStatesData]);
+
+  useEffect(() => {
+    if (newOrg !== "new" && newOrg !== "") {
+      setOrganization(
+        organizations.find((org: organization) => org.id === newOrg)
+      );
+    }
+  }, [newOrg, organizations]);
 
   const usr = UserData;
 
@@ -241,163 +267,145 @@ function UpdateEmployedInfo() {
             ))}
           </Select>
         </FormControl>
-        {newOrg === "new" && (
-          <Box
-            sx={{
-              width: "100%",
-              display: "grid",
-              gridTemplateColumns: {
-                xs: "1fr",
-                sm: "repeat(2, 1fr)",
-              },
-              gap: 2,
-              paddingTop: "10px",
-            }}
-          >
-            <TextField
-              label="Company Name"
-              value={
-                user?.organizationEmployed?.name
-                  ? user?.organizationEmployed?.name
-                  : "--"
-              }
-            />
+        <Box
+          sx={{
+            width: "100%",
+            display: "grid",
+            gridTemplateColumns: {
+              xs: "1fr",
+              sm: "repeat(2, 1fr)",
+            },
+            gap: 2,
+            paddingTop: "10px",
+          }}
+        >
+          <TextField
+            label="Company Name"
+            defaultValue={organization?.name}
+            value={formik.values.companyName}
+            onChange={(e) =>
+              formik.setFieldValue("companyName", e.target.value)
+            }
+          />
 
-            <TextField
-              value={
-                user?.organizationEmployed?.workingSector?.name
-                  ? user?.organizationEmployed?.workingSector?.name
-                  : "--"
+          <FormControl variant="outlined" sx={{ minWidth: 120, width: "100%" }}>
+            <InputLabel>Working Sector</InputLabel>
+            <Select
+              defaultValue={organization?.workingSector?.id}
+              value={formik.values.companySector}
+              onChange={(e) =>
+                formik.setFieldValue("companySector", e.target.value)
               }
-              label="Company Sector"
-            />
-            <FormControl
-              variant="outlined"
-              sx={{ minWidth: 120, width: "100%" }}
             >
-              <InputLabel>Working Sector</InputLabel>
-              <Select
-                defaultValue={user?.organizationEmployed?.workingSector?.id}
-                value={formik.values.companySector}
-                onChange={(e) =>
-                  formik.setFieldValue("companySector", e.target.value)
-                }
-              >
-                {workingSectorsEmployed.map((item: WorkingSector) => (
-                  <MenuItem key={item?.id} value={item?.id}>
-                    {item?.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <TextField
-              value={user?.positionInEmployed ? user?.positionInEmployed : "--"}
-              label="Position"
-            />
-            <TextField
-              value={
-                user?.organizationEmployed?.website
-                  ? user?.organizationEmployed?.website
-                  : "--"
-              }
-              label="Website"
-            />
-            <FormControl
-              variant="outlined"
-              sx={{ minWidth: 120, width: "100%" }}
+              {workingSectorsEmployed.map((item: WorkingSector) => (
+                <MenuItem key={item?.id} value={item?.id}>
+                  {item?.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <TextField
+            defaultValue={user?.positionInEmployed}
+            label="Position"
+            value={formik.values.companyPosition}
+            onChange={(e) =>
+              formik.setFieldValue("companyPosition", e.target.value)
+            }
+          />
+          <TextField
+            defaultValue={organization?.website}
+            label="Website"
+            value={formik.values.companyWebsite}
+            onChange={(e) =>
+              formik.setFieldValue("companyWebsite", e.target.value)
+            }
+          />
+          <FormControl variant="outlined" sx={{ minWidth: 120, width: "100%" }}>
+            <InputLabel>Country</InputLabel>
+            <Select
+              defaultValue={organization?.country?.id}
+              value={formik.values.companyCountry}
+              onChange={(e) => {
+                formik.setFieldValue("companyCountry", e.target.value);
+                setEmployedCountry(e.target.value);
+              }}
             >
-              <InputLabel>Country</InputLabel>
-              <Select
-                defaultValue={user?.organizationEmployed?.country?.name}
-                value={formik.values.companyCountry}
-                onChange={(e) => {
-                  formik.setFieldValue("companyCountry", e.target.value);
-                  setEmployedCountry(e.target.value);
-                }}
+              {countriesEmployed.map((item: Country) => (
+                <MenuItem key={item?.id} value={item?.id}>
+                  {item?.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          {(organization && organization?.country?.id !== "RW") ||
+            (formik.values.companyCountry !== "RW" && (
+              <FormControl
+                variant="outlined"
+                sx={{ minWidth: 120, width: "100%" }}
               >
-                {countriesEmployed.map((item: Country) => (
-                  <MenuItem key={item?.id} value={item?.id}>
-                    {item?.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            {(user?.organizationEmployed &&
-              user?.organizationEmployed?.country?.id !== "RW") ||
-              (formik.values.companyCountry !== "RW" && (
-                <FormControl
-                  variant="outlined"
-                  sx={{ minWidth: 120, width: "100%" }}
+                <InputLabel>State</InputLabel>
+                <Select
+                  value={formik.values.companyState}
+                  defaultValue={organization?.state?.id}
+                  onChange={(e) => {
+                    formik.setFieldValue("companyState", e.target.value);
+                  }}
                 >
-                  <InputLabel>State</InputLabel>
-                  <Select
-                    value={formik.values.companyState}
-                    defaultValue={user?.organizationEmployed?.state?.id}
-                    onChange={(e) => {
-                      formik.setFieldValue("companyState", e.target.value);
-                    }}
-                  >
-                    {employedStates.map((item: State) => (
-                      <MenuItem key={item?.id} value={item?.id}>
-                        {item?.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              ))}
-            {(user?.organizationEmployed &&
-              user?.organizationEmployed?.country?.id == "RW") ||
-              (formik.values.companyCountry === "RW" && (
-                <FormControl
-                  variant="outlined"
-                  sx={{ minWidth: 120, width: "100%" }}
+                  {employedStates.map((item: State) => (
+                    <MenuItem key={item?.id} value={item?.id}>
+                      {item?.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            ))}
+          {(organization && organization?.country?.id == "RW") ||
+            (formik.values.companyCountry === "RW" && (
+              <FormControl
+                variant="outlined"
+                sx={{ minWidth: 120, width: "100%" }}
+              >
+                <InputLabel>District</InputLabel>
+                <Select
+                  value={formik.values.companyDistrictName}
+                  onChange={(e) => {
+                    setSelectedDistrictEmployed(e.target.value);
+                    formik.setFieldValue("companyDistrictName", e.target.value);
+                    formik.setFieldValue("companySectorId", "");
+                  }}
+                  defaultValue={organization?.district?.id}
                 >
-                  <InputLabel>District</InputLabel>
-                  <Select
-                    value={formik.values.companyDistrictName}
-                    onChange={(e) => {
-                      setSelectedDistrictEmployed(e.target.value);
-                      formik.setFieldValue(
-                        "companyDistrictName",
-                        e.target.value
-                      );
-                      formik.setFieldValue("companySectorId", "");
-                    }}
-                    defaultValue={user?.organizationEmployed?.district?.id}
-                  >
-                    {districtsEmployed.map((item: residentDistrict) => (
-                      <MenuItem key={item?.id} value={item?.id}>
-                        {item?.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              ))}
-            {(user?.organizationEmployed &&
-              user?.organizationEmployed?.country?.id == "RW") ||
-              (formik.values.companyCountry === "RW" && (
-                <FormControl
-                  variant="outlined"
-                  sx={{ minWidth: 120, width: "100%" }}
+                  {districtsEmployed.map((item: residentDistrict) => (
+                    <MenuItem key={item?.id} value={item?.id}>
+                      {item?.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            ))}
+          {(organization && organization?.country?.id == "RW") ||
+            (formik.values.companyCountry === "RW" && (
+              <FormControl
+                variant="outlined"
+                sx={{ minWidth: 120, width: "100%" }}
+              >
+                <InputLabel>Sector</InputLabel>
+                <Select
+                  value={formik.values.companySectorId}
+                  defaultValue={organization?.sector?.id}
+                  onChange={(e) => {
+                    formik.setFieldValue("companySectorId", e.target.value);
+                  }}
                 >
-                  <InputLabel>Sector</InputLabel>
-                  <Select
-                    value={formik.values.companySectorId}
-                    defaultValue={user?.organizationEmployed?.sector?.id}
-                    onChange={(e) => {
-                      formik.setFieldValue("companySectorId", e.target.value);
-                    }}
-                  >
-                    {sectorsEmployed.map((item: residentSector) => (
-                      <MenuItem key={item?.id} value={item?.id}>
-                        {item?.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              ))}
-          </Box>
-        )}
+                  {sectorsEmployed.map((item: residentSector) => (
+                    <MenuItem key={item?.id} value={item?.id}>
+                      {item?.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            ))}
+        </Box>
       </div>
     </div>
   );
