@@ -103,13 +103,13 @@ const ImageUploader = ({
             }).unwrap();
             if (res.status === 200) {
               setSuccess("Image successfully updated!");
-              refetch();
             } else {
               setError("Failed to update the profile picture, try again!");
             }
           } catch (error: any) {
             setError(error?.message);
           }
+          refetch();
         }
       } catch (error: any) {
         setError(error?.error);
