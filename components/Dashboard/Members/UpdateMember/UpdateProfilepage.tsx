@@ -245,13 +245,7 @@ function UpdateProfilepage() {
         },
       }).unwrap();
       if (res.message) {
-        if (id) {
-          globalThis.location.href = "/dashboard/users/" + id;
-        } else {
-          globalThis.location.href = "/dashboard/profile";
-        }
-        formik.resetForm();
-        setSuccess("User updated successfully!");
+        setSuccess("Profile updated successfully!");
         RefetchUser();
       }
     } catch (error: any) {

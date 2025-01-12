@@ -10,13 +10,13 @@ import Link from "next/link";
 import {
   useChangeMutation,
   useGetOneUserQuery,
-  useUpdateProfilePictureMutation,
 } from "@/lib/features/userSlice";
 import ConfirmModal from "../../Other/confirmModal";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { Alert, Box, Button, Chip, TextField, Typography } from "@mui/material";
 import TopTitle from "../../Other/TopTitle";
+import ImageUploader from "./ImageUploader";
 
 function ProfilePage() {
   dayjs.extend(relativeTime);
@@ -28,10 +28,11 @@ function ProfilePage() {
   const [userData, setUser] = useState<User | null>(null);
   const [edit, setEdit] = useState(false);
 
-  const userProfile = useGetOneUserQuery(id || userData?.id);
+  const { data: UserData, refetch: RefetchUser } = useGetOneUserQuery<{
+    data: User;
+  }>(id ? id : userData?.id);
   const [change] = useChangeMutation();
-  const [updateProfilePicture] = useUpdateProfilePictureMutation();
-  const user: User = userProfile?.data;
+  const user: User = UserData;
 
   const getUserData = async () => {
     setIsLoading(true);
@@ -95,13 +96,12 @@ function ProfilePage() {
       )}
       <div className="w-full">
         <Box className="flex gap-3 items-center">
-          <img
-            src={`${
-              user?.profileImage?.link
-                ? user?.profileImage?.link
-                : "/placeholder.svg"
-            }`}
-            className="w-48 h-48 object-cover rounded-full"
+          <ImageUploader
+            user={user}
+            refetch={RefetchUser}
+            setError={setError}
+            setSuccess={setSuccess}
+            setLoading={setIsLoading}
           />
           <div className="flex flex-col gap-3">
             <Typography variant="h5" fontWeight={700}>

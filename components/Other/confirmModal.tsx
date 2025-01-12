@@ -62,8 +62,12 @@ function ConfirmModal({
               </div>
             </div>
             <div className="bg-gray-50 flex gap-2 items-center px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
-              <Button onClick={action}>{confirmText}</Button>
-              <Button onClick={closeModal}>{cancelText}</Button>
+              <Button variant="contained" color="primary" onClick={action}>
+                {confirmText}
+              </Button>
+              <Button variant="contained" color="error" onClick={closeModal}>
+                {cancelText}
+              </Button>
             </div>
           </div>
         </div>

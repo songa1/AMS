@@ -87,6 +87,8 @@ function UpdateFoundedInfo() {
     skip: !foundedCountry,
   });
 
+  const usr = UserData;
+
   useEffect(() => {
     if (
       !UserData ||
@@ -114,7 +116,7 @@ function UpdateFoundedInfo() {
   }, [OrganizationsData]);
 
   useEffect(() => {
-    if (OrganizationData) {
+    if (OrganizationData || usr?.organizationFounded) {
       setOrganization(OrganizationData?.data);
       setNewOrg(OrganizationData?.data?.id);
     }
@@ -158,18 +160,23 @@ function UpdateFoundedInfo() {
     }
   }, [newOrg, organizations]);
 
-  const usr = UserData;
-
   const formik = useFormik({
     initialValues: {
-      initiativeName: usr?.organizationFounded?.name,
-      mainSector: usr?.organizationFounded?.workingSector?.id,
+      initiativeName: usr?.organizationFounded?.name || organization?.name,
+      mainSector:
+        usr?.organizationFounded?.workingSector?.id ||
+        organization?.workingSector?.id,
       foundedPosition: usr?.positionInFounded,
-      foundedDistrictName: usr?.organizationFounded?.district?.id,
-      foundedSectorId: usr?.organizationFounded?.sector?.id,
-      foundedWebsite: usr?.organizationFounded?.website,
-      foundedCountry: usr?.organizationFounded?.country?.id,
-      foundedState: usr?.organizationFounded?.state?.id,
+      foundedDistrictName:
+        usr?.organizationFounded?.district?.id || organization?.district?.id,
+      foundedSectorId:
+        usr?.organizationFounded?.sector?.id || organization?.sectorId,
+      foundedWebsite:
+        usr?.organizationFounded?.website || organization?.website,
+      foundedCountry:
+        usr?.organizationFounded?.country?.id || organization?.country?.id,
+      foundedState:
+        usr?.organizationFounded?.state?.id || organization?.state?.id,
     },
     validationSchema: Yup.object({
       initiativeName: Yup.string(),
@@ -201,22 +208,46 @@ function UpdateFoundedInfo() {
   const handleSubmit = async () => {
     setIsLoading(true);
     const values: any = formik.values;
+    console.log(values);
     try {
       let res;
       if (usr?.organizationFounded) {
         res = await updateOrg({
-          id: usr?.organizationFounded?.id,
-          name: values?.initiativeName,
-          workingSector: values?.mainSector,
-          countryId: values?.foundedCountry,
-          state: values?.foundedState,
-          districtId: values?.foundedDistrictName,
-          sectorId: values?.foundedSectorId,
-          website: values?.foundedWebsite,
+          id: usr?.organizationFounded?.id
+            ? usr?.organizationFounded?.id
+            : organization?.id,
+          name:
+            values?.initiativeName ||
+            organization?.name ||
+            usr?.organizationFounded?.name,
+          workingSector:
+            values?.mainSector ||
+            organization?.workingSector?.id ||
+            usr?.organizationFounded?.workingSector,
+          countryId:
+            values?.foundedCountry ||
+            organization?.country?.id ||
+            organization?.country?.id,
+          state:
+            values?.foundedState ||
+            organization?.state?.id ||
+            usr?.organizationFounded?.state?.id,
+          districtId:
+            values?.foundedDistrictName ||
+            organization?.districtId ||
+            usr?.organizationFounded?.districtId,
+          sectorId:
+            values?.foundedSectorId ||
+            organization?.sectorId ||
+            usr?.organizationFounded?.sectorId,
+          website:
+            values?.foundedWebsite ||
+            organization?.website ||
+            usr?.organizationFounded?.website,
         }).unwrap();
       } else {
         res = await addOrg({
-          name: formik.values?.initiativeName,
+          name: values?.initiativeName,
           workingSectorId: values?.mainSector,
           countryId: values?.foundedCountry,
           stateId: values?.foundedState,
@@ -225,21 +256,19 @@ function UpdateFoundedInfo() {
           website: values?.foundedWebsite,
         }).unwrap();
       }
-      if (res.status === 200) {
-        RefetchAll();
-        RefetchOne();
-        const assign = await assignOrg({
-          userId: user?.id,
-          organizationId: res.data.id,
-          relationshipType: "founded",
-          position: formik.values.foundedPosition,
-        }).unwrap();
+      RefetchAll();
+      RefetchOne();
+      const assign = await assignOrg({
+        userId: user?.id,
+        organizationId: res.data.id,
+        relationshipType: "founded",
+        position: formik.values.foundedPosition,
+      }).unwrap();
 
-        if (assign.status === 200) {
-          setSuccess("Organization updated successfully!");
-          RefetchUser();
-        }
-      }
+      setSuccess("Organization updated successfully!");
+      RefetchUser();
+      setOrganization(res?.data);
+      setNewOrg(res?.data?.id);
     } catch (error: any) {
       console.log(error);
       setError(error?.data?.error);
@@ -316,7 +345,11 @@ function UpdateFoundedInfo() {
         >
           <TextField
             label="Initiative Name"
-            defaultValue={organization?.name}
+            defaultValue={
+              organization?.name
+                ? organization?.name
+                : usr?.organizationFounded?.name
+            }
             value={formik.values.initiativeName}
             onChange={(e) =>
               formik.setFieldValue("initiativeName", e.target.value)
