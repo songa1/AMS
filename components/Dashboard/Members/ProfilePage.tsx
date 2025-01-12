@@ -183,6 +183,13 @@ function ProfilePage() {
             }
             disabled={!edit}
           />
+          {user?.residentCountry && user?.residentCountry?.id !== "RW" && (
+            <TextField
+              label="Resident State"
+              value={user?.state?.name ? user?.state?.name : "--"}
+              disabled={!edit}
+            />
+          )}
           {user?.residentCountry && user?.residentCountry?.id === "RW" && (
             <TextField
               label="Resident District"
@@ -295,6 +302,18 @@ function ProfilePage() {
             disabled={!edit}
           />
           {user?.organizationFounded &&
+            user?.organizationFounded?.country?.id !== "RW" && (
+              <TextField
+                value={
+                  user?.organizationFounded?.state?.name
+                    ? user?.organizationFounded?.state?.name
+                    : "--"
+                }
+                disabled={!edit}
+                label="State"
+              />
+            )}
+          {user?.organizationFounded &&
             user?.organizationFounded?.country?.id == "RW" && (
               <TextField
                 value={
@@ -370,6 +389,18 @@ function ProfilePage() {
             disabled={!edit}
             label="Country"
           />
+          {user?.organizationEmployed &&
+            user?.organizationEmployed?.country?.id !== "RW" && (
+              <TextField
+                value={
+                  user?.organizationEmployed?.state?.name
+                    ? user?.organizationEmployed?.state?.name
+                    : "--"
+                }
+                disabled={!edit}
+                label="State"
+              />
+            )}
           {user?.organizationEmployed &&
             user?.organizationEmployed?.country?.id == "RW" && (
               <TextField

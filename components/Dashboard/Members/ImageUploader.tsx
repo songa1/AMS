@@ -124,24 +124,17 @@ const ImageUploader = ({
       <img
         src={user?.profileImage?.link || "/placeholder.svg"}
         alt="Profile"
-        // className="w-48 h-48 object-cover rounded-full"
-        style={{
-          width: "192px",
-          height: "192px",
-          objectFit: "cover",
-          borderRadius: "50%",
-          aspectRatio: "1",
-        }}
+        className="w-48 h-48 object-cover rounded-full"
       />
 
       <IconButton
         color="primary"
         component="label"
+        className="bg-gray-100 border border-white"
         style={{
           position: "absolute",
           bottom: 8,
           right: 8,
-          backgroundColor: "white",
         }}
       >
         <PhotoCamera />
