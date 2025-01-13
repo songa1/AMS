@@ -9,7 +9,10 @@ export const statSlice = createApi({
     stats: builder.query({
       query: () => `stats`,
     }),
+    comms: builder.query({
+      query: (id) => `stats/comms/${id}`,
+    }),
   }),
 });
 
-export const { useStatsQuery } = statSlice;
+export const { useStatsQuery, useCommsQuery } = statSlice;

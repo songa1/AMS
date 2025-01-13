@@ -132,7 +132,7 @@ function ChatPage() {
                     src={
                       message?.senderId === user?.id
                         ? user?.profileImage?.link
-                        : ""
+                        : message?.receiver?.profileImage?.link
                     }
                   />
                   <Box
