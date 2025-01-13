@@ -113,7 +113,6 @@ function NotificationSetup() {
     );
     if (notification) {
       formik.setValues({
-        ...formik.values,
         message: notification.message,
         usage: notification.usage,
         link: notification.link,
@@ -123,7 +122,9 @@ function NotificationSetup() {
 
   const formik = useFormik({
     initialValues: {
-      message: "Add the notification here",
+      message: notification?.message
+        ? notification?.message
+        : "Add the notification here",
       usage: notification?.usage,
       link: actions.map((action: any) => action.id).join("+"),
     },
@@ -202,12 +203,8 @@ function NotificationSetup() {
         <Box className="noti-sticky-header">
           <Box className="flex justify-between items-center w-full p-4">
             <Typography variant="h6" fontWeight={700}>
-              {currentNotification
-                ? `${
-                    notifications.find(
-                      (noti: any) => noti.id == currentNotification
-                    )?.usage
-                  }`
+              {currentNotification && notification
+                ? notification?.usage
                 : "No notification selected!"}
             </Typography>
             <Button
@@ -227,7 +224,11 @@ function NotificationSetup() {
           <ReactQuill
             className="w-full rounded-md h-[30vh] mb-11"
             theme="snow"
-            defaultValue={notification?.message || "Add the notification here"}
+            defaultValue={
+              notification?.message
+                ? notification?.message
+                : "Add the notification here"
+            }
             value={formik.values.message}
             onChange={(e) => formik.setFieldValue("message", e)}
           />
