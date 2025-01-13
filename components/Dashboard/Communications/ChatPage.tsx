@@ -16,10 +16,10 @@ import { User } from "@/types/user";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { useParams } from "next/navigation";
-import { Avatar } from "@mui/material";
+import { Avatar, Box, Typography } from "@mui/material";
 
 function ChatPage() {
-  const user = getUser();
+  const user: User = getUser();
   dayjs.extend(relativeTime);
   const [messages, setMessages] = useState<Message[]>([]);
   const { username } = useParams();
@@ -72,7 +72,7 @@ function ChatPage() {
       message: Yup.string().required("Message is required"),
       sender: Yup.string(),
     }),
-    onSubmit: async (values) => {
+    onSubmit: async (values: any) => {
       try {
         const res = await addMessage({ data: values }).unwrap();
         formik.resetForm();
@@ -83,20 +83,20 @@ function ChatPage() {
   });
 
   return (
-    <div className="chat">
-      <div
+    <Box className="chat">
+      <Box
         className="bg-gray-100 left-0 right-0 top-0 p-4 rounded-t-xl flex items-center gap-3"
         style={{ zIndex: 1 }}
       >
         <Avatar />
-        <div className="flex flex-col">
-          <h2 className="font-bold text-mainBlue">
+        <Box className="flex flex-col">
+          <Typography variant="h5" fontWeight={600}>
             {username
               ? UsersQuery?.data.find((user: User) => user?.id == username)
                   ?.firstName
               : "Community Chat"}
-          </h2>
-          <p className="text-xs">
+          </Typography>
+          <Typography className="text-xs">
             {!username &&
               UsersQuery?.data
                 .slice(0, 2)
@@ -104,10 +104,10 @@ function ChatPage() {
             {!username &&
               UsersQuery?.data.length > 2 &&
               " and " + UsersQuery?.data.length + " others"}
-          </p>
-        </div>
-      </div>
-      <div
+          </Typography>
+        </Box>
+      </Box>
+      <Box
         className={`h-[70vh] p-2 rounded-xl w-full content-end overflow-scroll my-scrollable-div no-scrollbar`}
       >
         {messages &&
@@ -119,7 +119,7 @@ function ChatPage() {
             )
             .map((message) => {
               return (
-                <div
+                <Box
                   key={message?.id}
                   className={`flex flex-1 gap-1 w-full ${
                     message?.senderId === user?.id
@@ -128,33 +128,38 @@ function ChatPage() {
                   }`}
                 >
                   <Avatar
-                    src={message?.senderId === user?.id ? user?.picture : ""}
+                    alt={user?.firstName}
+                    src={
+                      message?.senderId === user?.id
+                        ? user?.profileImage?.link
+                        : ""
+                    }
                   />
-                  <div
+                  <Box
                     className={`message ${
                       message?.senderId === user?.id ? "sent" : "received"
                     }`}
                   >
-                    <p className="text-xs font-bold">
+                    <Typography variant="body2" fontWeight={500}>
                       {message?.sender?.firstName +
                         " " +
                         message?.sender?.middleName || ""}
-                    </p>
-                    <p>{message?.message}</p>
-                    <p className="text-xs text-gray-600">
+                    </Typography>
+                    <Typography variant="body2">{message?.message}</Typography>
+                    <Typography className="text-xs">
                       {dayjs(message?.createdAt).fromNow()}
-                    </p>
-                  </div>
-                </div>
+                    </Typography>
+                  </Box>
+                </Box>
               );
             })}
         {messages && messages.length === 0 && (
-          <div className="flex h-full w-full justify-center items-center">
+          <Typography variant="body2" className="items-center">
             No messages yet, send a message to start the conversation!
-          </div>
+          </Typography>
         )}
         <div ref={messagesEndRef} />
-      </div>
+      </Box>
       <form className="flex gap-2 items-center">
         <ChatInput
           onSubmit={() => formik.handleSubmit()}
@@ -162,7 +167,7 @@ function ChatPage() {
           setValue={(e: any) => formik.setFieldValue("message", e.target.value)}
         />
       </form>
-    </div>
+    </Box>
   );
 }
 
