@@ -28,12 +28,14 @@ const ImageUploader = ({
   setError,
   setSuccess,
   setLoading,
+  currentUser,
 }: {
   user: User;
   refetch: any;
   setError: any;
   setSuccess: any;
   setLoading: any;
+  currentUser: User | null;
 }) => {
   const [open, setOpen] = useState(false);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
@@ -49,6 +51,8 @@ const ImageUploader = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploadPicture] = useUploadPictureMutation();
   const [updateProfilePicture] = useUpdateProfilePictureMutation();
+
+  const isAdmin = user?.role?.name == "ADMIN";
 
   const handleCropComplete = (_: any, croppedAreaPixels: any) => {
     setCroppedArea(croppedAreaPixels);
@@ -127,23 +131,26 @@ const ImageUploader = ({
         className="w-48 h-48 object-cover rounded-full"
       />
 
-      <IconButton
-        color="primary"
-        component="label"
-        className="bg-gray-100 border border-white"
-        style={{
-          position: "absolute",
-          bottom: 8,
-          right: 8,
-        }}
-      >
-        <PhotoCamera />
-        <VisuallyHiddenInput
-          ref={fileInputRef}
-          type="file"
-          onChange={handleFileChange}
-        />
-      </IconButton>
+      {isAdmin ||
+        (user?.id === currentUser?.id && (
+          <IconButton
+            color="primary"
+            component="label"
+            className="bg-gray-100 border border-white"
+            style={{
+              position: "absolute",
+              bottom: 8,
+              right: 8,
+            }}
+          >
+            <PhotoCamera />
+            <VisuallyHiddenInput
+              ref={fileInputRef}
+              type="file"
+              onChange={handleFileChange}
+            />
+          </IconButton>
+        ))}
 
       <Modal open={open} onClose={handleCancel}>
         <Box

@@ -28,12 +28,18 @@ import { getUser } from "@/helpers/auth";
 function Layout(props: any) {
   const user = getUser();
   const { data: Stats } = useCommsQuery(user?.id);
+  const isAdmin = user?.role?.name == "ADMIN";
+
   const NAVIGATION: Navigation = [
-    {
-      segment: "dashboard",
-      title: "Dashboard",
-      icon: <DashboardIcon />,
-    },
+    ...(isAdmin
+      ? [
+          {
+            segment: "dashboard",
+            title: "Dashboard",
+            icon: <DashboardIcon />,
+          },
+        ]
+      : []),
     {
       kind: "header",
       title: "Your Profile",
@@ -43,28 +49,32 @@ function Layout(props: any) {
       title: "View Profile",
       icon: <AccountBoxIcon />,
     },
-    {
-      segment: "dashboard/update-profile",
-      title: "Edit Profile",
-      icon: <EditIcon />,
-      children: [
-        {
-          segment: "/",
-          title: "Personal Info",
-          icon: <SettingsAccessibilityIcon />,
-        },
-        {
-          segment: "/organization-founded",
-          title: "Organization Founded",
-          icon: <FoundationIcon />,
-        },
-        {
-          segment: "/organization-employed",
-          title: "Employment Info",
-          icon: <CorporateFareIcon />,
-        },
-      ],
-    },
+    ...(isAdmin
+      ? [
+          {
+            segment: "dashboard/update-profile",
+            title: "Edit Profile",
+            icon: <EditIcon />,
+            children: [
+              {
+                segment: "/",
+                title: "Personal Info",
+                icon: <SettingsAccessibilityIcon />,
+              },
+              {
+                segment: "/organization-founded",
+                title: "Organization Founded",
+                icon: <FoundationIcon />,
+              },
+              {
+                segment: "/organization-employed",
+                title: "Employment Info",
+                icon: <CorporateFareIcon />,
+              },
+            ],
+          },
+        ]
+      : []),
     {
       kind: "divider",
     },
@@ -101,18 +111,22 @@ function Layout(props: any) {
     },
     {
       kind: "header",
-      title: "Users",
+      title: "Members",
     },
     {
       segment: "dashboard/users",
       title: "Members",
       icon: <PeopleIcon />,
     },
-    {
-      segment: "dashboard/add-new-user",
-      title: "Add New User",
-      icon: <PersonAddIcon />,
-    },
+    ...(isAdmin
+      ? [
+          {
+            segment: "dashboard/add-new-user",
+            title: "Add New User",
+            icon: <PersonAddIcon />,
+          },
+        ]
+      : []),
     {
       kind: "divider",
     },
@@ -125,11 +139,15 @@ function Layout(props: any) {
       title: "Change Password",
       icon: <EnhancedEncryptionIcon />,
     },
-    {
-      segment: "dashboard/settings",
-      title: "Settings",
-      icon: <SettingsIcon />,
-    },
+    ...(isAdmin
+      ? [
+          {
+            segment: "dashboard/settings",
+            title: "Settings",
+            icon: <SettingsIcon />,
+          },
+        ]
+      : []),
     {
       segment: "dashboard/logout",
       title: "Logout",

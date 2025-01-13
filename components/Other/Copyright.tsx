@@ -18,8 +18,8 @@ export default function Copyright(props: any) {
       ]}
     >
       {"Copyright © "}
-      <Link color="inherit" href="#">
-        Alumni Management System
+      <Link color="inherit" href="https://yalirwandachapter.org">
+        YALI Rwanda Chapter
       </Link>{" "}
       {new Date().getFullYear()}
       {"."}

@@ -28,11 +28,11 @@ function ProfilePage() {
   const [userData, setUser] = useState<User | null>(null);
   const [edit, setEdit] = useState(false);
 
-  const { data: UserData, refetch: RefetchUser } = useGetOneUserQuery<{
+  const { data: FetchedUserData, refetch: RefetchUser } = useGetOneUserQuery<{
     data: User;
   }>(id ? id : userData?.id);
   const [change] = useChangeMutation();
-  const user: User = UserData;
+  const user: User = FetchedUserData;
 
   const getUserData = async () => {
     setIsLoading(true);
@@ -102,6 +102,7 @@ function ProfilePage() {
             setError={setError}
             setSuccess={setSuccess}
             setLoading={setIsLoading}
+            currentUser={userData}
           />
           <div className="flex flex-col gap-3">
             <Typography variant="h5" fontWeight={700}>

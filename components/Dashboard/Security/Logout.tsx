@@ -5,10 +5,12 @@ import { useRouter } from "next/navigation";
 import { useLogoutMutation } from "@/lib/features/authSlice";
 import { AUTH_STORED_DATA, getUser } from "@/helpers/auth";
 import Cookies from "js-cookie";
+import Loading from "@/app/loading";
 
 function Logout() {
   const router = useRouter();
   const user = getUser();
+  const [loading, setLoading] = React.useState(false);
 
   const [logout] = useLogoutMutation();
 
@@ -16,6 +18,7 @@ function Logout() {
 
   useEffect(() => {
     const logoutFn = async () => {
+      setLoading(false);
       const res = await logout({ userId: user?.id, token }).unwrap();
       if (res.status === 200) {
         localStorage.removeItem(AUTH_STORED_DATA?.USER);
@@ -23,9 +26,14 @@ function Logout() {
         Cookies.remove(AUTH_STORED_DATA?.USER);
         router.push("/");
       }
+      setLoading(false);
     };
     logoutFn();
   }, []);
+
+  if (loading) {
+    return <Loading />;
+  }
 
   return null;
 }

@@ -134,9 +134,9 @@ const UsersPage = () => {
       headerName: "Actions",
       width: 150,
       cellClassName: "actions",
-      getActions: (params: GridRowParams<any>) => {
+      getActions: (params: GridRowParams<any>): React.ReactElement[] => {
         const id: any = params.id;
-        return [
+        const acts = [
           <GridActionsCellItem
             icon={<VisibilityIcon />}
             label="View"
@@ -147,25 +147,31 @@ const UsersPage = () => {
             color="inherit"
             key="view"
           />,
-          <GridActionsCellItem
-            icon={<EditIcon />}
-            label="Edit"
-            className="textPrimary"
-            onClick={() => (globalThis.location.href = "update-profile/" + id)}
-            color="inherit"
-            key="edit"
-          />,
-          <GridActionsCellItem
-            icon={<DeleteIcon />}
-            label="Delete"
-            onClick={async (e) => {
-              e.preventDefault();
-              setIdToDelete(id);
-              setModal(true);
-            }}
-            color="inherit"
-            key="delete"
-          />,
+          isAdmin ? (
+            <GridActionsCellItem
+              icon={<EditIcon />}
+              label="Edit"
+              className="textPrimary"
+              onClick={() =>
+                (globalThis.location.href = "update-profile/" + id)
+              }
+              color="inherit"
+              key="edit"
+            />
+          ) : null,
+          isAdmin ? (
+            <GridActionsCellItem
+              icon={<DeleteIcon />}
+              label="Delete"
+              onClick={async (e) => {
+                e.preventDefault();
+                setIdToDelete(id);
+                setModal(true);
+              }}
+              color="inherit"
+              key="delete"
+            />
+          ) : null,
           <GridActionsCellItem
             icon={<EmailIcon />}
             label="Message"
@@ -177,6 +183,9 @@ const UsersPage = () => {
             key="message"
           />,
         ];
+        return acts.filter(
+          (action): action is React.ReactElement => action != null
+        );
       },
     },
   ];
