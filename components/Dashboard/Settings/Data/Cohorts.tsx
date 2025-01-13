@@ -10,12 +10,14 @@ import React, { useEffect, useRef, useState } from "react";
 import * as Yup from "yup";
 import dayjs from "dayjs";
 import { FiDelete } from "react-icons/fi";
+import { Alert, Box, Button, TextField } from "@mui/material";
+import { SectionTitle } from "@/components/Other/TopTitle";
 
 function Cohorts() {
-  const toast: any = useRef(null);
   const [error, setError] = useState();
-  const [loading, setLoading] = useState();
+  const [loading, setLoading] = useState(false);
   const [data, setData] = useState<any>([]);
+  const [success, setSuccess] = useState("");
 
   const { data: CohortsData, refetch } = useCohortsQuery("");
   const [addCohort] = useAddCohortMutation();
@@ -50,18 +52,17 @@ function Cohorts() {
   }, [CohortsData]);
 
   const handleDelete = async (id: number) => {
+    setLoading(true);
     try {
       const res = await deleteCohort(id).unwrap();
       if (res) {
         refetch();
-        toast.current.show({
-          severity: "info",
-          summary: "Success",
-          detail: "Cohort deleted successfully!",
-        });
+        setSuccess("Cohort deleted successfully!");
       }
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -72,98 +73,88 @@ function Cohorts() {
     },
     validationSchema: Yup.object({}),
     onSubmit: async (values) => {
+      setLoading(true);
       try {
         const res = await addCohort({
           name: values?.name,
           description: values?.description,
         }).unwrap();
         if (res && res.status === 400) {
-          toast.current.show({
-            severity: "error",
-            summary: "Error",
-            detail: res?.data?.message,
-          });
+          setError(res?.data?.message);
         }
         if (res) {
           console.log(res);
           formik.resetForm();
           refetch();
-          toast.current.show({
-            severity: "info",
-            summary: "Success",
-            detail: "Cohort added successfully!",
-          });
+          setSuccess("Cohort added successfully!");
         }
       } catch (error: any) {
         console.log(error);
-        toast.current.show({
-          severity: "error",
-          summary: "Error",
-          detail: error?.error || error?.data?.message || error?.data?.error,
-        });
+        setError(error?.error || error?.data?.message || error?.data?.error);
+      } finally {
+        setLoading(false);
       }
     },
   });
 
   return (
-    <div>
-      <div className="data-hold">
-        <div className="notifications-left">
-          <h1 className="noti-sticky-header">Add Cohort</h1>
-          <form className="p-3">
-            {error && (
-              <p className="bg-red-500 text-white rounded-md text-center p-2 w-full">
-                {error}
-              </p>
-            )}
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700 mt-2"
-            >
-              Cohort Name:
-            </label>
-            <input
-              type="text"
-              id="name"
-              value={formik.values.name}
-              onChange={(e) => formik.setFieldValue("name", e.target.value)}
-              required
-              className="w-full p-2 mt-1 border rounded"
-            />
-          
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700 mt-3"
-            >
-              Description:
-            </label>
-            <textarea
-              rows={5}
-              id="name"
-              value={formik.values.description}
-              onChange={(e) =>
-                formik.setFieldValue("description", e.target.value)
-              }
-              required
-              className="w-full p-2 mt-1 border rounded"
-            />
-            
-            <button
-              type="submit"
-              className="w-full px-4 py-2 mt-4 font-bold text-white bg-mainBlue rounded hover:bg-mainblue-700"
-              disabled={loading}
-              onClick={(e) => {
-                e.preventDefault();
-                formik.handleSubmit();
-              }}
-            >
-              {loading ? "Adding..." : "Add"}
-            </button>
-          </form>
-        </div>
-        <div className="notifications-right">
-          <div className="noti-sticky-header">Cohorts</div>
-          {/* <DataTable
+    <Box className="data-hold">
+      <Box className="notifications-left">
+        <SectionTitle title="Add Cohort" />
+        <Box
+          sx={{
+            width: "100%",
+            display: "flex",
+            flexDirection: "column",
+            gap: 2,
+            padding: "15px",
+          }}
+        >
+          {error && (
+            <Alert variant="filled" severity="error">
+              {error}
+            </Alert>
+          )}
+          {success && (
+            <Alert variant="filled" severity="success">
+              {success}
+            </Alert>
+          )}
+          <TextField
+            id="name"
+            label="Cohort Name"
+            variant="filled"
+            value={formik.values.name}
+            onChange={(e) => formik.setFieldValue("name", e.target.value)}
+          />
+
+          <TextField
+            multiline
+            rows={5}
+            variant="filled"
+            label="Description"
+            value={formik.values.description}
+            onChange={(e) =>
+              formik.setFieldValue("description", e.target.value)
+            }
+          />
+
+          <Button
+            variant="contained"
+            color="primary"
+            disabled={loading}
+            onClick={(e) => {
+              e.preventDefault();
+              formik.handleSubmit();
+            }}
+          >
+            {loading ? "Adding..." : "Add"}
+          </Button>
+        </Box>
+      </Box>
+      <Box className="notifications-right">
+        <SectionTitle title="Cohorts" />
+        {/* <DataTable
             value={data}
             tableStyle={{ minWidth: "50rem" }}
             editMode="cell"
@@ -173,9 +164,8 @@ function Cohorts() {
                 <Column key={key} field={key} header={key}></Column>
               ))}
           </DataTable> */}
-        </div>
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 }
 

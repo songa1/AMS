@@ -11,7 +11,8 @@ import {
   useUpdateSetupMutation,
 } from "@/lib/features/notificationSlice";
 import dynamic from "next/dynamic";
-import { Button } from "@mui/material";
+import { Box, Button } from "@mui/material";
+import { SectionTitle } from "@/components/Other/TopTitle";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
@@ -141,7 +142,7 @@ function NotificationSetup() {
     <div>
       <div className="data-hold">
         <div className="notifications-left">
-          <h1 className="noti-sticky-header">Notification Type</h1>
+          <SectionTitle title="Notification Type" />
           <ul className="flex flex-col gap-1">
             {notifications.length > 0 ? (
               notifications.map((noti: any, index: number) => (
@@ -166,22 +167,28 @@ function NotificationSetup() {
           </ul>
         </div>
         <div className="notifications-right">
-          <div className="noti-sticky-header">
-            <div className="flex justify-between items-center w-full p-2">
-              <div>
-                {currentNotification
-                  ? `${
-                      notifications.find(
-                        (noti: any) => noti.id == currentNotification
-                      )?.usage
-                    }`
-                  : "No notification selected!"}
-              </div>
-              {/* <Button color="primary" onClick={formik.handleSubmit}>
+          <Box className="noti-sticky-header">
+            <Box className="flex justify-between items-center w-full p-2">
+              <SectionTitle
+                title={
+                  currentNotification
+                    ? `${
+                        notifications.find(
+                          (noti: any) => noti.id == currentNotification
+                        )?.usage
+                      }`
+                    : "No notification selected!"
+                }
+              />
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => formik.handleSubmit()}
+              >
                 Save
-              </Button> */}
-            </div>
-          </div>
+              </Button>
+            </Box>
+          </Box>
           <div className="p-5">
             <label className="py-2">
               <b>Message:</b>

@@ -14,6 +14,7 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import ChatIcon from "@mui/icons-material/Chat";
 import PeopleIcon from "@mui/icons-material/People";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
+import SettingsIcon from "@mui/icons-material/Settings";
 
 export const NAVIGATION: Navigation = [
   {
@@ -99,6 +100,11 @@ export const NAVIGATION: Navigation = [
     segment: "dashboard/change-password",
     title: "Change Password",
     icon: <EnhancedEncryptionIcon />,
+  },
+  {
+    segment: "dashboard/Settings",
+    title: "Settings",
+    icon: <SettingsIcon />,
   },
   {
     segment: "dashboard/logout",

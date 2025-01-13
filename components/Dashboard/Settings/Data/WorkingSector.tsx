@@ -10,13 +10,15 @@ import React, { useEffect, useRef, useState } from "react";
 import * as Yup from "yup";
 import dayjs from "dayjs";
 import { FiDelete } from "react-icons/fi";
-import { Button } from "@mui/material";
+import { Alert, Box, Button, TextField } from "@mui/material";
+import { SectionTitle } from "@/components/Other/TopTitle";
 
 function WorkingSector() {
   const toast: any = useRef(null);
   const [error, setError] = useState();
   const [loading, setLoading] = useState();
   const [data, setData] = useState<any>([]);
+  const [success, setSuccess] = useState("");
 
   const { data: WorkingSectorData, refetch } = useWorkingSectorQuery("");
   const [addWorkingSector] = useAddWorkingSectorMutation();
@@ -91,43 +93,53 @@ function WorkingSector() {
   });
 
   return (
-    <div>
-      <div className="data-hold">
-        <div className="notifications-left">
-          <h1 className="noti-sticky-header">Add Working Sector</h1>
-          <form className="p-3">
-            {error && (
-              <p className="bg-red-500 text-white rounded-md text-center p-2 w-full">
-                {error}
-              </p>
-            )}
-            <label className="block text-sm font-medium text-gray-700 mt-2">
-              Working Sector Name:
-            </label>
-            <input
-              type="text"
-              id="name"
-              value={formik.values.name}
-              onChange={(e) => formik.setFieldValue("name", e.target.value)}
-              required
-              className="w-full p-2 mt-1 border rounded"
-            />
+    <Box className="data-hold">
+      <Box className="notifications-left">
+        <SectionTitle title="Add Working Sector" />
+        <Box
+          sx={{
+            width: "100%",
+            display: "flex",
+            flexDirection: "column",
+            gap: 2,
+            padding: "15px",
+          }}
+        >
+          {error && (
+            <Alert variant="filled" severity="error">
+              {error}
+            </Alert>
+          )}
+          {success && (
+            <Alert variant="filled" severity="success">
+              {success}
+            </Alert>
+          )}
+          <TextField
+            type="text"
+            id="name"
+            variant="filled"
+            label="Working Sector Name"
+            value={formik.values.name}
+            onChange={(e) => formik.setFieldValue("name", e.target.value)}
+          />
 
-            <Button
-              color="primary"
-              disabled={loading}
-              onClick={(e) => {
-                e.preventDefault();
-                formik.handleSubmit();
-              }}
-            >
-              {loading ? "Adding..." : "Add"}
-            </Button>
-          </form>
-        </div>
-        <div className="notifications-right">
-          <div className="noti-sticky-header">Working Sectors</div>
-          {/* <DataTable
+          <Button
+            color="primary"
+            disabled={loading}
+            variant="contained"
+            onClick={(e) => {
+              e.preventDefault();
+              formik.handleSubmit();
+            }}
+          >
+            {loading ? "Adding..." : "Add"}
+          </Button>
+        </Box>
+      </Box>
+      <Box className="notifications-right">
+        <SectionTitle title="Working Sectors" />
+        {/* <DataTable
             value={data}
             tableStyle={{ minWidth: "50rem" }}
             editMode="cell"
@@ -137,9 +149,8 @@ function WorkingSector() {
                 <Column key={key} field={key} header={key}></Column>
               ))}
           </DataTable> */}
-        </div>
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 }
 

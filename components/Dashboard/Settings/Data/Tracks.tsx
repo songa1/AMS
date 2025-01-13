@@ -10,12 +10,14 @@ import React, { useEffect, useRef, useState } from "react";
 import * as Yup from "yup";
 import dayjs from "dayjs";
 import { FiDelete } from "react-icons/fi";
+import { Alert, Box, Button, TextField } from "@mui/material";
+import { SectionTitle } from "@/components/Other/TopTitle";
 
 function Tracks() {
-  const toast: any = useRef(null);
   const [error, setError] = useState();
-  const [loading, setLoading] = useState();
+  const [loading, setLoading] = useState(false);
   const [data, setData] = useState<any>([]);
+  const [success, setSuccess] = useState("");
 
   const { data: TracksData, refetch } = useTracksQuery("");
   const [addTrack] = useAddTrackMutation();
@@ -49,18 +51,18 @@ function Tracks() {
   }, [TracksData]);
 
   const handleDelete = async (id: number) => {
+    setLoading(true);
     try {
       const res = await deleteTrack(id).unwrap();
       if (res) {
         refetch();
-        toast.current.show({
-          severity: "info",
-          summary: "Success",
-          detail: "Track deleted successfully!",
-        });
+        setSuccess("Track deleted successfully!");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.log(error);
+      setError(error?.data?.error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -70,6 +72,7 @@ function Tracks() {
     },
     validationSchema: Yup.object({}),
     onSubmit: async (values) => {
+      setLoading(true);
       try {
         const res = await addTrack({
           name: values?.name,
@@ -77,56 +80,63 @@ function Tracks() {
         if (res) {
           formik.resetForm();
           refetch();
-          toast.current.show({
-            severity: "info",
-            summary: "Success",
-            detail: "Track added successfully!",
-          });
+          setSuccess("Track added successfully!");
         }
       } catch (error) {
         console.log(error);
+      } finally {
+        setLoading(false);
       }
     },
   });
 
   return (
-    <div>
-      <div className="data-hold">
-        <div className="notifications-left">
-          <h1 className="noti-sticky-header">Add Track</h1>
-          <form className="p-3">
-            {error && (
-              <p className="bg-red-500 text-white rounded-md text-center p-2 w-full">
-                {error}
-              </p>
-            )}
-            <label className="block text-sm font-medium text-gray-700 mt-2">
-              Track Name:
-            </label>
-            <input
-              type="text"
-              id="name"
-              value={formik.values.name}
-              onChange={(e) => formik.setFieldValue("name", e.target.value)}
-              required
-              className="w-full p-2 mt-1 border rounded"
-            />
-            <button
-              type="submit"
-              className="w-full px-4 py-2 mt-4 font-bold text-white bg-mainBlue rounded hover:bg-mainblue-700"
-              disabled={loading}
-              onClick={(e) => {
-                e.preventDefault();
-                formik.handleSubmit();
-              }}
-            >
-              {loading ? "Adding..." : "Add"}
-            </button>
-          </form>
-        </div>
-        <div className="notifications-right">
-          <div className="noti-sticky-header">Tracks</div>
-          {/* <DataTable
+    <Box className="data-hold">
+      <Box className="notifications-left">
+        <SectionTitle title="Add Track" />
+        <Box
+          sx={{
+            width: "100%",
+            display: "flex",
+            flexDirection: "column",
+            gap: 2,
+            padding: "15px",
+          }}
+        >
+          {error && (
+            <Alert variant="filled" severity="error">
+              {error}
+            </Alert>
+          )}
+          {success && (
+            <Alert variant="filled" severity="success">
+              {success}
+            </Alert>
+          )}
+          <TextField
+            type="text"
+            id="name"
+            variant="filled"
+            label="Track Name"
+            value={formik.values.name}
+            onChange={(e) => formik.setFieldValue("name", e.target.value)}
+          />
+          <Button
+            disabled={loading}
+            variant="contained"
+            color="primary"
+            onClick={(e) => {
+              e.preventDefault();
+              formik.handleSubmit();
+            }}
+          >
+            {loading ? "Adding..." : "Add"}
+          </Button>
+        </Box>
+      </Box>
+      <Box className="notifications-right">
+        <SectionTitle title="Tracks" />
+        {/* <DataTable
             value={data}
             tableStyle={{ minWidth: "50rem" }}
             editMode="cell"
@@ -136,9 +146,8 @@ function Tracks() {
                 <Column key={key} field={key} header={key}></Column>
               ))}
           </DataTable> */}
-        </div>
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 }
 
