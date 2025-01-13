@@ -1,20 +1,5 @@
 "use client";
 
-// function Layout({ children }: { children: React.ReactNode }) {
-//   const [titles, setTitles] = useState(true);
-//   return (
-//     <div className="h-screen flex">
-//       <div className="h-full bg-mainBlue">
-//         <Sidebar titles={titles} setTitles={setTitles} />
-//       </div>
-
-//       <div className={`p-5 w-full h-screen ${!titles ? "ml-14" : "ml-60"}`}>
-//         <AccessDashboard>{children}</AccessDashboard>
-//       </div>
-//     </div>
-//   );
-// }
-
 import * as React from "react";
 import { DashboardLayout } from "@toolpad/core/DashboardLayout";
 import { PageContainer } from "@toolpad/core/PageContainer";
@@ -91,7 +76,7 @@ function Layout(props: any) {
       segment: "dashboard/notifications",
       title: "Notifications",
       icon: <NotificationsIcon />,
-      action: (
+      action: Number(Stats?.data?.notifications) > 0 && (
         <Chip
           label={Stats?.data?.notifications ? Stats?.data?.notifications : ""}
           color="info"
@@ -103,7 +88,7 @@ function Layout(props: any) {
       segment: "dashboard/chat",
       title: "Chat",
       icon: <ChatIcon />,
-      action: (
+      action: Number(Stats?.data?.messages) > 0 && (
         <Chip
           label={Stats?.data?.messages ? Stats?.data?.messages : ""}
           color="info"

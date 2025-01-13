@@ -85,12 +85,13 @@ function ChatPage() {
   return (
     <Box className="chat">
       <Box
-        className="bg-gray-100 left-0 right-0 top-0 p-4 rounded-t-xl flex items-center gap-3"
+        className="left-0 right-0 top-0 p-4 rounded-t-xl flex items-center gap-3 dark:text-black"
+        sx={{ backgroundColor: "white" }}
         style={{ zIndex: 1 }}
       >
         <Avatar />
         <Box className="flex flex-col">
-          <Typography variant="h5" fontWeight={600}>
+          <Typography variant="h6" fontWeight={600}>
             {username
               ? UsersQuery?.data.find((user: User) => user?.id == username)
                   ?.firstName
@@ -98,12 +99,10 @@ function ChatPage() {
           </Typography>
           <Typography className="text-xs">
             {!username &&
-              UsersQuery?.data
-                .slice(0, 2)
-                .map((user: User) => user?.firstName + ", ")}
+              UsersQuery?.data.slice(0, 1).map((user: User) => user?.firstName)}
             {!username &&
               UsersQuery?.data.length > 2 &&
-              " and " + UsersQuery?.data.length + " others"}
+              " and " + (UsersQuery?.data.length - 1) + " others"}
           </Typography>
         </Box>
       </Box>
