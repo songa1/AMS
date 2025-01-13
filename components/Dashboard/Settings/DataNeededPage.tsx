@@ -13,7 +13,7 @@ function DataNeededPage() {
     <Box className="flex flex-col gap-5">
       <Box>
         <OtherTitle title="Setup Notifications" />
-        {/* <NotificationSetup /> */}
+        <NotificationSetup />
       </Box>
       <Box>
         <OtherTitle title="Cohorts Information" />

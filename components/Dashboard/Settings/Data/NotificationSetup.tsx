@@ -11,7 +11,19 @@ import {
   useUpdateSetupMutation,
 } from "@/lib/features/notificationSlice";
 import dynamic from "next/dynamic";
-import { Box, Button } from "@mui/material";
+import {
+  Alert,
+  Box,
+  Button,
+  Checkbox,
+  FormControlLabel,
+  FormGroup,
+  List,
+  ListItemButton,
+  ListItemText,
+  ListSubheader,
+  Typography,
+} from "@mui/material";
 import { SectionTitle } from "@/components/Other/TopTitle";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
@@ -32,12 +44,13 @@ export const actionOptions = [
 ];
 
 function NotificationSetup() {
-  const toast: any = useRef(null);
   dayjs.extend(relativeTime);
   const [notifications, setNotifications] = useState<any>([]);
   const [currentNotification, setCurrentNotification] = useState<string>();
   const [notification, setNotification] = useState<any>();
   const [actions, setActions] = useState<any[]>([]);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   const OnActionChange = (e: any) => {
     let _actions = [...actions];
@@ -109,10 +122,10 @@ function NotificationSetup() {
     initialValues: {
       message: "Add the notification here",
       usage: notification?.usage,
-      link: actions.map((action) => action.id).join("+"),
+      link: actions.map((action: any) => action.id).join("+"),
     },
     validationSchema: Yup.object({}),
-    onSubmit: async (values) => {
+    onSubmit: async (values: any) => {
       try {
         const res = await updateSetup({
           message: values.message,
@@ -122,114 +135,127 @@ function NotificationSetup() {
 
         if (res) {
           AllRefetch();
-          toast.current.show({
-            severity: "success",
-            summary: "Success",
-            detail: "Notification updated successfully!",
-          });
+          setSuccess("Notification updated successfully!");
         }
       } catch (error: any) {
-        toast.current.show({
-          severity: "error",
-          summary: "Error",
-          detail: "Error",
-        });
+        console.log(error);
+        setError(error?.message);
       }
     },
   });
 
   return (
-    <div>
-      <div className="data-hold">
-        <div className="notifications-left">
-          <SectionTitle title="Notification Type" />
-          <ul className="flex flex-col gap-1">
-            {notifications.length > 0 ? (
-              notifications.map((noti: any, index: number) => (
-                <li
-                  key={index + 1}
-                  className="border-b border-gray-200 p-2 px-4 cursor-pointer hover:bg-blue-100"
-                  onClick={() => handleOpenNotification(noti?.id)}
+    <Box className="data-hold">
+      <Box className="notifications-left">
+        <SectionTitle title="Notification Type" />
+        {error && (
+          <Alert variant="filled" severity="error">
+            {error}
+          </Alert>
+        )}
+        {success && (
+          <Alert variant="filled" severity="success">
+            {success}
+          </Alert>
+        )}
+        <List
+          className="flex flex-col gap-1"
+          sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
+          component="nav"
+          aria-labelledby="nested-list-subheader"
+          subheader={
+            <ListSubheader component="div" id="nested-list-subheader">
+              Choose a notification to edit
+            </ListSubheader>
+          }
+        >
+          {notifications.length > 0 ? (
+            notifications.map((noti: any, index: number) => (
+              <ListItemButton
+                key={index + 1}
+                onClick={() => handleOpenNotification(noti?.id)}
+              >
+                <ListItemText
+                  primary={noti.usage}
+                  secondary={dayjs(noti?.updatedAt).fromNow()}
+                ></ListItemText>
+              </ListItemButton>
+            ))
+          ) : (
+            <Typography
+              variant="body2"
+              sx={{ padding: "10px", textAlign: "center" }}
+            >
+              No Notifications for Now! Check back later!
+            </Typography>
+          )}
+        </List>
+      </Box>
+      <Box className="notifications-right">
+        <Box className="noti-sticky-header">
+          <Box className="flex justify-between items-center w-full p-2">
+            <SectionTitle
+              title={
+                currentNotification
+                  ? `${
+                      notifications.find(
+                        (noti: any) => noti.id == currentNotification
+                      )?.usage
+                    }`
+                  : "No notification selected!"
+              }
+            />
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => formik.handleSubmit()}
+            >
+              Save
+            </Button>
+          </Box>
+        </Box>
+        <Box className="p-5">
+          <Typography variant="h5" fontWeight={700} className="py-2">
+            <b>Message:</b>
+          </Typography>
+          <ReactQuill
+            className="w-full bg-gray-100 rounded-md h-[30vh] mb-11"
+            theme="snow"
+            defaultValue={notification?.message || "Add the notification here"}
+            value={formik.values.message}
+            onChange={(e) => formik.setFieldValue("message", e)}
+          />
+          <Typography variant="h5" fontWeight={700} className="py-2">
+            Action:
+          </Typography>
+          <Box className="flex flex-wrap justify-content-center gap-3 p-3">
+            {actionOptions.length > 0 ? (
+              actionOptions.map((action: any) => (
+                <FormGroup
+                  key={action.action}
+                  className="flex align-items-center"
                 >
-                  <div>
-                    <p className="text-xs text-mainBlue">
-                      {dayjs(noti?.updatedAt).fromNow()}
-                    </p>
-                    <p>{noti.usage}</p>
-                  </div>
-                </li>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        name={action.id}
+                        aria-label=""
+                        value={action.action}
+                        onChange={OnActionChange}
+                        checked={actions && actions.includes(action.action)}
+                      />
+                    }
+                    label={action?.action}
+                  />
+                </FormGroup>
               ))
             ) : (
-              <p className="py-4 px-2 text-center text-xs">
-                No Notifications for Now! Check back later!
-              </p>
+              <Typography variant="body2">No actions at the moment</Typography>
             )}
-          </ul>
-        </div>
-        <div className="notifications-right">
-          <Box className="noti-sticky-header">
-            <Box className="flex justify-between items-center w-full p-2">
-              <SectionTitle
-                title={
-                  currentNotification
-                    ? `${
-                        notifications.find(
-                          (noti: any) => noti.id == currentNotification
-                        )?.usage
-                      }`
-                    : "No notification selected!"
-                }
-              />
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={() => formik.handleSubmit()}
-              >
-                Save
-              </Button>
-            </Box>
           </Box>
-          <div className="p-5">
-            <label className="py-2">
-              <b>Message:</b>
-            </label>
-            <ReactQuill
-              className="w-full bg-gray-100 rounded-md h-[30vh] mb-11"
-              theme="snow"
-              defaultValue={
-                notification?.message || "Add the notification here"
-              }
-              value={formik.values.message}
-              onChange={(e) => formik.setFieldValue("message", e)}
-            />
-            <label className="py-2">
-              <b>Action:</b>
-            </label>
-            <div className="flex flex-wrap justify-content-center gap-3 p-3">
-              {actionOptions.length > 0 ? (
-                actionOptions.map((action: any) => (
-                  <div key={action.action} className="flex align-items-center">
-                    <input
-                      type="checkbox"
-                      name={action.id}
-                      value={action.action}
-                      onChange={OnActionChange}
-                      checked={actions && actions.includes(action.action)}
-                    />
-                    <label htmlFor={action.id} className="ml-2">
-                      {action.action}
-                    </label>
-                  </div>
-                ))
-              ) : (
-                <p>No actions at the moment</p>
-              )}
-            </div>
-          </div>
-          {/* )} */}
-        </div>
-      </div>
-    </div>
+        </Box>
+      </Box>
+    </Box>
   );
 }
 
