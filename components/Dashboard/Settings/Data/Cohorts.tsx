@@ -36,6 +36,7 @@ function Cohorts() {
         CohortsData?.data
           .map((c: any) => {
             return {
+              id: c?.id,
               Name: c?.name,
               Description: c?.description,
               CreatedAt: dayjs(c.createdAt).format("DD-MM-YYYY"),

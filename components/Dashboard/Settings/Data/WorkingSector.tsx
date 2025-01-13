@@ -36,6 +36,7 @@ function WorkingSector() {
         WorkingSectorData?.data
           .map((c: any) => {
             return {
+              id: c?.id,
               Name: c?.name,
               CreatedAt: dayjs(c.createdAt).format("DD-MM-YYYY"),
             };
