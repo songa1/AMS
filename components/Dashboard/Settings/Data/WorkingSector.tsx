@@ -6,17 +6,22 @@ import {
   useWorkingSectorQuery,
 } from "@/lib/features/otherSlice";
 import { useFormik } from "formik";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import * as Yup from "yup";
 import dayjs from "dayjs";
-import { FiDelete } from "react-icons/fi";
 import { Alert, Box, Button, TextField } from "@mui/material";
 import { SectionTitle } from "@/components/Other/TopTitle";
+import DeleteIcon from "@mui/icons-material/Delete";
+import {
+  DataGrid,
+  GridActionsCellItem,
+  GridColDef,
+  GridRowParams,
+} from "@mui/x-data-grid";
 
 function WorkingSector() {
-  const toast: any = useRef(null);
   const [error, setError] = useState();
-  const [loading, setLoading] = useState();
+  const [loading, setLoading] = useState(false);
   const [data, setData] = useState<any>([]);
   const [success, setSuccess] = useState("");
 
@@ -25,6 +30,7 @@ function WorkingSector() {
   const [deleteWorkingSector] = useDeleteWorkingSectorMutation();
 
   useEffect(() => {
+    setLoading(true);
     if (WorkingSectorData) {
       setData(
         WorkingSectorData?.data
@@ -32,23 +38,12 @@ function WorkingSector() {
             return {
               Name: c?.name,
               CreatedAt: dayjs(c.createdAt).format("DD-MM-YYYY"),
-              Action: (
-                <button
-                  className=" bg-red-600 text-xs p-1 rounded"
-                  disabled={c?.name === "Not Specified"}
-                  onClick={async (e) => {
-                    e.preventDefault();
-                    await handleDelete(c.id);
-                  }}
-                >
-                  <FiDelete />
-                </button>
-              ),
             };
           })
           .sort((a: any, b: any) => a.createdAt - b.createdAt)
       );
     }
+    setLoading(false);
   }, [WorkingSectorData]);
 
   const handleDelete = async (id: number) => {
@@ -56,16 +51,48 @@ function WorkingSector() {
       const res = await deleteWorkingSector(id).unwrap();
       if (res) {
         refetch();
-        toast.current.show({
-          severity: "info",
-          summary: "Success",
-          detail: "Working Sector deleted successfully!",
-        });
+        setSuccess("Working Sector deleted successfully!");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.log(error);
+      setError(error?.message);
     }
   };
+
+  const columns: GridColDef[] = [
+    { field: "name", headerName: "Name", width: 200 },
+    { field: "createdAt", headerName: "Created When", width: 150 },
+    {
+      field: "actions",
+      type: "actions",
+      headerName: "Actions",
+      width: 150,
+      cellClassName: "actions",
+      getActions: (params: GridRowParams<any>) => {
+        const id: any = params.id;
+        return [
+          <GridActionsCellItem
+            icon={<DeleteIcon />}
+            label="Delete"
+            onClick={async (e) => {
+              e.preventDefault();
+              handleDelete(id);
+            }}
+            color="inherit"
+            key="delete"
+          />,
+        ];
+      },
+    },
+  ];
+
+  const rows = data.map((item: any) => {
+    return {
+      id: item.id,
+      name: item?.Name,
+      createdAt: item?.CreatedAt,
+    };
+  });
 
   const formik = useFormik({
     initialValues: {
@@ -73,6 +100,7 @@ function WorkingSector() {
     },
     validationSchema: Yup.object({}),
     onSubmit: async (values) => {
+      setLoading(true);
       try {
         const res = await addWorkingSector({
           name: values?.name,
@@ -80,14 +108,13 @@ function WorkingSector() {
         if (res) {
           formik.resetForm();
           refetch();
-          toast.current.show({
-            severity: "info",
-            summary: "Success",
-            detail: "Working Sector added successfully!",
-          });
+          setSuccess("Working Sector added successfully!");
         }
-      } catch (error) {
+      } catch (error: any) {
         console.log(error);
+        setError(error?.data?.error);
+      } finally {
+        setLoading(false);
       }
     },
   });
@@ -139,16 +166,30 @@ function WorkingSector() {
       </Box>
       <Box className="notifications-right">
         <SectionTitle title="Working Sectors" />
-        {/* <DataTable
-            value={data}
-            tableStyle={{ minWidth: "50rem" }}
-            editMode="cell"
-          >
-            {data.length > 0 &&
-              Object.keys(data[0]).map((key) => (
-                <Column key={key} field={key} header={key}></Column>
-              ))}
-          </DataTable> */}
+        <DataGrid
+          checkboxSelection
+          rows={rows}
+          columns={columns}
+          getRowClassName={(params) =>
+            params.indexRelativeToCurrentPage % 2 === 0 ? "even" : "odd"
+          }
+          initialState={{
+            pagination: { paginationModel: { pageSize: 20 } },
+          }}
+          sx={(theme: any) => ({
+            borderColor:
+              theme.palette.mode === "dark"
+                ? theme.palette.grey[700]
+                : theme.palette.grey[200],
+            "& .MuiDataGrid-cell": {
+              borderColor:
+                theme.palette.mode === "dark"
+                  ? theme.palette.grey[700]
+                  : theme.palette.grey[200],
+            },
+          })}
+          pageSizeOptions={[10, 20, 50, 100]}
+        />
       </Box>
     </Box>
   );

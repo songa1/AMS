@@ -13,7 +13,7 @@ import ConfirmModal from "../../Other/confirmModal";
 import { getUser } from "@/helpers/auth";
 import Loading from "@/app/loading";
 import FullScreenExport from "../../Other/FullScreenExport";
-import { Button, ButtonGroup } from "@mui/material";
+import { Box, Button, ButtonGroup } from "@mui/material";
 import {
   DataGrid,
   GridActionsCellItem,
@@ -216,14 +216,14 @@ const UsersPage = () => {
         />
       )}
       <TopTitle title="Members List" />
-      <div className="flex justify-between items-center my-2">
+      <Box className="flex justify-between items-center my-2">
         <SearchInput
           value={searchText}
           setValue={handleSearch}
           onSubmit={filteredUsers}
         />
         {isAdmin && (
-          <div className="flex gap-2 items-center">
+          <Box className="flex gap-2 items-center">
             <ButtonGroup
               size="small"
               variant="outlined"
@@ -252,9 +252,9 @@ const UsersPage = () => {
               id="popup_menu_right"
               popupAlignment="right"
             /> */}
-          </div>
+          </Box>
         )}
-      </div>
+      </Box>
       <div>
         <DataGrid
           checkboxSelection

@@ -6,27 +6,28 @@ import Tracks from "./Data/Tracks";
 import WorkingSector from "./Data/WorkingSector";
 import NotificationSetup from "./Data/NotificationSetup";
 import { OtherTitle } from "@/components/Other/TopTitle";
+import { Box } from "@mui/material";
 
 function DataNeededPage() {
   return (
-    <div className="flex flex-col gap-5">
-      <div>
+    <Box className="flex flex-col gap-5">
+      <Box>
         <OtherTitle title="Setup Notifications" />
         {/* <NotificationSetup /> */}
-      </div>
-      <div>
+      </Box>
+      <Box>
         <OtherTitle title="Cohorts Information" />
         <Cohorts />
-      </div>
-      <div>
+      </Box>
+      <Box>
         <OtherTitle title="Tracks Information" />
         <Tracks />
-      </div>
-      <div>
+      </Box>
+      <Box>
         <OtherTitle title="Working Sector Information" />
         <WorkingSector />
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 }
 

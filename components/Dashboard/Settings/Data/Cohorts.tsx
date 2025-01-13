@@ -6,12 +6,18 @@ import {
   useDeleteCohortMutation,
 } from "@/lib/features/otherSlice";
 import { useFormik } from "formik";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import * as Yup from "yup";
 import dayjs from "dayjs";
-import { FiDelete } from "react-icons/fi";
 import { Alert, Box, Button, TextField } from "@mui/material";
 import { SectionTitle } from "@/components/Other/TopTitle";
+import {
+  DataGrid,
+  GridActionsCellItem,
+  GridColDef,
+  GridRowParams,
+} from "@mui/x-data-grid";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 function Cohorts() {
   const [error, setError] = useState();
@@ -24,6 +30,7 @@ function Cohorts() {
   const [deleteCohort] = useDeleteCohortMutation();
 
   useEffect(() => {
+    setLoading(true);
     if (CohortsData) {
       setData(
         CohortsData?.data
@@ -32,23 +39,12 @@ function Cohorts() {
               Name: c?.name,
               Description: c?.description,
               CreatedAt: dayjs(c.createdAt).format("DD-MM-YYYY"),
-              Action: (
-                <button
-                  className=" bg-red-600 text-xs p-1 rounded"
-                  disabled={c?.name === "Not Specified"}
-                  onClick={async (e) => {
-                    e.preventDefault();
-                    await handleDelete(c.id);
-                  }}
-                >
-                  <FiDelete />
-                </button>
-              ),
             };
           })
           .sort((a: any, b: any) => a.createdAt - b.createdAt)
       );
     }
+    setLoading(false);
   }, [CohortsData]);
 
   const handleDelete = async (id: number) => {
@@ -65,6 +61,43 @@ function Cohorts() {
       setLoading(false);
     }
   };
+
+  const columns: GridColDef[] = [
+    { field: "name", headerName: "Name", width: 200 },
+    { field: "description", headerName: "Description", width: 250 },
+    { field: "createdAt", headerName: "Created When", width: 150 },
+    {
+      field: "actions",
+      type: "actions",
+      headerName: "Actions",
+      width: 150,
+      cellClassName: "actions",
+      getActions: (params: GridRowParams<any>) => {
+        const id: any = params.id;
+        return [
+          <GridActionsCellItem
+            icon={<DeleteIcon />}
+            label="Delete"
+            onClick={async (e) => {
+              e.preventDefault();
+              handleDelete(id);
+            }}
+            color="inherit"
+            key="delete"
+          />,
+        ];
+      },
+    },
+  ];
+
+  const rows = data.map((item: any) => {
+    return {
+      id: item.id,
+      name: item?.Name,
+      description: item?.Description,
+      createdAt: item?.CreatedAt,
+    };
+  });
 
   const formik = useFormik({
     initialValues: {
@@ -154,16 +187,30 @@ function Cohorts() {
       </Box>
       <Box className="notifications-right">
         <SectionTitle title="Cohorts" />
-        {/* <DataTable
-            value={data}
-            tableStyle={{ minWidth: "50rem" }}
-            editMode="cell"
-          >
-            {data.length > 0 &&
-              Object.keys(data[0]).map((key) => (
-                <Column key={key} field={key} header={key}></Column>
-              ))}
-          </DataTable> */}
+        <DataGrid
+          checkboxSelection
+          rows={rows}
+          columns={columns}
+          getRowClassName={(params) =>
+            params.indexRelativeToCurrentPage % 2 === 0 ? "even" : "odd"
+          }
+          initialState={{
+            pagination: { paginationModel: { pageSize: 20 } },
+          }}
+          sx={(theme) => ({
+            borderColor:
+              theme.palette.mode === "dark"
+                ? theme.palette.grey[700]
+                : theme.palette.grey[200],
+            "& .MuiDataGrid-cell": {
+              borderColor:
+                theme.palette.mode === "dark"
+                  ? theme.palette.grey[700]
+                  : theme.palette.grey[200],
+            },
+          })}
+          pageSizeOptions={[10, 20, 50, 100]}
+        />
       </Box>
     </Box>
   );
