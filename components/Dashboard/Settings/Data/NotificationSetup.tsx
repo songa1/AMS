@@ -51,6 +51,7 @@ function NotificationSetup() {
   const [actions, setActions] = useState<any[]>([]);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const OnActionChange = (e: any) => {
     let _actions = [...actions];
@@ -106,8 +107,10 @@ function NotificationSetup() {
   }, [currentNotification, notifications]);
 
   const handleOpenNotification = async (id: string) => {
-    console.log(id);
     setCurrentNotification(id);
+    setNotification(
+      notifications.find((noti: any) => noti.id == currentNotification)
+    );
     if (notification) {
       formik.setValues({
         ...formik.values,
@@ -126,6 +129,7 @@ function NotificationSetup() {
     },
     validationSchema: Yup.object({}),
     onSubmit: async (values: any) => {
+      setLoading(true);
       try {
         const res = await updateSetup({
           message: values.message,
@@ -140,6 +144,8 @@ function NotificationSetup() {
       } catch (error: any) {
         console.log(error);
         setError(error?.message);
+      } finally {
+        setLoading(false);
       }
     },
   });
@@ -173,6 +179,7 @@ function NotificationSetup() {
             notifications.map((noti: any, index: number) => (
               <ListItemButton
                 key={index + 1}
+                selected={noti?.id == currentNotification}
                 onClick={() => handleOpenNotification(noti?.id)}
               >
                 <ListItemText
@@ -193,33 +200,32 @@ function NotificationSetup() {
       </Box>
       <Box className="notifications-right">
         <Box className="noti-sticky-header">
-          <Box className="flex justify-between items-center w-full p-2">
-            <SectionTitle
-              title={
-                currentNotification
-                  ? `${
-                      notifications.find(
-                        (noti: any) => noti.id == currentNotification
-                      )?.usage
-                    }`
-                  : "No notification selected!"
-              }
-            />
+          <Box className="flex justify-between items-center w-full p-4">
+            <Typography variant="h6" fontWeight={700}>
+              {currentNotification
+                ? `${
+                    notifications.find(
+                      (noti: any) => noti.id == currentNotification
+                    )?.usage
+                  }`
+                : "No notification selected!"}
+            </Typography>
             <Button
               variant="contained"
               color="primary"
+              size="small"
               onClick={() => formik.handleSubmit()}
             >
-              Save
+              {loading ? "Saving..." : "Save"}
             </Button>
           </Box>
         </Box>
         <Box className="p-5">
           <Typography variant="h5" fontWeight={700} className="py-2">
-            <b>Message:</b>
+            Message:
           </Typography>
           <ReactQuill
-            className="w-full bg-gray-100 rounded-md h-[30vh] mb-11"
+            className="w-full rounded-md h-[30vh] mb-11"
             theme="snow"
             defaultValue={notification?.message || "Add the notification here"}
             value={formik.values.message}

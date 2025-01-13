@@ -102,7 +102,7 @@ export const NAVIGATION: Navigation = [
     icon: <EnhancedEncryptionIcon />,
   },
   {
-    segment: "dashboard/Settings",
+    segment: "dashboard/settings",
     title: "Settings",
     icon: <SettingsIcon />,
   },
