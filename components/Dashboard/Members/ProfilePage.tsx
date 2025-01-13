@@ -84,16 +84,7 @@ function ProfilePage() {
           action={changeRole}
         />
       )}
-      {error && (
-        <Alert variant="filled" severity="error">
-          {error}
-        </Alert>
-      )}
-      {success && (
-        <Alert variant="filled" severity="success">
-          {success}
-        </Alert>
-      )}
+
       <div className="w-full">
         <Box className="flex gap-3 items-center">
           <ImageUploader
@@ -125,29 +116,34 @@ function ProfilePage() {
               Profile created at {dayjs(user?.createdAt).format("DD MMM YYYY")},
               Last updated {dayjs(user?.updatedAt).fromNow()}
             </p>
-            <Link
-              href={`${
-                isAdmin
-                  ? "/dashboard/update-profile/" + id
-                  : "/dashboard/update-profile"
-              }`}
-            >
-              <Button size="small" variant="contained">
-                Update Profile
-              </Button>
-            </Link>
+            {isAdmin ||
+              (user?.id === userData?.id && (
+                <Link
+                  href={`${
+                    isAdmin
+                      ? "/dashboard/update-profile/" + id
+                      : "/dashboard/update-profile"
+                  }`}
+                >
+                  <Button size="small" variant="contained">
+                    Update Profile
+                  </Button>
+                </Link>
+              ))}
           </div>
         </Box>
-        {error && (
-          <p className="bg-red-500 text-white rounded-md text-center p-2 w-full my-3">
-            {error}
-          </p>
-        )}
-        {success && (
-          <p className="bg-green-500 text-white rounded-md text-center p-2 w-full my-3">
-            {success}
-          </p>
-        )}
+        <Box sx={{ padding: "10px" }}>
+          {error && (
+            <Alert variant="filled" severity="error">
+              {error}
+            </Alert>
+          )}
+          {success && (
+            <Alert variant="filled" severity="success">
+              {success}
+            </Alert>
+          )}
+        </Box>
         <Box
           sx={{
             width: "100%",

@@ -49,32 +49,29 @@ function Layout(props: any) {
       title: "View Profile",
       icon: <AccountBoxIcon />,
     },
-    ...(isAdmin
-      ? [
-          {
-            segment: "dashboard/update-profile",
-            title: "Edit Profile",
-            icon: <EditIcon />,
-            children: [
-              {
-                segment: "/",
-                title: "Personal Info",
-                icon: <SettingsAccessibilityIcon />,
-              },
-              {
-                segment: "/organization-founded",
-                title: "Organization Founded",
-                icon: <FoundationIcon />,
-              },
-              {
-                segment: "/organization-employed",
-                title: "Employment Info",
-                icon: <CorporateFareIcon />,
-              },
-            ],
-          },
-        ]
-      : []),
+    {
+      segment: "dashboard/update-profile",
+      title: "Edit Profile",
+      icon: <EditIcon />,
+      children: [
+        {
+          segment: "/",
+          title: "Personal Info",
+          icon: <SettingsAccessibilityIcon />,
+        },
+        {
+          segment: "/organization-founded",
+          title: "Organization Founded",
+          icon: <FoundationIcon />,
+        },
+        {
+          segment: "/organization-employed",
+          title: "Employment Info",
+          icon: <CorporateFareIcon />,
+        },
+      ],
+    },
+
     {
       kind: "divider",
     },

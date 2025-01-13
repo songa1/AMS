@@ -284,8 +284,16 @@ function AddPersonalInfo({ canMove }: { canMove: any }) {
 
   return (
     <div>
-      {success && <Alert severity="success">{success}</Alert>}
-      {error && <Alert severity="error">{error}</Alert>}
+      {success && (
+        <Alert variant="filled" severity="success">
+          {success}
+        </Alert>
+      )}
+      {error && (
+        <Alert variant="filled" severity="error">
+          {error}
+        </Alert>
+      )}
       <div className="relative">
         <div className="flex items-start justify-between p-2">
           <div>
