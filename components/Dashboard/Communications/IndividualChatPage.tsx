@@ -7,6 +7,17 @@ import dayjs from "dayjs";
 import { usePrivateChatsQuery } from "@/lib/features/chatSlice";
 import { getUser } from "@/helpers/auth";
 import { Message } from "@/types/message";
+import {
+  Avatar,
+  Box,
+  List,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Typography,
+} from "@mui/material";
+import { SectionTitle } from "@/components/Other/TopTitle";
+import PeopleIcon from "@mui/icons-material/People";
 
 function IndividualChatPage() {
   dayjs.extend(relativeTime);
@@ -37,22 +48,23 @@ function IndividualChatPage() {
   }, [data, user.id]);
 
   return (
-    <div className="grid grid-cols-4 gap-2">
-      <div>
-        <div className="notifications-left p-2">
-          <h1 className="noti-sticky-header">Inbox</h1>
-          <ul className="flex flex-col gap-1">
-            <li
-              className="border-b border-gray-200 p-2 px-4 cursor-pointer hover:bg-blue-100"
+    <Box className="grid grid-cols-4 gap-2">
+      <Box>
+        <Box className="notifications-left p-2">
+          <SectionTitle title="Inbox" />
+          <List
+            className="flex flex-col gap-1"
+            sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
+            component="nav"
+          >
+            <ListItemButton
               onClick={() => (globalThis.location.href = "/dashboard/chat")}
             >
-              <div>
-                {/* <p className="text-xs text-mainBlue">
-                  {dayjs(noti?.createdAt).fromNow()}
-                </p> */}
-                <p className="font-bold">Community Chat</p>
-              </div>
-            </li>
+              <ListItemIcon>
+                <PeopleIcon />
+              </ListItemIcon>
+              <ListItemText primary="Community Chat" />
+            </ListItemButton>
             {chats.length > 0 ? (
               [...chats]
                 .sort(
@@ -61,37 +73,50 @@ function IndividualChatPage() {
                     new Date(a.createdAt).getTime()
                 )
                 .map((noti: Message, index: number) => (
-                  <li
+                  <ListItemButton
                     key={index + 1}
                     className="border-b border-gray-200 p-2 px-4 cursor-pointer hover:bg-blue-100"
                     onClick={() =>
                       (globalThis.location.href = `/dashboard/chat/${noti?.id}`)
                     }
                   >
-                    <div>
-                      <p className="text-xs text-mainBlue">
-                        {dayjs(noti?.createdAt).fromNow()}
-                      </p>
-                      <p className="">
-                        {`${noti?.receiver?.firstName} ${
-                          noti?.receiver?.id == user?.id ? "(You)" : ""
-                        }`}{" "}
-                      </p>
-                    </div>
-                  </li>
+                    <ListItemIcon>
+                      <Avatar
+                        alt={
+                          noti?.receiver?.id !== user?.id
+                            ? noti?.receiver?.firstName
+                            : noti?.sender?.firstName
+                        }
+                        src={
+                          noti?.receiver?.id !== user?.id
+                            ? noti?.receiver?.profileImage?.link
+                            : noti?.sender?.profileImage?.link
+                        }
+                      />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={`${noti?.receiver?.firstName} ${
+                        noti?.receiver?.id == user?.id ? "(You)" : ""
+                      }`}
+                      secondary={dayjs(noti?.createdAt).fromNow()}
+                    ></ListItemText>
+                  </ListItemButton>
                 ))
             ) : (
-              <p className="py-4 px-2 text-center text-xs">
+              <Typography
+                variant="body2"
+                className="py-4 px-2 text-center text-xs"
+              >
                 No private chats for Now! Start a conversation!
-              </p>
+              </Typography>
             )}
-          </ul>
-        </div>
-      </div>
-      <div className="col-span-3">
+          </List>
+        </Box>
+      </Box>
+      <Box className="col-span-3">
         <ChatPage />
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 }
 
