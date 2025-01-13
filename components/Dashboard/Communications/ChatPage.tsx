@@ -89,7 +89,20 @@ function ChatPage() {
         sx={{ backgroundColor: "white" }}
         style={{ zIndex: 1 }}
       >
-        <Avatar />
+        <Avatar
+          alt={
+            username
+              ? UsersQuery?.data.find((user: User) => user?.id == username)
+                  ?.firstName
+              : "Community Chat"
+          }
+          src={
+            username
+              ? UsersQuery?.data.find((user: User) => user?.id == username)
+                  ?.profileImage?.link
+              : ""
+          }
+        />
         <Box className="flex flex-col">
           <Typography variant="h6" fontWeight={600}>
             {username
@@ -139,13 +152,19 @@ function ChatPage() {
                       message?.senderId === user?.id ? "sent" : "received"
                     }`}
                   >
-                    <Typography variant="body2" fontWeight={500}>
+                    <Typography
+                      variant="caption"
+                      color="primary"
+                      sx={{ fontWeight: 700 }}
+                    >
                       {message?.sender?.firstName +
                         " " +
                         message?.sender?.middleName || ""}
                     </Typography>
-                    <Typography variant="body2">{message?.message}</Typography>
-                    <Typography className="text-xs">
+                    <Typography variant="subtitle1">
+                      {message?.message}
+                    </Typography>
+                    <Typography variant="caption" color="primary">
                       {dayjs(message?.createdAt).fromNow()}
                     </Typography>
                   </Box>
