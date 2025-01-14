@@ -52,7 +52,7 @@ const ImageUploader = ({
   const [uploadPicture] = useUploadPictureMutation();
   const [updateProfilePicture] = useUpdateProfilePictureMutation();
 
-  const isAdmin = user?.role?.name == "ADMIN";
+  const isAdmin = currentUser?.role?.name == "ADMIN";
 
   const handleCropComplete = (_: any, croppedAreaPixels: any) => {
     setCroppedArea(croppedAreaPixels);
@@ -105,13 +105,10 @@ const ImageUploader = ({
               userId: user?.id,
               pictureId: data?.image?.id,
             }).unwrap();
-            if (res.status === 200) {
-              setSuccess("Image successfully updated!");
-            } else {
-              setError("Failed to update the profile picture, try again!");
-            }
+            setSuccess("Image successfully updated!");
           } catch (error: any) {
-            setError(error?.message);
+            console.log(error);
+            setError(error?.error);
           }
           refetch();
         }

@@ -34,7 +34,9 @@ function AddFoundedInfo({ canMove }: { canMove: any }) {
   const [foundedStates, setFoundedStates] = useState([]);
   const [countriesFounded, setCountriesFounded] = useState([]);
   const [sectorsFounded, setSectorsFounded] = useState([]);
-  const [districtsFounded, setDistrictsFounded] = useState([]);
+  const [districtsFounded, setDistrictsFounded] = useState<residentDistrict[]>(
+    []
+  );
   const [organizations, setOrganizations] = useState([]);
   const [selectedDistrictFounded, setSelectedDistrictFounded] = useState("");
   const [newOrg, setNewOrg] = useState("");
@@ -386,7 +388,7 @@ function AddFoundedInfo({ canMove }: { canMove: any }) {
                 }}
               >
                 {districtsFounded.map((item: residentDistrict) => (
-                  <MenuItem key={item?.id} value={item?.id}>
+                  <MenuItem key={item?.id} value={item?.name}>
                     {item?.name}
                   </MenuItem>
                 ))}

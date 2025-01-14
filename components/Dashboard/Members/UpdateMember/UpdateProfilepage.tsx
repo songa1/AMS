@@ -45,7 +45,7 @@ function UpdateProfilepage() {
   const user = getUser();
   const [genders, setGenders] = useState([]);
   const [cohorts, setCohorts] = useState([]);
-  const [districts, setDistricts] = useState([]);
+  const [districts, setDistricts] = useState<residentDistrict[]>([]);
   const [countries, setCountries] = useState([]);
   const [sectors, setSectors] = useState([]);
   const [tracks, setTracks] = useState([]);
@@ -64,9 +64,12 @@ function UpdateProfilepage() {
   const { data: CountryData } = useCountriesQuery("");
   const { data: DistrictData } = useDistrictsQuery("");
   const { data: CohortsData } = useCohortsQuery("");
-  const { data: SectorsData } = useSectorsByDistrictQuery(selectedDistrict, {
-    skip: !selectedDistrict,
-  });
+  const { data: SectorsData } = useSectorsByDistrictQuery(
+    districts.find((d: residentDistrict) => d.id === selectedDistrict)?.name,
+    {
+      skip: !selectedDistrict,
+    }
+  );
 
   const { data: TracksData } = useTracksQuery("");
 

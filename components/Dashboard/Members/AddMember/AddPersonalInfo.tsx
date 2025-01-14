@@ -58,7 +58,7 @@ function AddPersonalInfo({ canMove }: { canMove: any }) {
   const user = getUser();
 
   const [country, setCountry] = useState("");
-  const [districts, setDistricts] = useState([]);
+  const [districts, setDistricts] = useState<residentDistrict[]>([]);
   const [states, setStates] = useState([]);
   const [sectors, setSectors] = useState([]);
   const [selectedDistrict, setSelectedDistrict] = useState("");
@@ -81,9 +81,12 @@ function AddPersonalInfo({ canMove }: { canMove: any }) {
   });
   const { data: DistrictData } = useDistrictsQuery("");
   const { data: CohortsData } = useCohortsQuery("");
-  const { data: SectorsData } = useSectorsByDistrictQuery(selectedDistrict, {
-    skip: !selectedDistrict,
-  });
+  const { data: SectorsData } = useSectorsByDistrictQuery(
+    districts.find((d: residentDistrict) => d.id === selectedDistrict)?.name,
+    {
+      skip: !selectedDistrict,
+    }
+  );
 
   const { data: TracksData } = useTracksQuery("");
 
@@ -588,7 +591,7 @@ function AddPersonalInfo({ canMove }: { canMove: any }) {
                 }}
               >
                 {districts.map((item: residentDistrict) => (
-                  <MenuItem key={item?.id} value={item.name}>
+                  <MenuItem key={item?.id} value={item.id}>
                     {item?.name}
                   </MenuItem>
                 ))}

@@ -27,6 +27,7 @@ function ChatInput({
             endAdornment: (
               <InputAdornment position="end">
                 <IconButton
+                  type="submit"
                   onClick={(e) => {
                     e.preventDefault();
                     onSubmit();

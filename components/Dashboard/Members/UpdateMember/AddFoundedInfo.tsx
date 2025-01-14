@@ -443,7 +443,7 @@ function UpdateFoundedInfo() {
                   }}
                 >
                   {districtsFounded.map((item: residentDistrict) => (
-                    <MenuItem key={item?.id} value={item?.id}>
+                    <MenuItem key={item?.id} value={item?.name}>
                       {item?.name}
                     </MenuItem>
                   ))}

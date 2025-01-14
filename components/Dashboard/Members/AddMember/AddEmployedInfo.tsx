@@ -35,7 +35,9 @@ function AddEmployedInfo({ canMove }: { canMove: any }) {
   const [countriesEmployed, setCountriesEmployed] = useState([]);
   const [sectorsEmployed, setSectorsEmployed] = useState([]);
   const [selectedDistrictEmployed, setSelectedDistrictEmployed] = useState("");
-  const [districtsEmployed, setDistrictsEmployed] = useState([]);
+  const [districtsEmployed, setDistrictsEmployed] = useState<
+    residentDistrict[]
+  >([]);
   const [newOrg, setNewOrg] = useState("");
   const [organizations, setOrganizations] = useState([]);
 
@@ -380,7 +382,7 @@ function AddEmployedInfo({ canMove }: { canMove: any }) {
                 }}
               >
                 {districtsEmployed.map((item: residentDistrict) => (
-                  <MenuItem key={item?.id} value={item?.id}>
+                  <MenuItem key={item?.id} value={item?.name}>
                     {item?.name}
                   </MenuItem>
                 ))}
