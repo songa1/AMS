@@ -373,7 +373,7 @@ function UpdateProfilepage() {
               ))}
             </Select>
           </FormControl>
-          {(user?.residentCountry && user?.residentCountry?.id !== "RW") ||
+          {(usr?.residentCountry && usr?.residentCountry?.id !== "RW") ||
             (formik.values.residentCountryId !== "RW" && (
               <FormControl
                 variant="outlined"
@@ -397,7 +397,7 @@ function UpdateProfilepage() {
                 </Select>
               </FormControl>
             ))}
-          {(user?.residentCountry && user?.residentCountry?.id === "RW") ||
+          {(usr?.residentCountry && usr?.residentCountry?.id === "RW") ||
             (formik.values.residentCountryId === "RW" && (
               <FormControl
                 variant="outlined"
@@ -422,7 +422,7 @@ function UpdateProfilepage() {
                 </Select>
               </FormControl>
             ))}
-          {(user?.residentCountry && user?.residentCountry?.id === "RW") ||
+          {(usr?.residentCountry && usr?.residentCountry?.id === "RW") ||
             (formik.values.residentCountryId === "RW" && (
               <FormControl
                 variant="outlined"
