@@ -210,10 +210,8 @@ function UpdateEmployedInfo() {
           position: formik.values.companyPosition,
         }).unwrap();
 
-        if (assign.status === 200) {
-          setSuccess("Organization updated successfully!");
-          RefetchUser();
-        }
+        setSuccess("Organization updated successfully!");
+        RefetchUser();
       }
     } catch (error: any) {
       console.log(error);
