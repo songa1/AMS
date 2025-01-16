@@ -21,7 +21,7 @@ export const orgsSlices = createApi({
     }),
     assignOrg: builder.mutation({
       query: (credentials) => ({
-        url: "organizations",
+        url: "organizations/assign",
         method: "PATCH",
         body: credentials,
       }),

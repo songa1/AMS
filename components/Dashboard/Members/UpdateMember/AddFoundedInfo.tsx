@@ -252,7 +252,7 @@ function UpdateFoundedInfo() {
       RefetchOne();
       if (res?.data) {
         const assign = await assignOrg({
-          userId: usr?.id,
+          userId: user?.id,
           organizationId: res?.data?.id,
           relationshipType: "founded",
           position: formik.values.foundedPosition,
