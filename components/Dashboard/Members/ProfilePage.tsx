@@ -116,20 +116,19 @@ function ProfilePage() {
               Profile created at {dayjs(user?.createdAt).format("DD MMM YYYY")},
               Last updated {dayjs(user?.updatedAt).fromNow()}
             </p>
-            {isAdmin ||
-              (user?.id === userData?.id && (
-                <Link
-                  href={`${
-                    isAdmin
-                      ? "/dashboard/update-profile/" + id
-                      : "/dashboard/update-profile"
-                  }`}
-                >
-                  <Button size="small" variant="contained">
-                    Update Profile
-                  </Button>
-                </Link>
-              ))}
+            {user?.id === userData?.id && (
+              <Link
+                href={`${
+                  isAdmin
+                    ? "/dashboard/update-profile/" + id
+                    : "/dashboard/update-profile"
+                }`}
+              >
+                <Button size="small" variant="contained">
+                  Update Profile
+                </Button>
+              </Link>
+            )}
           </div>
         </Box>
         <Box sx={{ padding: "10px" }}>
