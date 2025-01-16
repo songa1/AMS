@@ -71,6 +71,7 @@ function ChatPage() {
     validationSchema: Yup.object({
       message: Yup.string().required("Message is required"),
       sender: Yup.string(),
+      receiverId: Yup.string(),
     }),
     onSubmit: async (values: any) => {
       try {
@@ -182,7 +183,10 @@ function ChatPage() {
         <ChatInput
           onSubmit={() => formik.handleSubmit()}
           value={formik.values.message}
-          setValue={(e: any) => formik.setFieldValue("message", e.target.value)}
+          setValue={(e: any) => {
+            formik.setFieldValue("message", e.target.value);
+            formik.setFieldValue("receiverId", username ? username : "");
+          }}
         />
       </form>
     </Box>
