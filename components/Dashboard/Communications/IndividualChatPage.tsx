@@ -24,7 +24,30 @@ function IndividualChatPage() {
   const user = getUser();
   const [chats, setChats] = useState<Message[]>([]);
 
-  const { data } = usePrivateChatsQuery(user?.id);
+  const { data } = usePrivateChatsQuery(user?.id, {
+    pollingInterval: 2000,
+  });
+
+  useEffect(() => {
+    if (data) {
+      const chatMap = new Map();
+
+      const sortedChats = [...data?.data].sort(
+        (a: Message, b: Message) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+
+      sortedChats.forEach((chat: Message) => {
+        const otherUserId =
+          chat.senderId === user.id ? chat.receiverId : chat.senderId;
+        if (!chatMap.has(otherUserId)) {
+          chatMap.set(otherUserId, chat);
+        }
+      });
+
+      setChats(Array.from(chatMap.values()));
+    }
+  }, [data, user.id]);
 
   useEffect(() => {
     if (data) {

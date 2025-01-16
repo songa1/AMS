@@ -130,6 +130,10 @@ function ChatPage() {
                 new Date(b.createdAt).getTime()
             )
             .map((message) => {
+              const otherPerson =
+                user?.id !== message?.sender?.id
+                  ? message?.sender
+                  : message?.receiver;
               return (
                 <Box
                   key={message?.id}
@@ -140,12 +144,8 @@ function ChatPage() {
                   }`}
                 >
                   <Avatar
-                    alt={user?.firstName}
-                    src={
-                      message?.senderId === user?.id
-                        ? user?.profileImage?.link
-                        : message?.receiver?.profileImage?.link
-                    }
+                    alt={otherPerson?.firstName}
+                    src={username && otherPerson?.profileImage?.link}
                   />
                   <Box
                     className={`message ${

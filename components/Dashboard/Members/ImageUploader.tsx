@@ -128,26 +128,25 @@ const ImageUploader = ({
         className="w-48 h-48 object-cover rounded-full"
       />
 
-      {isAdmin ||
-        (user?.id === currentUser?.id && (
-          <IconButton
-            color="primary"
-            component="label"
-            className="bg-gray-100 border border-white"
-            style={{
-              position: "absolute",
-              bottom: 8,
-              right: 8,
-            }}
-          >
-            <PhotoCamera />
-            <VisuallyHiddenInput
-              ref={fileInputRef}
-              type="file"
-              onChange={handleFileChange}
-            />
-          </IconButton>
-        ))}
+      {user?.id === currentUser?.id && (
+        <IconButton
+          color="primary"
+          component="label"
+          className="bg-gray-100 border border-white"
+          style={{
+            position: "absolute",
+            bottom: 8,
+            right: 8,
+          }}
+        >
+          <PhotoCamera />
+          <VisuallyHiddenInput
+            ref={fileInputRef}
+            type="file"
+            onChange={handleFileChange}
+          />
+        </IconButton>
+      )}
 
       <Modal open={open} onClose={handleCancel}>
         <Box

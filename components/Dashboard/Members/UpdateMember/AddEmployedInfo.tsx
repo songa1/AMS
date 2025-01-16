@@ -264,13 +264,7 @@ function UpdateEmployedInfo() {
       }
     } catch (error: any) {
       console.log(error);
-      if (error?.status === 409) {
-        setError(error?.data?.error);
-      } else {
-        setError(
-          "Updating user Failed! Try again, or contact the administrator!"
-        );
-      }
+      setError(error?.data?.error);
     } finally {
       setIsLoading(false);
     }
