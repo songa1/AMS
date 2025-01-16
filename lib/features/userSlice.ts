@@ -27,7 +27,7 @@ export const usersSlices = createApi({
     updatedUser: builder.mutation({
       query: (data) => ({
         url: `users`,
-        method: "PUT",
+        method: "PATCH",
         body: {
           user: data?.user,
           organizationFounded: data?.organizationFounded,
@@ -66,7 +66,7 @@ export const usersSlices = createApi({
     updateProfilePicture: builder.mutation({
       query: (credentials) => ({
         url: "users/picture",
-        method: "POST",
+        method: "PATCH",
         body: credentials,
       }),
     }),

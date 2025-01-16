@@ -29,7 +29,7 @@ export const orgsSlices = createApi({
     updateOrg: builder.mutation({
       query: (credentials) => ({
         url: "organizations",
-        method: "PUT",
+        method: "PATCH",
         body: credentials,
       }),
     }),

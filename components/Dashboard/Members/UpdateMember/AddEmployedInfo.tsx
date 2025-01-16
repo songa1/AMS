@@ -77,6 +77,8 @@ function UpdateEmployedInfo() {
     }
   );
 
+  const usr = UserData;
+
   const { data: WorkingSectorsData } = useWorkingSectorQuery("");
 
   const { data: EmployedStatesData } = useStatesByCountryQuery(
@@ -89,7 +91,7 @@ function UpdateEmployedInfo() {
   const { data: OrganizationData, refetch: RefetchOne } = useOrganizationQuery(
     user?.organizationFounded?.id,
     {
-      skip: !user?.organizationFounded?.id,
+      skip: !usr?.organizationFounded?.id,
     }
   );
 
@@ -164,8 +166,6 @@ function UpdateEmployedInfo() {
     }
   }, [newOrg, organizations]);
 
-  const usr = UserData;
-
   const formik = useFormik({
     initialValues: {
       companyName: usr?.organizationEmployed?.name,
@@ -211,14 +211,30 @@ function UpdateEmployedInfo() {
       let res;
       if (usr?.organizationEmployed) {
         res = await updateOrg({
-          id: usr?.organizationEmployed?.id,
-          name: values?.companyName,
-          workingSector: values?.companySector,
-          countryId: values?.companyCountry,
-          state: values?.companyState,
-          districtId: values?.companyDistrictName,
-          sectorId: values?.companySectorId,
-          website: values?.companyWebsite,
+          id: usr?.organizationEmployed?.id
+            ? usr?.organizationEmployed?.id
+            : organization?.id,
+          name: values?.companyName
+            ? values?.companyName
+            : usr?.organizationEmployed?.name,
+          workingSectorId: values?.companySector
+            ? values?.companySector
+            : usr?.organizationEmployed?.workingSector?.id,
+          countryId: values?.companyCountry
+            ? values?.companyCountry
+            : usr?.organizationEmployed?.country?.id,
+          state: values?.companyState
+            ? values?.companyState
+            : usr?.organizationEmployed?.state?.id,
+          districtId: values?.companyDistrictName
+            ? values?.companyDistrictName
+            : usr?.organizationEmployed?.districtId,
+          sectorId: values?.companySectorId
+            ? values?.companySectorId
+            : usr?.organizationEmployed?.sectorId,
+          website: values?.companyWebsite
+            ? values?.companyWebsite
+            : usr?.organizationEmployed?.website,
         }).unwrap();
       } else {
         res = await addOrg({
@@ -231,9 +247,9 @@ function UpdateEmployedInfo() {
           website: values?.companyWebsite,
         }).unwrap();
       }
-      if (res.message) {
-        RefetchAll();
-        RefetchOne();
+      RefetchAll();
+      RefetchOne();
+      if (res.data) {
         const assign = await assignOrg({
           userId: usr?.id,
           organizationId: res?.data?.id,
@@ -328,7 +344,11 @@ function UpdateEmployedInfo() {
         >
           <TextField
             label="Company Name"
-            defaultValue={organization?.name}
+            defaultValue={
+              organization?.name
+                ? organization?.name
+                : usr?.organizationEmployed?.name
+            }
             value={formik.values.companyName}
             onChange={(e) =>
               formik.setFieldValue("companyName", e.target.value)
@@ -338,7 +358,11 @@ function UpdateEmployedInfo() {
           <FormControl variant="outlined" sx={{ minWidth: 120, width: "100%" }}>
             <InputLabel>Working Sector</InputLabel>
             <Select
-              defaultValue={organization?.workingSector?.id}
+              defaultValue={
+                organization?.workingSector?.id
+                  ? organization?.workingSector?.id
+                  : usr?.organizationEmployed?.workingSector?.id
+              }
               value={formik.values.companySector}
               onChange={(e) =>
                 formik.setFieldValue("companySector", e.target.value)
@@ -360,7 +384,11 @@ function UpdateEmployedInfo() {
             }
           />
           <TextField
-            defaultValue={organization?.website}
+            defaultValue={
+              organization?.website
+                ? organization?.website
+                : usr?.organizationEmployed?.website
+            }
             label="Website"
             value={formik.values.companyWebsite}
             onChange={(e) =>
@@ -370,7 +398,11 @@ function UpdateEmployedInfo() {
           <FormControl variant="outlined" sx={{ minWidth: 120, width: "100%" }}>
             <InputLabel>Country</InputLabel>
             <Select
-              defaultValue={organization?.country?.id}
+              defaultValue={
+                organization?.country?.id
+                  ? organization?.country?.id
+                  : usr?.organizationEmployed?.country?.id
+              }
               value={formik.values.companyCountry}
               onChange={(e) => {
                 formik.setFieldValue("companyCountry", e.target.value);
@@ -384,7 +416,8 @@ function UpdateEmployedInfo() {
               ))}
             </Select>
           </FormControl>
-          {(organization && organization?.country?.id !== "RW") ||
+          {usr?.organizationEmployed?.country?.id !== "RW" ||
+            organization?.country?.id !== "RW" ||
             (formik.values.companyCountry !== "RW" && (
               <FormControl
                 variant="outlined"
@@ -393,7 +426,11 @@ function UpdateEmployedInfo() {
                 <InputLabel>State</InputLabel>
                 <Select
                   value={formik.values.companyState}
-                  defaultValue={organization?.state?.id}
+                  defaultValue={
+                    organization?.state?.id
+                      ? organization?.state?.id
+                      : usr?.organizationEmployed?.state?.id
+                  }
                   onChange={(e) => {
                     formik.setFieldValue("companyState", e.target.value);
                   }}
@@ -406,7 +443,8 @@ function UpdateEmployedInfo() {
                 </Select>
               </FormControl>
             ))}
-          {(organization && organization?.country?.id == "RW") ||
+          {usr?.organizationEmployed?.country?.id === "RW" ||
+            organization?.country?.id == "RW" ||
             (formik.values.companyCountry === "RW" && (
               <FormControl
                 variant="outlined"
@@ -420,7 +458,11 @@ function UpdateEmployedInfo() {
                     formik.setFieldValue("companyDistrictName", e.target.value);
                     formik.setFieldValue("companySectorId", "");
                   }}
-                  defaultValue={organization?.district?.id}
+                  defaultValue={
+                    organization?.district?.id
+                      ? organization?.district?.id
+                      : usr?.organizationEmployed?.district?.id
+                  }
                 >
                   {districtsEmployed.map((item: residentDistrict) => (
                     <MenuItem key={item?.id} value={item?.name}>
@@ -430,7 +472,8 @@ function UpdateEmployedInfo() {
                 </Select>
               </FormControl>
             ))}
-          {(organization && organization?.country?.id == "RW") ||
+          {usr?.organizationEmployed?.country?.id === "RW" ||
+            organization?.country?.id == "RW" ||
             (formik.values.companyCountry === "RW" && (
               <FormControl
                 variant="outlined"
@@ -439,7 +482,11 @@ function UpdateEmployedInfo() {
                 <InputLabel>Sector</InputLabel>
                 <Select
                   value={formik.values.companySectorId}
-                  defaultValue={organization?.sector?.id}
+                  defaultValue={
+                    organization?.sector?.id
+                      ? organization?.sector?.id
+                      : usr?.organizationEmployed?.sector?.id
+                  }
                   onChange={(e) => {
                     formik.setFieldValue("companySectorId", e.target.value);
                   }}
