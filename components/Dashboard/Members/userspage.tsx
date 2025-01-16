@@ -180,7 +180,7 @@ const UsersPage = () => {
 
   return (
     <Box className="container mx-auto p-4">
-      <FullScreenModal
+      {/* <FullScreenModal
         refetch={refetch}
         setIsOpen={setIsOpen}
         isOpen={isOpen}
@@ -189,7 +189,7 @@ const UsersPage = () => {
         setIsOpen={setExportOpen}
         isOpen={exportOpen}
         users={filteredUsers}
-      />
+      /> */}
       {modal && (
         <ConfirmModal
           cancelText="Cancel"
