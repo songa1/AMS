@@ -1,6 +1,6 @@
 "use client";
 
-import { InputAdornment, TextField } from "@mui/material";
+import { Box, InputAdornment, TextField } from "@mui/material";
 import React from "react";
 import SearchIcon from "@mui/icons-material/Search";
 
@@ -14,7 +14,10 @@ function SearchInput({
   onSubmit: any;
 }) {
   return (
-    <div className="relative flex h-10 w-full max-w-[300px]">
+    <Box
+      sx={{ position: "relative", display: "flex" }}
+      className="h-10 w-full max-w-[300px]"
+    >
       <TextField
         label="Search Members"
         sx={{ width: "30ch" }}
@@ -32,7 +35,7 @@ function SearchInput({
           },
         }}
       />
-    </div>
+    </Box>
   );
 }
 

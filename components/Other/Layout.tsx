@@ -3,7 +3,6 @@
 import * as React from "react";
 import { DashboardLayout } from "@toolpad/core/DashboardLayout";
 import { PageContainer } from "@toolpad/core/PageContainer";
-import SidebarFooterAccount, { ToolbarAccountOverride } from "./SidebarFooter";
 import { AppProvider } from "@toolpad/core";
 import Copyright from "./Copyright";
 import { Navigation } from "@toolpad/core";
@@ -160,12 +159,7 @@ function Layout(props: any) {
         homeUrl: "/dashboard",
       }}
     >
-      <DashboardLayout
-        slots={{
-          toolbarAccount: ToolbarAccountOverride,
-          sidebarFooter: SidebarFooterAccount,
-        }}
-      >
+      <DashboardLayout>
         <PageContainer>
           <AccessDashboard>{props.children}</AccessDashboard>
           <Copyright sx={{ my: 4 }} />

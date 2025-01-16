@@ -78,6 +78,15 @@ function UpdateFoundedInfo() {
   });
 
   useEffect(() => {
+    if (success || error) {
+      setInterval(() => {
+        setSuccess("");
+        setError("");
+      }, 10000);
+    }
+  }, [success, error]);
+
+  useEffect(() => {
     if (!UserData || !CountryData || !DistrictData || !WorkingSectorsData) {
       setIsLoading(true);
     } else {

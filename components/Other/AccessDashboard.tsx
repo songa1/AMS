@@ -19,9 +19,9 @@ export const OnlyAdmin = ({ children }: { children: any }) => {
   const isAdmin = user?.role?.name == "ADMIN";
 
   useEffect(() => {
-    // if (!isAdmin) {
-    //   globalThis.location.href = "/dashboard/profile";
-    // }
+    if (!isAdmin) {
+      globalThis.location.href = "/dashboard/profile";
+    }
   }, [isAdmin]);
 
   return <>{children}</>;

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { useImportUsersMutation } from "@/lib/features/userSlice";
 import Loading from "@/app/loading";
-import { Button } from "@mui/material";
+import { Box, Button } from "@mui/material";
 
 const acceptedCSVTypes = [
   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -97,7 +97,7 @@ const FullScreenModal = ({
   };
 
   return (
-    <div>
+    <Box sx={{ zIndex: 100 }}>
       {isOpen &&
         createPortal(
           <div className="modal fixed w-full h-full top-0 left-0 flex items-center justify-center">
@@ -150,7 +150,7 @@ const FullScreenModal = ({
           </div>,
           document.body
         )}
-    </div>
+    </Box>
   );
 };
 

@@ -7,7 +7,7 @@ import * as Yup from "yup";
 import { useChangePasswordMutation } from "@/lib/features/authSlice";
 import { AUTH_STORED_DATA, getUser } from "@/helpers/auth";
 import Cookies from "js-cookie";
-import { Button, TextField, Typography } from "@mui/material";
+import { Alert, Box, Button, TextField, Typography } from "@mui/material";
 import TopTitle from "../Other/TopTitle";
 
 const ChangePasswordPage = () => {
@@ -58,7 +58,7 @@ const ChangePasswordPage = () => {
     <div className="flex items-center justify-center flex-col w-full p-10 ">
       <TopTitle title="Change Password" />
 
-      <div className="p-6 rounded shadow-md w-full">
+      <Box className="p-6 rounded shadow-md w-full">
         <form
           onSubmit={formik.handleSubmit}
           className="w-full flex flex-col gap-3"
@@ -142,9 +142,17 @@ const ChangePasswordPage = () => {
             {loading ? "Changing..." : "Change Password"}
           </Button>
         </form>
-        {message && <p className="mt-4 text-green-500">{message}</p>}
-        {error && <p className="mt-4 text-red-500">{error}</p>}
-      </div>
+        {message && (
+          <Alert severity="success" variant="filled">
+            {message}
+          </Alert>
+        )}
+        {error && (
+          <Alert severity="error" variant="filled">
+            {error}
+          </Alert>
+        )}
+      </Box>
     </div>
   );
 };

@@ -78,6 +78,15 @@ function UpdateProfilepage() {
   });
 
   useEffect(() => {
+    if (success || error) {
+      setInterval(() => {
+        setSuccess("");
+        setError("");
+      }, 10000);
+    }
+  }, [success, error]);
+
+  useEffect(() => {
     if (
       !UserData ||
       !GenderData ||

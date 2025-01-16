@@ -18,7 +18,11 @@ export default function Copyright(props: any) {
       ]}
     >
       {"Copyright © "}
-      <Link color="inherit" href="https://yalirwandachapter.org">
+      <Link
+        color="inherit"
+        target="_blank"
+        href="https://yalirwandachapter.org"
+      >
         YALI Rwanda Chapter
       </Link>{" "}
       {new Date().getFullYear()}

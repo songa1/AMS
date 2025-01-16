@@ -3,7 +3,7 @@ import { createPortal } from "react-dom";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { User } from "@/types/user";
-import { Button } from "@mui/material";
+import { Box, Button } from "@mui/material";
 
 const FullScreenExport = ({
   isOpen,
@@ -68,7 +68,7 @@ const FullScreenExport = ({
   }, [isOpen]);
 
   return (
-    <div>
+    <Box sx={{ zIndex: 100 }}>
       {isOpen &&
         createPortal(
           <div className="modal fixed w-full h-full top-0 left-0 flex items-center justify-center">
@@ -166,7 +166,7 @@ const FullScreenExport = ({
           </div>,
           document.body
         )}
-    </div>
+    </Box>
   );
 };
 
