@@ -160,9 +160,11 @@ function UpdateEmployedInfo() {
     }
   }, [error, success]);
 
-  if (userHasOrg) {
-    formik.setFieldValue("orgId", usr?.organizationEmployed?.id);
-  }
+  useEffect(() => {
+    if (userHasOrg) {
+      formik.setFieldValue("orgId", usr?.organizationEmployed?.id);
+    }
+  }, [userHasOrg, usr, formik]);
 
   const handleSubmit = async () => {
     setIsLoading(true);
