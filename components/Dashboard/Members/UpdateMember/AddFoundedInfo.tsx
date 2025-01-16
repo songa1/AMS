@@ -212,9 +212,7 @@ function UpdateFoundedInfo() {
       let res;
       if (usr?.organizationFounded) {
         res = await updateOrg({
-          id: usr?.organizationFounded?.id
-            ? usr?.organizationFounded?.id
-            : organization?.id,
+          id: usr?.organizationFounded?.id,
           name: values?.initiativeName
             ? values?.initiativeName
             : usr?.organizationFounded?.name,

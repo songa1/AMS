@@ -447,7 +447,7 @@ function UpdateProfilepage() {
             value={formik.values.nearlestLandmark}
             defaultValue={usr?.nearestLandmark}
             onChange={(e) =>
-              formik.setFieldValue("nearestLandmark", e.target.value)
+              formik.setFieldValue("nearlestLandmark", e.target.value)
             }
           />
           <FormControl variant="outlined" sx={{ minWidth: 120, width: "100%" }}>
@@ -459,7 +459,7 @@ function UpdateProfilepage() {
               onChange={(e) => formik.setFieldValue("track", e.target.value)}
             >
               {tracks.map((item: Track) => (
-                <MenuItem key={item?.id} value={item.id}>
+                <MenuItem key={item?.id} value={item?.id}>
                   {item?.name}
                 </MenuItem>
               ))}
