@@ -13,7 +13,7 @@ import ConfirmModal from "../../Other/confirmModal";
 import { getUser } from "@/helpers/auth";
 import Loading from "@/app/loading";
 import FullScreenExport from "../../Other/FullScreenExport";
-import { Box, Button, ButtonGroup } from "@mui/material";
+import { Box, Button, ButtonGroup, Menu, MenuItem } from "@mui/material";
 import {
   DataGrid,
   GridActionsCellItem,
@@ -36,6 +36,8 @@ const UsersPage = () => {
   const [idToDelete, setIdToDelete] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const menuRight: any = useRef(null);
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
 
   const { data, isLoading, refetch } = useUsersQuery("");
   const [deleteUser] = useDeleteUserMutation();
@@ -44,40 +46,6 @@ const UsersPage = () => {
   const user = getUser();
 
   const isAdmin = user?.role?.name == "ADMIN";
-
-  const items = [
-    {
-      label: "Options",
-      items: [
-        {
-          label: "Export PDF",
-          icon: "pi pi-refresh",
-          command: () => setExportOpen(!exportOpen),
-        },
-        {
-          label: "Export Excel",
-          icon: "pi pi-export",
-          command: async () => {
-            try {
-              const res = await exportUsers("").unwrap();
-              const blob = new Blob([new Uint8Array(res.data.data)], {
-                type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-              });
-              const url = window.URL.createObjectURL(blob);
-              const link = document.createElement("a");
-              link.href = url;
-              link.setAttribute("download", `users_data_${Date.now()}.xlsx`);
-              document.body.appendChild(link);
-              link.click();
-              link.remove();
-            } catch (error) {
-              console.log(error);
-            }
-          },
-        },
-      ],
-    },
-  ];
 
   useEffect(() => {
     if (data) {
@@ -202,8 +170,16 @@ const UsersPage = () => {
     };
   });
 
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
   return (
-    <div className="container mx-auto p-4">
+    <Box className="container mx-auto p-4">
       <FullScreenModal
         refetch={refetch}
         setIsOpen={setIsOpen}
@@ -247,20 +223,61 @@ const UsersPage = () => {
                 Add
               </Button>
               <Button
-                onClick={(event: any) => menuRight.current.toggle(event)}
+                id="basic-button"
+                onClick={handleClick}
+                variant="outlined"
                 startIcon={<PrintIcon fontSize="inherit" />}
+                aria-controls={open ? "basic-menu" : undefined}
+                aria-haspopup="true"
+                aria-expanded={open ? "true" : undefined}
               >
                 Export
               </Button>
-            </ButtonGroup>
+              <Menu
+                id="basic-menu"
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleClose}
+                MenuListProps={{
+                  "aria-labelledby": "basic-button",
+                }}
+              >
+                <MenuItem
+                  onClick={() => {
+                    setExportOpen(!exportOpen);
+                    handleClose();
+                  }}
+                >
+                  Export PDF
+                </MenuItem>
+                <MenuItem
+                  onClick={async () => {
+                    try {
+                      const res = await exportUsers("").unwrap();
+                      const blob = new Blob([new Uint8Array(res.data.data)], {
+                        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                      });
+                      const url = window.URL.createObjectURL(blob);
+                      const link = document.createElement("a");
+                      link.href = url;
+                      link.setAttribute(
+                        "download",
+                        `users_data_${Date.now()}.xlsx`
+                      );
+                      document.body.appendChild(link);
+                      link.click();
+                      link.remove();
+                    } catch (error) {
+                      console.log(error);
+                    }
 
-            {/* <Menu
-              model={items}
-              popup
-              ref={menuRight}
-              id="popup_menu_right"
-              popupAlignment="right"
-            /> */}
+                    handleClose();
+                  }}
+                >
+                  Export Excel
+                </MenuItem>
+              </Menu>
+            </ButtonGroup>
           </Box>
         )}
       </Box>
@@ -290,7 +307,7 @@ const UsersPage = () => {
           pageSizeOptions={[10, 20, 50, 100]}
         />
       </div>
-    </div>
+    </Box>
   );
 };
 
