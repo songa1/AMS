@@ -131,6 +131,7 @@ function UpdateEmployedInfo() {
       companySectorId: usr?.organizationEmployed?.sector?.id,
       companyState: usr?.organizationEmployed?.state?.id,
       companyCountry: usr?.organizationEmployed?.country?.id,
+      orgId: usr?.organizationEmployed?.id,
     },
     validationSchema: Yup.object({
       companyName: Yup.string(),
@@ -159,6 +160,10 @@ function UpdateEmployedInfo() {
     }
   }, [error, success]);
 
+  if (userHasOrg) {
+    formik.setFieldValue("orgId", usr?.organizationEmployed?.id);
+  }
+
   const handleSubmit = async () => {
     setIsLoading(true);
     const values: any = formik.values;
@@ -166,7 +171,7 @@ function UpdateEmployedInfo() {
       let res;
       if (userHasOrg) {
         res = await updateOrg({
-          id: usr?.organizationEmployed?.id,
+          id: values?.orgId,
           name: values?.companyName,
           workingSectorId: values?.companySector,
           countryId: values?.companyCountry,
