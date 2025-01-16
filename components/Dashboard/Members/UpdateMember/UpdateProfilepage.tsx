@@ -373,78 +373,59 @@ function UpdateProfilepage() {
               ))}
             </Select>
           </FormControl>
-          {(usr?.residentCountry && usr?.residentCountry?.id !== "RW") ||
-            (formik.values.residentCountryId !== "RW" && (
-              <FormControl
-                variant="outlined"
-                sx={{ minWidth: 120, width: "100%" }}
-              >
-                <InputLabel>State</InputLabel>
-                <Select
-                  labelId="state-label"
-                  value={formik.values.state}
-                  defaultValue={usr?.state?.id}
-                  onChange={(e) => {
-                    console.log(e);
-                    formik.setFieldValue("state", e.target.value);
-                  }}
-                >
-                  {states.map((item: State) => (
-                    <MenuItem key={item?.id} value={item.id}>
-                      {item?.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            ))}
-          {(usr?.residentCountry && usr?.residentCountry?.id === "RW") ||
-            (formik.values.residentCountryId === "RW" && (
-              <FormControl
-                variant="outlined"
-                sx={{ minWidth: 120, width: "100%" }}
-              >
-                <InputLabel>District</InputLabel>
-                <Select
-                  labelId="district-label"
-                  value={formik.values.districtName}
-                  defaultValue={usr?.residentDistrict?.id}
-                  onChange={(e) => {
-                    setSelectedDistrict(e.target.value);
-                    formik.setFieldValue("districtName", e.target.value);
-                    formik.setFieldValue("sectorId", "");
-                  }}
-                >
-                  {districts.map((item: residentDistrict) => (
-                    <MenuItem key={item?.id} value={item.id}>
-                      {item?.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            ))}
-          {(usr?.residentCountry && usr?.residentCountry?.id === "RW") ||
-            (formik.values.residentCountryId === "RW" && (
-              <FormControl
-                variant="outlined"
-                sx={{ minWidth: 120, width: "100%" }}
-              >
-                <InputLabel>Sector</InputLabel>
-                <Select
-                  labelId="sector-label"
-                  value={formik.values.sectorId}
-                  defaultValue={usr?.residentSector?.id}
-                  onChange={(e) =>
-                    formik.setFieldValue("sectorId", e.target.value)
-                  }
-                >
-                  {sectors.map((item: residentSector) => (
-                    <MenuItem key={item?.id} value={item.id}>
-                      {item?.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            ))}
+          <FormControl variant="outlined" sx={{ minWidth: 120, width: "100%" }}>
+            <InputLabel>{`State (If you are not in Rwanda)`}</InputLabel>
+            <Select
+              labelId="state-label"
+              value={formik.values.state}
+              defaultValue={usr?.state?.id}
+              onChange={(e) => {
+                console.log(e);
+                formik.setFieldValue("state", e.target.value);
+              }}
+            >
+              {states.map((item: State) => (
+                <MenuItem key={item?.id} value={item.id}>
+                  {item?.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          <FormControl variant="outlined" sx={{ minWidth: 120, width: "100%" }}>
+            <InputLabel>{`District (If you are in Rwanda)`}</InputLabel>
+            <Select
+              labelId="district-label"
+              value={formik.values.districtName}
+              defaultValue={usr?.residentDistrict?.id}
+              onChange={(e) => {
+                setSelectedDistrict(e.target.value);
+                formik.setFieldValue("districtName", e.target.value);
+                formik.setFieldValue("sectorId", "");
+              }}
+            >
+              {districts.map((item: residentDistrict) => (
+                <MenuItem key={item?.id} value={item.id}>
+                  {item?.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <FormControl variant="outlined" sx={{ minWidth: 120, width: "100%" }}>
+            <InputLabel>{`Sector (If you are in Rwanda)`}</InputLabel>
+            <Select
+              labelId="sector-label"
+              value={formik.values.sectorId}
+              defaultValue={usr?.residentSector?.id}
+              onChange={(e) => formik.setFieldValue("sectorId", e.target.value)}
+            >
+              {sectors.map((item: residentSector) => (
+                <MenuItem key={item?.id} value={item.id}>
+                  {item?.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
           <FormControl variant="outlined" sx={{ minWidth: 120, width: "100%" }}>
             <InputLabel>Cohort</InputLabel>
             <Select

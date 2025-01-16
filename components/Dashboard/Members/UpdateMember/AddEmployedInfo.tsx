@@ -410,89 +410,69 @@ function UpdateEmployedInfo() {
               ))}
             </Select>
           </FormControl>
-          {usr?.organizationEmployed?.country?.id !== "RW" ||
-            organization?.country?.id !== "RW" ||
-            (formik.values.companyCountry !== "RW" && (
-              <FormControl
-                variant="outlined"
-                sx={{ minWidth: 120, width: "100%" }}
-              >
-                <InputLabel>State</InputLabel>
-                <Select
-                  value={formik.values.companyState}
-                  defaultValue={
-                    organization?.state?.id
-                      ? organization?.state?.id
-                      : usr?.organizationEmployed?.state?.id
-                  }
-                  onChange={(e) => {
-                    formik.setFieldValue("companyState", e.target.value);
-                  }}
-                >
-                  {employedStates.map((item: State) => (
-                    <MenuItem key={item?.id} value={item?.id}>
-                      {item?.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            ))}
-          {usr?.organizationEmployed?.country?.id === "RW" ||
-            organization?.country?.id == "RW" ||
-            (formik.values.companyCountry === "RW" && (
-              <FormControl
-                variant="outlined"
-                sx={{ minWidth: 120, width: "100%" }}
-              >
-                <InputLabel>District</InputLabel>
-                <Select
-                  value={formik.values.companyDistrictName}
-                  onChange={(e) => {
-                    setSelectedDistrictEmployed(e.target.value);
-                    formik.setFieldValue("companyDistrictName", e.target.value);
-                    formik.setFieldValue("companySectorId", "");
-                  }}
-                  defaultValue={
-                    organization?.district?.id
-                      ? organization?.district?.id
-                      : usr?.organizationEmployed?.district?.id
-                  }
-                >
-                  {districtsEmployed.map((item: residentDistrict) => (
-                    <MenuItem key={item?.id} value={item?.name}>
-                      {item?.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            ))}
-          {usr?.organizationEmployed?.country?.id === "RW" ||
-            organization?.country?.id == "RW" ||
-            (formik.values.companyCountry === "RW" && (
-              <FormControl
-                variant="outlined"
-                sx={{ minWidth: 120, width: "100%" }}
-              >
-                <InputLabel>Sector</InputLabel>
-                <Select
-                  value={formik.values.companySectorId}
-                  defaultValue={
-                    organization?.sector?.id
-                      ? organization?.sector?.id
-                      : usr?.organizationEmployed?.sector?.id
-                  }
-                  onChange={(e) => {
-                    formik.setFieldValue("companySectorId", e.target.value);
-                  }}
-                >
-                  {sectorsEmployed.map((item: residentSector) => (
-                    <MenuItem key={item?.id} value={item?.id}>
-                      {item?.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            ))}
+          <FormControl variant="outlined" sx={{ minWidth: 120, width: "100%" }}>
+            <InputLabel>{`State (If you are not in Rwanda)`}</InputLabel>
+            <Select
+              value={formik.values.companyState}
+              defaultValue={
+                organization?.state?.id
+                  ? organization?.state?.id
+                  : usr?.organizationEmployed?.state?.id
+              }
+              onChange={(e) => {
+                formik.setFieldValue("companyState", e.target.value);
+              }}
+            >
+              {employedStates.map((item: State) => (
+                <MenuItem key={item?.id} value={item?.id}>
+                  {item?.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <FormControl variant="outlined" sx={{ minWidth: 120, width: "100%" }}>
+            <InputLabel>{`District (If you are in Rwanda)`}</InputLabel>
+            <Select
+              value={formik.values.companyDistrictName}
+              onChange={(e) => {
+                setSelectedDistrictEmployed(e.target.value);
+                formik.setFieldValue("companyDistrictName", e.target.value);
+                formik.setFieldValue("companySectorId", "");
+              }}
+              defaultValue={
+                organization?.district?.id
+                  ? organization?.district?.id
+                  : usr?.organizationEmployed?.district?.id
+              }
+            >
+              {districtsEmployed.map((item: residentDistrict) => (
+                <MenuItem key={item?.id} value={item?.name}>
+                  {item?.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          <FormControl variant="outlined" sx={{ minWidth: 120, width: "100%" }}>
+            <InputLabel>{`Sector (If you are in Rwanda)`}</InputLabel>
+            <Select
+              value={formik.values.companySectorId}
+              defaultValue={
+                organization?.sector?.id
+                  ? organization?.sector?.id
+                  : usr?.organizationEmployed?.sector?.id
+              }
+              onChange={(e) => {
+                formik.setFieldValue("companySectorId", e.target.value);
+              }}
+            >
+              {sectorsEmployed.map((item: residentSector) => (
+                <MenuItem key={item?.id} value={item?.id}>
+                  {item?.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
         </Box>
       </div>
     </div>

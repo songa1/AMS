@@ -407,89 +407,70 @@ function UpdateFoundedInfo() {
               ))}
             </Select>
           </FormControl>
-          {usr?.organizationFounded?.country?.id !== "RW" ||
-            organization?.country?.id !== "RW" ||
-            (formik.values.foundedCountry !== "RW" && (
-              <FormControl
-                variant="outlined"
-                sx={{ minWidth: 120, width: "100%" }}
-              >
-                <InputLabel>State</InputLabel>
-                <Select
-                  value={formik.values.foundedState}
-                  defaultValue={
-                    organization?.state?.id
-                      ? organization?.state?.id
-                      : usr?.organizationFounded?.state?.id
-                  }
-                  onChange={(e) => {
-                    formik.setFieldValue("foundedState", e.target.value);
-                  }}
-                >
-                  {foundedStates.map((item: State) => (
-                    <MenuItem key={item?.id} value={item?.id}>
-                      {item?.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            ))}
-          {usr?.organizationFounded?.country?.id === "RW" ||
-            organization?.country?.id === "RW" ||
-            (formik.values.foundedCountry === "RW" && (
-              <FormControl
-                variant="outlined"
-                sx={{ minWidth: 120, width: "100%" }}
-              >
-                <InputLabel>District</InputLabel>
-                <Select
-                  value={formik.values.foundedDistrictName}
-                  defaultValue={
-                    organization?.district?.id
-                      ? organization?.district?.id
-                      : usr?.organizationFounded?.district?.id
-                  }
-                  onChange={(e) => {
-                    setSelectedDistrictFounded(e.target.value);
-                    formik.setFieldValue("foundedDistrictName", e.target.value);
-                    formik.setFieldValue("foundedSectorId", "");
-                  }}
-                >
-                  {districtsFounded.map((item: residentDistrict) => (
-                    <MenuItem key={item?.id} value={item?.name}>
-                      {item?.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            ))}
-          {usr?.organizationFounded?.country?.id === "RW" ||
-            organization?.country?.id === "RW" ||
-            (formik.values.foundedCountry === "RW" && (
-              <FormControl
-                variant="outlined"
-                sx={{ minWidth: 120, width: "100%" }}
-              >
-                <InputLabel>Sector</InputLabel>
-                <Select
-                  value={formik.values.foundedSectorId}
-                  defaultValue={
-                    organization?.sector?.id
-                      ? organization?.sector?.id
-                      : usr?.organizationFounded?.sector?.id
-                  }
-                  onChange={(e) => {
-                    formik.setFieldValue("foundedSectorId", e.target.value);
-                  }}
-                >
-                  {sectorsFounded.map((item: residentSector) => (
-                    <MenuItem key={item?.id} value={item?.id}>
-                      {item?.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            ))}
+          <FormControl variant="outlined" sx={{ minWidth: 120, width: "100%" }}>
+            <InputLabel>{`State (If you are not in Rwanda)`}</InputLabel>
+            <Select
+              value={formik.values.foundedState}
+              defaultValue={
+                organization?.state?.id
+                  ? organization?.state?.id
+                  : usr?.organizationFounded?.state?.id
+              }
+              onChange={(e) => {
+                formik.setFieldValue("foundedState", e.target.value);
+              }}
+            >
+              {foundedStates.map((item: State) => (
+                <MenuItem key={item?.id} value={item?.id}>
+                  {item?.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          <FormControl variant="outlined" sx={{ minWidth: 120, width: "100%" }}>
+            <InputLabel>{`District  (If you are in Rwanda)`}</InputLabel>
+            <Select
+              value={formik.values.foundedDistrictName}
+              defaultValue={
+                organization?.district?.id
+                  ? organization?.district?.id
+                  : usr?.organizationFounded?.district?.id
+              }
+              onChange={(e) => {
+                setSelectedDistrictFounded(e.target.value);
+                formik.setFieldValue("foundedDistrictName", e.target.value);
+                formik.setFieldValue("foundedSectorId", "");
+              }}
+            >
+              {districtsFounded.map((item: residentDistrict) => (
+                <MenuItem key={item?.id} value={item?.name}>
+                  {item?.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          <FormControl variant="outlined" sx={{ minWidth: 120, width: "100%" }}>
+            <InputLabel>{`Sector (If you are in Rwanda)`}</InputLabel>
+            <Select
+              value={formik.values.foundedSectorId}
+              defaultValue={
+                organization?.sector?.id
+                  ? organization?.sector?.id
+                  : usr?.organizationFounded?.sector?.id
+              }
+              onChange={(e) => {
+                formik.setFieldValue("foundedSectorId", e.target.value);
+              }}
+            >
+              {sectorsFounded.map((item: residentSector) => (
+                <MenuItem key={item?.id} value={item?.id}>
+                  {item?.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
         </Box>
       </div>
     </div>
