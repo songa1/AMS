@@ -16,6 +16,7 @@ import {
 import { TransitionProps } from "@mui/material/transitions";
 import CloseIcon from "@mui/icons-material/Close";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import Link from "next/link";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -177,6 +178,12 @@ const FullScreenModal = ({
               multiple
             />
           </Button>
+          <Typography>
+            Download the template{" "}
+            <Link className="underline" href="/template_alumni.xlsx">
+              Here
+            </Link>
+          </Typography>
         </Box>
         {isLoading && <Loading />}
       </DialogContent>
