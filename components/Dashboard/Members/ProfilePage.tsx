@@ -83,16 +83,15 @@ function ProfilePage() {
 
   return (
     <div className="">
-      {roleModal && (
-        <ConfirmModal
-          cancelText="Cancel"
-          confirmText={isLoading ? "Changing..." : "Change"}
-          title="Changing a user's role"
-          description="Are you sure you want to change the user's role a user? Note that if the user was the ADMIN, the user will become a normal USER, and if a user was a normal USER, the user will become an ADMIN."
-          closeModal={() => setRoleModal(false)}
-          action={changeRole}
-        />
-      )}
+      <ConfirmModal
+        open={roleModal}
+        cancelText="Cancel"
+        confirmText={isLoading ? "Changing..." : "Change"}
+        title="Are you sure you want to change the user's role a user?"
+        description="Note that if the user was the ADMIN, the user will become a normal USER, and if a user was a normal USER, the user will become an ADMIN."
+        closeModal={() => setRoleModal(false)}
+        action={changeRole}
+      />
 
       <div className="w-full">
         <Box className="flex gap-3 items-center">

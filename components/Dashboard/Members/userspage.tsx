@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import SearchInput from "../../Other/SearchInput";
 import FullScreenModal from "../../Other/FullScreenModal";
 import {
@@ -35,7 +35,6 @@ const UsersPage = () => {
   const [modal, setModal] = useState(false);
   const [idToDelete, setIdToDelete] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const menuRight: any = useRef(null);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
@@ -180,26 +179,26 @@ const UsersPage = () => {
 
   return (
     <Box className="container mx-auto p-4">
-      {/* <FullScreenModal
+      <FullScreenModal
         refetch={refetch}
         setIsOpen={setIsOpen}
         isOpen={isOpen}
       />
-      <FullScreenExport
+      {/*<FullScreenExport
         setIsOpen={setExportOpen}
         isOpen={exportOpen}
         users={filteredUsers}
       /> */}
-      {modal && (
-        <ConfirmModal
-          cancelText="Cancel"
-          confirmText={loading ? "Deleting..." : "Confirm"}
-          title="Deleting a user"
-          description="Are you sure you want to delete a user?"
-          closeModal={() => setModal(false)}
-          action={handleDeleteUser}
-        />
-      )}
+      <ConfirmModal
+        open={modal}
+        cancelText="Cancel"
+        confirmText={loading ? "Deleting..." : "Confirm"}
+        title="Are you sure you want to delete a user?"
+        description="Please note that this action is irreversible."
+        closeModal={() => setModal(false)}
+        action={handleDeleteUser}
+      />
+
       <TopTitle title="Members List" />
       <Box className="flex justify-between items-center my-2">
         <SearchInput
