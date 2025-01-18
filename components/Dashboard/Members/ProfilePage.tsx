@@ -79,8 +79,6 @@ function ProfilePage() {
     }
   };
 
-  const isAdmin = userData?.role?.name === "ADMIN";
-
   return (
     <div className="">
       <ConfirmModal
@@ -125,13 +123,7 @@ function ProfilePage() {
               Last updated {dayjs(user?.updatedAt).fromNow()}
             </p>
             {user?.id === userData?.id && (
-              <Link
-                href={`${
-                  isAdmin
-                    ? "/dashboard/update-profile/" + id
-                    : "/dashboard/update-profile"
-                }`}
-              >
+              <Link href={"/dashboard/update-profile"}>
                 <Button size="small" variant="contained">
                   Update Profile
                 </Button>

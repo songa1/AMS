@@ -39,8 +39,7 @@ import {
 import { getUser } from "@/helpers/auth";
 import * as Yup from "yup";
 import { useFormik } from "formik";
-import "react-phone-number-input/style.css";
-import PhoneInputWithCountrySelect from "react-phone-number-input";
+import { MuiTelInput } from "mui-tel-input";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -439,53 +438,24 @@ function AddPersonalInfo({ canMove }: { canMove: any }) {
                 : ""
             }
           />
-          <PhoneInputWithCountrySelect
-            international
-            countryCallingCodeEditable={false}
-            defaultCountry="RW"
-            className="w-full"
+          <MuiTelInput
             value={formik.values.phoneNumber}
+            label="Phone Number:"
+            variant="filled"
+            defaultCountry="RW"
             onChange={(e: any) => {
               console.log(e);
-              formik.setFieldValue("phoneNumber", e.target.value);
+              formik.setFieldValue("phoneNumber", e);
             }}
-            inputComponent={TextField}
-            variant="filled"
-            label="Phone Number:"
-            error={
-              formik.errors.phoneNumber && formik.touched.phoneNumber
-                ? true
-                : false
-            }
-            helperText={
-              formik.errors.phoneNumber && formik.touched.phoneNumber
-                ? formik.errors.phoneNumber
-                : ""
-            }
-            placeholder="Enter phone number"
           />
-          <PhoneInputWithCountrySelect
-            international
-            countryCallingCodeEditable={false}
-            defaultCountry="RW"
-            className="w-full"
+          <MuiTelInput
             value={formik.values.whatsAppNumber}
+            label="WhatsApp Number:"
+            variant="filled"
+            defaultCountry="RW"
             onChange={(e: any) => {
               formik.setFieldValue("whatsAppNumber", e);
             }}
-            inputComponent={TextField}
-            variant="filled"
-            label="WhatsApp Number:"
-            error={
-              formik.errors.whatsAppNumber && formik.touched.whatsAppNumber
-                ? true
-                : false
-            }
-            helperText={
-              formik.errors.whatsAppNumber && formik.touched.whatsAppNumber
-                ? formik.errors.whatsAppNumber
-                : ""
-            }
             placeholder="Enter WhatsApp number"
           />
           <FormControl
