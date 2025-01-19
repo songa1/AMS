@@ -414,7 +414,11 @@ function AddEmployedInfo({ canMove, newUser }: { canMove: any; newUser: any }) {
         </FormControl>
       </Box>
 
-      <ChangeOrganization rel="employed" user={newUser} />
+      <ChangeOrganization
+        refetch={() => console.log("success")}
+        rel="employed"
+        user={newUser}
+      />
     </Box>
   );
 }

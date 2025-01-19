@@ -374,7 +374,7 @@ function UpdateEmployedInfo() {
             </Select>
           </FormControl>
         </Box>
-        <ChangeOrganization rel="employed" user={usr} />
+        <ChangeOrganization refetch={RefetchUser} rel="employed" user={usr} />
       </div>
     </div>
   );

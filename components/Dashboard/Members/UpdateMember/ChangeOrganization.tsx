@@ -18,7 +18,15 @@ import {
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 
-function ChangeOrganization({ user, rel }: { user: any; rel: string }) {
+function ChangeOrganization({
+  user,
+  rel,
+  refetch,
+}: {
+  user: any;
+  rel: string;
+  refetch: any;
+}) {
   const [organizations, setOrganizations] = useState([]);
   const [newOrg, setNewOrg] = useState("");
   const [position, setPosition] = useState("");
@@ -49,6 +57,7 @@ function ChangeOrganization({ user, rel }: { user: any; rel: string }) {
       }).unwrap();
       if (assign?.data) {
         setSuccess(assign?.message);
+        refetch();
       }
     } catch (error: any) {
       console.log(error);
@@ -73,26 +82,28 @@ function ChangeOrganization({ user, rel }: { user: any; rel: string }) {
           Save
         </Button>
       </Box>
-      {error && (
-        <Alert variant="filled" severity="error">
-          {error}
-        </Alert>
-      )}
-      {success && (
-        <Alert variant="filled" severity="success">
-          {success}
-        </Alert>
-      )}
-      {error && (
-        <Alert variant="filled" severity="error">
-          {error}
-        </Alert>
-      )}
-      {info && (
-        <Alert variant="filled" severity="warning">
-          {info}
-        </Alert>
-      )}
+      <Box sx={{ margin: "10px 0px 10px 0px" }}>
+        {error && (
+          <Alert variant="filled" severity="error">
+            {error}
+          </Alert>
+        )}
+        {success && (
+          <Alert variant="filled" severity="success">
+            {success}
+          </Alert>
+        )}
+        {error && (
+          <Alert variant="filled" severity="error">
+            {error}
+          </Alert>
+        )}
+        {info && (
+          <Alert variant="filled" severity="warning">
+            {info}
+          </Alert>
+        )}
+      </Box>
       <Box
         sx={{
           width: "100%",

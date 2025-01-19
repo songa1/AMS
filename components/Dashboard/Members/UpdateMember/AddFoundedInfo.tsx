@@ -368,7 +368,7 @@ function UpdateFoundedInfo() {
             </Select>
           </FormControl>
         </Box>
-        <ChangeOrganization rel="founded" user={usr} />
+        <ChangeOrganization refetch={RefetchUser} rel="founded" user={usr} />
       </div>
     </div>
   );

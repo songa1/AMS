@@ -387,7 +387,11 @@ function AddFoundedInfo({ canMove, newUser }: { canMove: any; newUser: any }) {
         </FormControl>
       </Box>
 
-      <ChangeOrganization rel="founded" user={newUser} />
+      <ChangeOrganization
+        refetch={() => console.log("success")}
+        rel="founded"
+        user={newUser}
+      />
     </Box>
   );
 }
