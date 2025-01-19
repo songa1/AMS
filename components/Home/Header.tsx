@@ -1,15 +1,28 @@
 "use client";
 
+import { Box, Typography } from "@mui/material";
 import React from "react";
 
 function Header() {
   return (
-    <div className="w-full p-2 flex justify-center items-center flex-col py-5 gap-5">
-      <img src="/yali.png" width={200} />
-      <h2 className="text-mainBlue text-center text-2xl font-extrabold text-gray-900">
-        ALUMNI MANAGEMENT SYSTEM!
-      </h2>
-    </div>
+    <Box
+      sx={{
+        padding: "10px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        flexDirection: "column",
+      }}
+    >
+      <img src="/yali.png" width={150} />
+      <Typography
+        variant="h6"
+        className="text-center text-mainBlue"
+        fontWeight={600}
+      >
+        ALUMNI MANAGEMENT SYSTEM
+      </Typography>
+    </Box>
   );
 }
 
