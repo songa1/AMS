@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import { useImportUsersMutation } from "@/lib/features/userSlice";
 import Loading from "@/app/loading";
 import {
@@ -58,7 +58,6 @@ const FullScreenModal = ({
   refetch: any;
 }) => {
   const [importUsers] = useImportUsersMutation();
-  const toast: any = useRef(null);
   const [isLoading, setIsLoading] = useState(false);
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
@@ -102,187 +101,230 @@ const FullScreenModal = ({
   };
 
   const handlePreview = async (event: any) => {
-    console.log("starting...");
     setError("");
-    console.log(event);
     const file = event.target.files?.[0];
-    console.log(file);
     if (!file) return;
 
     const reader = new FileReader();
+
     reader.onload = (e) => {
       try {
         const data = e.target?.result;
-        console.log("Raw file data:", data);
+        if (!data) throw new Error("File data could not be read.");
+
         const workbook = XLSX.read(data, { type: "binary" });
-        console.log("Workbook:", workbook);
         const sheetName = workbook.SheetNames[0];
         const sheet = workbook.Sheets[sheetName];
         const excelData: any[] = XLSX.utils.sheet_to_json(sheet);
 
-        console.log(excelData);
-
-        const mappedRows: any = excelData.map((row, index) => {
-          return {
-            id: index + 1,
-            firstName: row["First name"],
-            middleName: row["Middle Name"],
-            lastName: row["Second name"],
-            email: row["Email Address"],
-            phoneNumber: row["Your personal Phone number"],
-            whatsappNumber: row["Your WhatsApp number"],
-            residentCountry: row["Country of Residence"],
-            state: row["State (If not in Rwanda)"],
-            residentDistrict: row["District of Residence (If in Rwanda)"],
-            residentSector: row["Sector of Residence (If in Rwanda)"],
-            nearestLandmark:
-              row[
-                "Nearest Landmark (School, Church, Mosque, Hotel, or any other common known mark)"
-              ],
-            cohort: row["Cohort"],
-            track: row["Track"],
-            initiativeName:
-              row[
-                "The name of your Initiative (organization you Founded or co-founded)  if Available"
-              ],
-            initiativeSector:
-              row[
-                "Main Sector of intervention (Eg: Finance, Education, Agribusiness, Etc)"
-              ],
-            initiativePosition:
-              row[
-                "Position with that Organizaton  (Eg: Founder & CEO, Co-Founder &CEO) or other Position"
-              ],
-            initiativeAddress:
-              row["Country of the initiative (District/Sector)"],
-            initiativeWebsite:
-              row["Website or any online presence of your initiative"],
-            employerName:
-              row["Organization Name (If employed by another organization)"],
-            employerPosition: row["Position in the organization employing you"],
-            employerWebsite:
-              row["Website of an Organization that Employs you (If available)"],
-            employerAddress: row["Organization Address (Country)"],
-            gender: row["Gender"],
-            linkedin:
-              row["LinkedIn Profile Link (https://linkedin.com/in/...)"],
-            instagram:
-              row["Instagram Profile Link (https://instagram.com/...)"],
-            facebook: row["Facebook Profile Link (https://facebook.com/...)"],
-            twitter: row["X (Twitter) Profile Link (https://x.com/...)"],
-          };
-        });
+        const mappedRows: any = excelData.map((row, index) => ({
+          id: index + 1,
+          firstName: row["First name"] || "",
+          middleName: row["Middle Name"] || "",
+          lastName: row["Second name"] || "",
+          email: row["Email Address"] || "",
+          phoneNumber: row["Your personal Phone number"] || "",
+          whatsappNumber: row["Your WhatsApp number"] || "",
+          residentCountry: row["Country of Residence"] || "",
+          state: row["State (If not in Rwanda)"] || "",
+          residentDistrict: row["District of Residence (If in Rwanda)"] || "",
+          residentSector: row["Sector of Residence (If in Rwanda)"] || "",
+          nearestLandmark:
+            row[
+              "Nearest Landmark (School, Church, Mosque, Hotel, or any other common known mark)"
+            ] || "",
+          cohort: row["Cohort"] || "",
+          track: row["Track"] || "",
+          initiativeName:
+            row[
+              "The name of your Initiative (organization you Founded or co-founded)  if Available"
+            ] || "",
+          initiativeSector:
+            row[
+              "Main Sector of intervention (Eg: Finance, Education, Agribusiness, Etc)"
+            ] || "",
+          initiativePosition:
+            row[
+              "Position with that Organizaton  (Eg: Founder & CEO, Co-Founder &CEO) or other Position"
+            ] || "",
+          initiativeAddress:
+            row["Country of the initiative (District/Sector)"] || "",
+          initiativeWebsite:
+            row["Website or any online presence of your initiative"] || "",
+          employerName:
+            row["Organization Name (If employed by another organization)"] ||
+            "",
+          employerPosition:
+            row["Position in the organization employing you"] || "",
+          employerWebsite:
+            row["Website of an Organization that Employs you (If available)"] ||
+            "",
+          employerAddress: row["Organization Address (Country)"] || "",
+          gender: row["Gender"] || "",
+          linkedin:
+            row["LinkedIn Profile Link (https://linkedin.com/in/...)"] || "",
+          instagram:
+            row["Instagram Profile Link (https://instagram.com/...)"] || "",
+          facebook:
+            row["Facebook Profile Link (https://facebook.com/...)"] || "",
+          twitter: row["X (Twitter) Profile Link (https://x.com/...)"] || "",
+        }));
 
         setRows(mappedRows);
-      } catch (error) {
-        console.log(error);
+      } catch (err) {
+        console.error("Error parsing file:", err);
         setError("Failed to parse the file. Please check the format.");
       }
     };
+
+    reader.readAsBinaryString(file);
   };
 
   console.log(rows);
 
   const columns: GridColDef[] = [
-    { field: "firstName", headerName: "First Name", width: 150 },
-    { field: "middleName", headerName: "Middle Name", width: 150 },
-    { field: "lastName", headerName: "Second Name", width: 150 },
-    { field: "email", headerName: "Email Address", width: 200 },
+    {
+      field: "firstName",
+      headerName: "First Name",
+      width: 150,
+      editable: true,
+    },
+    {
+      field: "middleName",
+      headerName: "Middle Name",
+      width: 150,
+      editable: true,
+    },
+    {
+      field: "lastName",
+      headerName: "Second Name",
+      width: 150,
+      editable: true,
+    },
+    { field: "email", headerName: "Email Address", width: 200, editable: true },
     {
       field: "phoneNumber",
       headerName: "Your Personal Phone Number",
       width: 180,
+      editable: true,
     },
-    { field: "whatsappNumber", headerName: "Your WhatsApp Number", width: 180 },
+    {
+      field: "whatsappNumber",
+      headerName: "Your WhatsApp Number",
+      width: 180,
+      editable: true,
+    },
     {
       field: "residentCountry",
       headerName: "Country of Residence",
       width: 200,
+      editable: true,
     },
-    { field: "state", headerName: "State (If not in Rwanda)", width: 200 },
+    {
+      field: "state",
+      headerName: "State (If not in Rwanda)",
+      width: 200,
+      editable: true,
+    },
     {
       field: "residentDistrict",
       headerName: "District of Residence (If in Rwanda)",
       width: 230,
+      editable: true,
     },
     {
       field: "residentSector",
       headerName: "Sector of Residence (If in Rwanda)",
       width: 230,
+      editable: true,
     },
     {
       field: "nearestLandmark",
       headerName:
         "Nearest Landmark (School, Church, Mosque, Hotel, or any other common known mark)",
       width: 300,
+      editable: true,
     },
-    { field: "cohort", headerName: "Cohort", width: 100 },
-    { field: "track", headerName: "Track", width: 150 },
+    { field: "cohort", headerName: "Cohort", width: 100, editable: true },
+    { field: "track", headerName: "Track", width: 150, editable: true },
     {
       field: "initiativeName",
       headerName: "Name of Your Initiative",
       width: 250,
+      editable: true,
     },
     {
       field: "initiativeSector",
       headerName: "Main Sector of Intervention",
       width: 200,
+      editable: true,
     },
     {
       field: "initiativePosition",
       headerName: "Position with Initiative",
       width: 250,
+      editable: true,
     },
     {
       field: "initiativeAddress",
       headerName: "Country of the Initiative (District/Sector)",
       width: 250,
+      editable: true,
     },
     {
       field: "initiativeWebsite",
       headerName: "Website/Online Presence of Initiative",
       width: 250,
+      editable: true,
     },
     {
       field: "employerName",
       headerName: "Organization Name (If employed by another organization)",
       width: 300,
+      editable: true,
     },
     {
       field: "employerPosition",
       headerName: "Position in Employing Organization",
       width: 250,
+      editable: true,
     },
     {
       field: "employerWebsite",
       headerName: "Website of Employing Organization (If available)",
       width: 250,
+      editable: true,
     },
     {
       field: "employerAddress",
       headerName: "Organization Address (Country)",
       width: 200,
+      editable: true,
     },
-    { field: "gender", headerName: "Gender", width: 130 },
+    { field: "gender", headerName: "Gender", width: 130, editable: true },
     {
       field: "linkedin",
       headerName: "LinkedIn Profile Link",
       width: 300,
+      editable: true,
     },
     {
       field: "instagram",
       headerName: "Instagram Profile Link",
       width: 300,
+      editable: true,
     },
     {
       field: "facebook",
       headerName: "Facebook Profile Link",
       width: 300,
+      editable: true,
     },
     {
       field: "twitter",
       headerName: "X (Twitter) Profile Link",
       width: 300,
+      editable: true,
     },
   ];
 
@@ -366,6 +408,7 @@ const FullScreenModal = ({
             checkboxSelection
             rows={rows}
             columns={columns}
+            editMode="row"
             getRowClassName={(params) =>
               params.indexRelativeToCurrentPage % 2 === 0 ? "even" : "odd"
             }
