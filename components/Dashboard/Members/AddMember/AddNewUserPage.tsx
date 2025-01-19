@@ -12,6 +12,7 @@ import {
 import AddPersonalInfo from "./AddPersonalInfo";
 import AddFoundedInfo from "./AddFoundedInfo";
 import AddEmployedInfo from "./AddEmployedInfo";
+import { User } from "@/types/user";
 
 const steps = [
   "Personal Information",
@@ -23,7 +24,7 @@ function NewProfile() {
   const [activeStep, setActiveStep] = React.useState(0);
   const [skipped, setSkipped] = React.useState(new Set<number>());
   const [canMove, setCanMove] = useState(false);
-  const [newUser, setNewUser] = useState();
+  const [newUser, setNewUser] = useState<User>();
 
   const isStepOptional = (step: number) => {
     return step === 1;
@@ -65,6 +66,10 @@ function NewProfile() {
     setActiveStep(0);
   };
 
+  const handleViewUser = () => {
+    globalThis.location.href = `/dashboard/profile/${newUser?.id}`;
+  };
+
   return (
     <div className="">
       <div className="w-full">
@@ -103,7 +108,11 @@ function NewProfile() {
                 <Button onClick={handleReset} variant="contained">
                   Add Another Member
                 </Button>
-                <Button onClick={handleReset} variant="contained" color="info">
+                <Button
+                  onClick={handleViewUser}
+                  variant="contained"
+                  color="info"
+                >
                   View Added Member
                 </Button>
               </Box>

@@ -111,6 +111,12 @@ function NotificationSetup() {
     setNotification(
       notifications.find((noti: any) => noti.id == currentNotification)
     );
+    console.log(
+      "Notification: ",
+      notification,
+      "NotificationID",
+      currentNotification
+    );
     if (notification) {
       formik.setValues({
         message: notification?.message,
@@ -118,6 +124,12 @@ function NotificationSetup() {
         link: notification?.link,
       });
     }
+    console.log(
+      "Notification: ",
+      notification,
+      "NotificationID",
+      currentNotification
+    );
   };
 
   const formik = useFormik({

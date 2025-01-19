@@ -281,7 +281,7 @@ function AddPersonalInfo({
         setNewUser(res?.user);
       }
     } catch (error: any) {
-      setError(error?.data?.error);
+      setError(error?.error);
     }
   };
 

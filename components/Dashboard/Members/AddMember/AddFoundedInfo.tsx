@@ -167,7 +167,6 @@ function AddFoundedInfo({ canMove, newUser }: { canMove: any; newUser: any }) {
       }).unwrap();
       setSuccess("Organization added successfully!");
       canMove();
-      // RefetchUser();
     } catch (error: any) {
       console.log(error);
       setError(error?.data?.error);
