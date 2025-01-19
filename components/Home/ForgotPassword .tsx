@@ -6,6 +6,8 @@ import { useFormik } from "formik";
 import React, { useEffect, useState } from "react";
 import * as Yup from "yup";
 import Header from "./Header";
+import { Alert, Box, Button, TextField } from "@mui/material";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 const ForgotPasswordPage = () => {
   const [error, setError] = useState("");
@@ -49,52 +51,63 @@ const ForgotPasswordPage = () => {
   }, [error]);
 
   return (
-    <div className="flex items-center justify-center w-full">
-      <div className="w-full lg:w min-w-[300px] flex flex-col  items-center border border-mainBlue max-w-[40%] mx-auto mt-7 p-3 rounded-md shadow-xl">
-        <Header />
-        <div className="w-full h-2 bg-mainBlue shadow-md"></div>
-        <h1 className="my-3 text-2xl font-bold">Forgot Password</h1>
-        {success && (
-          <p className="bg-green-500 text-white rounded-md text-center p-2 w-full">
-            {success}
-          </p>
-        )}
-        {!success && (
-          <form className="w-full">
-            {error && (
-              <p className="bg-red-500 text-white rounded-md text-center p-2 w-full">
-                {error}
-              </p>
-            )}
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700 mt-2"
-            >
-              Enter your email address:
-            </label>
-            <input
+    <Box className="w-full h-screen flex flex-col md:flex-row">
+      <Box
+        className="w-full md:w-1/2 h-1/2 md:h-full bg-cover bg-center"
+        style={{ backgroundImage: `url('/yali_alumni.jpg')` }}
+      ></Box>
+      <Box className="w-full md:w-1/2 h-full p-8 md:p-20 flex items-center justify-center">
+        <form className="w-full max-w-md shadow-md md:p-5 p-2">
+          <Header />
+
+          {error && (
+            <Alert variant="filled" severity="error" className="my-2">
+              {error}
+            </Alert>
+          )}
+          {success && (
+            <Alert variant="filled" severity="success" className="my-2">
+              {success}
+            </Alert>
+          )}
+          <Box sx={{ display: "flex", flexDirection: "column", gap: "15px" }}>
+            <TextField
               type="email"
-              id="email"
+              variant="filled"
+              label="Enter your email address:"
+              placeholder="eg: example@domain.com"
               value={formik.values.email}
               onChange={(e) => formik.setFieldValue("email", e.target.value)}
               required
-              className="w-full p-2 mt-1 border rounded"
             />
-            <button
+          </Box>
+
+          <Box className="flex flex-col gap-1">
+            <Button
+              variant="contained"
+              color="primary"
               type="submit"
-              className="w-full px-4 py-2 mt-4 font-bold text-white bg-mainBlue rounded hover:bg-mainblue-700"
-              disabled={loading}
+              className="w-full mt-2"
               onClick={(e) => {
                 e.preventDefault();
                 formik.handleSubmit();
               }}
             >
               {loading ? "Requesting..." : "Request Password Reset"}
-            </button>
-          </form>
-        )}
-      </div>
-    </div>
+            </Button>
+            <Button
+              variant="outlined"
+              onClick={() => {
+                globalThis.location.href = "/";
+              }}
+              startIcon={<ArrowBackIcon />}
+            >
+              Back to Login
+            </Button>
+          </Box>
+        </form>
+      </Box>
+    </Box>
   );
 };
 

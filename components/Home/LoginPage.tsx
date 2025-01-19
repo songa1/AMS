@@ -9,7 +9,7 @@ import React, { useEffect, useState } from "react";
 import * as Yup from "yup";
 import Cookies from "js-cookie";
 import { AUTH_STORED_DATA } from "@/helpers/auth";
-import { Box, Button, TextField, Typography } from "@mui/material";
+import { Alert, Box, Button, TextField, Typography } from "@mui/material";
 
 const LoginPage = () => {
   const [error, setError] = useState("");
@@ -86,9 +86,9 @@ const LoginPage = () => {
           <Header />
 
           {error && (
-            <p className="bg-red-500 text-white rounded-md text-center p-2 w-full">
+            <Alert variant="filled" severity="error" className="my-2">
               {error}
-            </p>
+            </Alert>
           )}
           <Box sx={{ display: "flex", flexDirection: "column", gap: "15px" }}>
             <TextField
@@ -112,7 +112,7 @@ const LoginPage = () => {
             />
           </Box>
 
-          <div className="flex justify-between items-center mt-1">
+          <Box className="flex justify-between items-center mt-1">
             <div></div>
             <Link href="/forgotpassword">
               <Typography
@@ -123,7 +123,7 @@ const LoginPage = () => {
                 Forgot Password?
               </Typography>
             </Link>
-          </div>
+          </Box>
           <Button
             variant="contained"
             color="primary"
