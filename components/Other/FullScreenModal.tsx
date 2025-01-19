@@ -103,6 +103,11 @@ const FullScreenModal = ({
       if (res.processedUsers.length > 0) {
         setSuccess("Members added successfully!");
       }
+
+      if (res?.failedUsers.length > 0) {
+        const failed = res?.failedUsers.map((u: any) => u?.email).join(", ");
+        setInfo(`Failed to add users with email: ${failed}`);
+      }
     } catch (error: any) {
       console.log(error);
       setError(error);
