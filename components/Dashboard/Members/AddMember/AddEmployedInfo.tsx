@@ -34,10 +34,8 @@ import {
   useAssignOrgMutation,
   useOrganizationsQuery,
 } from "@/lib/features/orgSlice";
-import { getUser } from "@/helpers/auth";
 
-function AddEmployedInfo({ canMove }: { canMove: any }) {
-  const user = getUser();
+function AddEmployedInfo({ canMove, newUser }: { canMove: any; newUser: any }) {
   const [employedCountry, setEmployedCountry] = useState("");
   const [employedStates, setEmployedStates] = useState([]);
   const [countriesEmployed, setCountriesEmployed] = useState([]);
@@ -155,7 +153,7 @@ function AddEmployedInfo({ canMove }: { canMove: any }) {
         website: values?.companyWebsite,
       }).unwrap();
       const assign = await assignOrg({
-        userId: user?.id,
+        userId: newUser?.id,
         organizationId: res?.data?.id,
         relationshipType: "founded",
         position: formik.values.companyPosition,

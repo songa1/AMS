@@ -53,7 +53,13 @@ const VisuallyHiddenInput = styled("input")({
   width: 1,
 });
 
-function AddPersonalInfo({ canMove }: { canMove: any }) {
+function AddPersonalInfo({
+  setNewUser,
+  canMove,
+}: {
+  setNewUser: any;
+  canMove: any;
+}) {
   const user = getUser();
 
   const [country, setCountry] = useState("");
@@ -272,15 +278,10 @@ function AddPersonalInfo({ canMove }: { canMove: any }) {
           formik.setFieldValue("profileImageId", "");
         setSuccess("User added successfully!");
         canMove(true);
+        setNewUser(res?.user);
       }
     } catch (error: any) {
-      if (error?.status === 409) {
-        setError(error?.data?.error);
-      } else {
-        setError(
-          "Adding user Failed! Try again, or contact the administrator!"
-        );
-      }
+      setError(error?.data?.error);
     }
   };
 

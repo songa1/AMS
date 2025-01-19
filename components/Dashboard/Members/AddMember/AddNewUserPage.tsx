@@ -22,8 +22,8 @@ const steps = [
 function NewProfile() {
   const [activeStep, setActiveStep] = React.useState(0);
   const [skipped, setSkipped] = React.useState(new Set<number>());
-
   const [canMove, setCanMove] = useState(false);
+  const [newUser, setNewUser] = useState();
 
   const isStepOptional = (step: number) => {
     return step === 1;
@@ -112,17 +112,20 @@ function NewProfile() {
             <React.Fragment>
               {activeStep === 0 && (
                 <div className="py-5">
-                  <AddPersonalInfo canMove={setCanMove} />
+                  <AddPersonalInfo
+                    setNewUser={setNewUser}
+                    canMove={setCanMove}
+                  />
                 </div>
               )}
               {activeStep === 1 && (
                 <div className="py-5">
-                  <AddFoundedInfo canMove={setCanMove} />
+                  <AddFoundedInfo newUser={newUser} canMove={setCanMove} />
                 </div>
               )}
               {activeStep === 2 && (
                 <div className="py-5">
-                  <AddEmployedInfo canMove={setCanMove} />
+                  <AddEmployedInfo newUser={newUser} canMove={setCanMove} />
                 </div>
               )}
               <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
@@ -141,7 +144,7 @@ function NewProfile() {
                   </Button>
                 )}
                 <Button
-                  // disabled={!canMove}
+                  disabled={!canMove}
                   onClick={handleNext}
                   variant="contained"
                 >

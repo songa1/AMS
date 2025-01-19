@@ -291,8 +291,8 @@ function ProfilePage() {
           <TextField
             label="Country"
             value={
-              user?.organizationFounded?.district?.name
-                ? user?.organizationFounded?.district?.name
+              user?.organizationFounded?.country?.name
+                ? user?.organizationFounded?.country?.name
                 : "--"
             }
             disabled={!edit}
@@ -398,7 +398,7 @@ function ProfilePage() {
               />
             )}
           {user?.organizationEmployed &&
-            user?.organizationEmployed?.country?.id == "RW" && (
+            user?.organizationEmployed?.country?.id === "RW" && (
               <TextField
                 value={
                   user?.organizationEmployed?.district?.name
@@ -410,7 +410,7 @@ function ProfilePage() {
               />
             )}
           {user?.organizationEmployed &&
-            user?.organizationEmployed?.country?.id == "RW" && (
+            user?.organizationEmployed?.country?.id === "RW" && (
               <TextField
                 value={
                   user?.organizationEmployed?.sector?.name

@@ -104,7 +104,7 @@ function NotificationSetup() {
         usage: notification.usage,
       });
     }
-  }, [currentNotification, notifications]);
+  }, [currentNotification, notification, notifications]);
 
   const handleOpenNotification = async (id: string) => {
     setCurrentNotification(id);
@@ -113,9 +113,9 @@ function NotificationSetup() {
     );
     if (notification) {
       formik.setValues({
-        message: notification.message,
-        usage: notification.usage,
-        link: notification.link,
+        message: notification?.message,
+        usage: notification?.usage,
+        link: notification?.link,
       });
     }
   };
