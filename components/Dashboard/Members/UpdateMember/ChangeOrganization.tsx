@@ -89,7 +89,7 @@ function ChangeOrganization({ user, rel }: { user: any; rel: string }) {
         </Alert>
       )}
       {info && (
-        <Alert variant="filled" severity="info">
+        <Alert variant="filled" severity="warning">
           {info}
         </Alert>
       )}

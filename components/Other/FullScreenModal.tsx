@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useImportUsersMutation } from "@/lib/features/userSlice";
 import Loading from "@/app/loading";
 import {
@@ -35,10 +35,6 @@ const VisuallyHiddenInput = styled("input")({
   width: 1,
 });
 
-const acceptedCSVTypes = [
-  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-];
-
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
     children: React.ReactElement<unknown>;
@@ -60,27 +56,43 @@ const FullScreenModal = ({
   const [importUsers] = useImportUsersMutation();
   const [isLoading, setIsLoading] = useState(false);
   const [success, setSuccess] = useState("");
+  const [info, setInfo] = useState("");
   const [error, setError] = useState("");
   const [rows, setRows] = useState([]);
+  const [rowSelectionModel, setRowSelectionModel] = useState<string[]>([]);
 
   const toggleModal = () => {
     setIsOpen(!isOpen);
   };
 
+  useEffect(() => {
+    if (success || error || info) {
+      setInterval(() => {
+        setSuccess("");
+        setError("");
+        setInfo("");
+      }, 10000);
+    }
+  }, [success, error, info]);
+
   const handleFileUpload = async (event: any) => {
     setIsLoading(true);
-    const file = event.target.files[0];
+    const selectedRows = rows.filter((row: any) =>
+      rowSelectionModel.includes(row.id)
+    );
 
-    if (!file) {
-      alert("Please select a file");
+    if (selectedRows.length === 0) {
+      setInfo("Please select at least one row.");
+      setIsLoading(false);
       return;
     }
 
-    const formData = new FormData();
-    formData.append("file", file);
+    const payload = {
+      selectedData: selectedRows,
+    };
 
     try {
-      const res = await importUsers(formData).unwrap();
+      const res = await importUsers(payload).unwrap();
       console.log(res);
       if (res.errors.length > 0) {
         res.errors.forEach((err: any) => {
@@ -179,8 +191,6 @@ const FullScreenModal = ({
 
     reader.readAsBinaryString(file);
   };
-
-  console.log(rows);
 
   const columns: GridColDef[] = [
     {
@@ -402,10 +412,23 @@ const FullScreenModal = ({
             {success}
           </Alert>
         )}
+        {info && (
+          <Alert
+            variant="filled"
+            sx={{ margin: "15px 0px 15px 0px" }}
+            severity="warning"
+          >
+            {info}
+          </Alert>
+        )}
         {isLoading && <Loading />}
         {!isLoading && (
           <DataGrid
             checkboxSelection
+            rowSelectionModel={rowSelectionModel}
+            onRowSelectionModelChange={(newSelection: any) =>
+              setRowSelectionModel(newSelection)
+            }
             rows={rows}
             columns={columns}
             editMode="row"

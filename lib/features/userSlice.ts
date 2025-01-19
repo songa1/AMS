@@ -30,8 +30,6 @@ export const usersSlices = createApi({
         method: "PATCH",
         body: {
           user: data?.user,
-          organizationFounded: data?.organizationFounded,
-          organizationEmployed: data?.organizationEmployed,
         },
       }),
     }),
@@ -45,13 +43,6 @@ export const usersSlices = createApi({
     createUserProfile: builder.mutation({
       query: (credentials) => ({
         url: "users/profile",
-        method: "POST",
-        body: credentials,
-      }),
-    }),
-    bulkAddUsers: builder.mutation({
-      query: (credentials) => ({
-        url: "users/bulk",
         method: "POST",
         body: credentials,
       }),
@@ -92,7 +83,6 @@ export const {
   useDeleteUserMutation,
   useUpdatedUserMutation,
   useAddUserMutation,
-  useBulkAddUsersMutation,
   useUploadPictureMutation,
   useChangeMutation,
   useImportUsersMutation,
