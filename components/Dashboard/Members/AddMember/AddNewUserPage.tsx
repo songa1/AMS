@@ -153,7 +153,7 @@ function NewProfile() {
                   </Button>
                 )}
                 <Button
-                  disabled={!canMove}
+                  // disabled={!canMove}
                   onClick={handleNext}
                   variant="contained"
                 >

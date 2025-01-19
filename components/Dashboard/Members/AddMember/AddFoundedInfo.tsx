@@ -32,8 +32,8 @@ import {
 import {
   useAddOrgMutation,
   useAssignOrgMutation,
-  useOrganizationsQuery,
 } from "@/lib/features/orgSlice";
+import ChangeOrganization from "../UpdateMember/ChangeOrganization";
 
 function AddFoundedInfo({ canMove, newUser }: { canMove: any; newUser: any }) {
   const [foundedCountry, setFoundedCountry] = useState("");
@@ -43,9 +43,8 @@ function AddFoundedInfo({ canMove, newUser }: { canMove: any; newUser: any }) {
   const [districtsFounded, setDistrictsFounded] = useState<residentDistrict[]>(
     []
   );
-  const [organizations, setOrganizations] = useState([]);
+
   const [selectedDistrictFounded, setSelectedDistrictFounded] = useState("");
-  const [newOrg, setNewOrg] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
@@ -58,7 +57,6 @@ function AddFoundedInfo({ canMove, newUser }: { canMove: any; newUser: any }) {
     skip: !foundedCountry,
   });
   const { data: DistrictData } = useDistrictsQuery("");
-  const { data: OrganizationsData } = useOrganizationsQuery("");
 
   const { data: SectorsDataFounded } = useSectorsByDistrictQuery(
     selectedDistrictFounded,
@@ -84,12 +82,6 @@ function AddFoundedInfo({ canMove, newUser }: { canMove: any; newUser: any }) {
   }, [WorkingSectorsData]);
 
   useEffect(() => {
-    if (OrganizationsData) {
-      setOrganizations(OrganizationsData?.data);
-    }
-  }, [OrganizationsData]);
-
-  useEffect(() => {
     if (FoundedStatesData) {
       setFoundedStates(FoundedStatesData?.data);
     }
@@ -112,14 +104,6 @@ function AddFoundedInfo({ canMove, newUser }: { canMove: any; newUser: any }) {
       setCountriesFounded(CountryData?.data);
     }
   }, [CountryData]);
-
-  useEffect(() => {
-    if (newOrg === "") {
-      canMove(false);
-    } else {
-      canMove(true);
-    }
-  }, [newOrg, canMove]);
 
   const formik = useFormik({
     initialValues: {
@@ -198,22 +182,6 @@ function AddFoundedInfo({ canMove, newUser }: { canMove: any; newUser: any }) {
           Submit
         </Button>
       </div>
-      {/* <FormControl
-        variant="filled"
-        sx={{ minWidth: 120, width: "100%", marginBottom: "15px" }}
-      >
-        <InputLabel>Choose your organization:</InputLabel>
-        <Select value={newOrg} onChange={(e) => setNewOrg(e.target.value)}>
-          <MenuItem key={100} value="new">
-            Add a new company
-          </MenuItem>
-          {organizations.map((item: organization) => (
-            <MenuItem key={item?.id} value={item.id}>
-              {item?.name}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl> */}
 
       <Box
         sx={{
@@ -418,6 +386,8 @@ function AddFoundedInfo({ canMove, newUser }: { canMove: any; newUser: any }) {
           )}
         </FormControl>
       </Box>
+
+      <ChangeOrganization rel="founded" user={newUser} />
     </Box>
   );
 }

@@ -40,6 +40,7 @@ import {
   useOrganizationsQuery,
   useUpdateOrgMutation,
 } from "@/lib/features/orgSlice";
+import ChangeOrganization from "./ChangeOrganization";
 
 function UpdateFoundedInfo() {
   const { id } = useParams();
@@ -367,6 +368,7 @@ function UpdateFoundedInfo() {
             </Select>
           </FormControl>
         </Box>
+        <ChangeOrganization rel="founded" user={usr} />
       </div>
     </div>
   );

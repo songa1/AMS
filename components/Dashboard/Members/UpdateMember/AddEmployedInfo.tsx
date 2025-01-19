@@ -40,6 +40,7 @@ import {
   useOrganizationsQuery,
   useUpdateOrgMutation,
 } from "@/lib/features/orgSlice";
+import ChangeOrganization from "./ChangeOrganization";
 
 function UpdateEmployedInfo() {
   const { id } = useParams();
@@ -373,6 +374,7 @@ function UpdateEmployedInfo() {
             </Select>
           </FormControl>
         </Box>
+        <ChangeOrganization rel="employed" user={usr} />
       </div>
     </div>
   );

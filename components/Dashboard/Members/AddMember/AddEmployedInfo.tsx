@@ -34,6 +34,7 @@ import {
   useAssignOrgMutation,
   useOrganizationsQuery,
 } from "@/lib/features/orgSlice";
+import ChangeOrganization from "../UpdateMember/ChangeOrganization";
 
 function AddEmployedInfo({ canMove, newUser }: { canMove: any; newUser: any }) {
   const [employedCountry, setEmployedCountry] = useState("");
@@ -327,99 +328,93 @@ function AddEmployedInfo({ canMove, newUser }: { canMove: any; newUser: any }) {
             <FormHelperText>{formik.errors.companyCountry}</FormHelperText>
           )}
         </FormControl>
-        {formik.values.companyCountry &&
-          formik.values.companyCountry !== "RW" && (
-            <FormControl
-              variant="filled"
-              error={
-                formik.errors.companyState && formik.touched.companyState
-                  ? true
-                  : false
-              }
-              sx={{ minWidth: 120, width: "100%" }}
-            >
-              <InputLabel>State</InputLabel>
-              <Select
-                value={formik?.values?.companyState}
-                onChange={(e) => {
-                  formik.setFieldValue("companyState", e.target.value);
-                }}
-              >
-                {employedStates.map((item: State) => (
-                  <MenuItem key={item?.id} value={item?.id}>
-                    {item?.name}
-                  </MenuItem>
-                ))}
-              </Select>
-              {formik.errors.companyState && formik.touched.companyState && (
-                <FormHelperText>{formik.errors.companyState}</FormHelperText>
-              )}
-            </FormControl>
+        <FormControl
+          variant="filled"
+          error={
+            formik.errors.companyState && formik.touched.companyState
+              ? true
+              : false
+          }
+          sx={{ minWidth: 120, width: "100%" }}
+        >
+          <InputLabel>State</InputLabel>
+          <Select
+            value={formik?.values?.companyState}
+            onChange={(e) => {
+              formik.setFieldValue("companyState", e.target.value);
+            }}
+          >
+            {employedStates.map((item: State) => (
+              <MenuItem key={item?.id} value={item?.id}>
+                {item?.name}
+              </MenuItem>
+            ))}
+          </Select>
+          {formik.errors.companyState && formik.touched.companyState && (
+            <FormHelperText>{formik.errors.companyState}</FormHelperText>
           )}
-        {formik.values.companyCountry == "RW" && (
-          <FormControl
-            variant="filled"
-            error={
-              formik.errors.companyDistrictName &&
-              formik.touched.companyDistrictName
-                ? true
-                : false
-            }
-            sx={{ minWidth: 120, width: "100%" }}
+        </FormControl>
+        <FormControl
+          variant="filled"
+          error={
+            formik.errors.companyDistrictName &&
+            formik.touched.companyDistrictName
+              ? true
+              : false
+          }
+          sx={{ minWidth: 120, width: "100%" }}
+        >
+          <InputLabel>District</InputLabel>
+          <Select
+            value={formik?.values?.companyDistrictName}
+            onChange={(e) => {
+              setSelectedDistrictEmployed(e.target.value);
+              formik.setFieldValue("companyDistrictName", e.target.value);
+              formik.setFieldValue("companySectorId", "");
+            }}
           >
-            <InputLabel>District</InputLabel>
-            <Select
-              value={formik?.values?.companyDistrictName}
-              onChange={(e) => {
-                setSelectedDistrictEmployed(e.target.value);
-                formik.setFieldValue("companyDistrictName", e.target.value);
-                formik.setFieldValue("companySectorId", "");
-              }}
-            >
-              {districtsEmployed.map((item: residentDistrict) => (
-                <MenuItem key={item?.id} value={item?.name}>
-                  {item?.name}
-                </MenuItem>
-              ))}
-            </Select>
-            {formik.errors.companyDistrictName &&
-              formik.touched.companyDistrictName && (
-                <FormHelperText>
-                  {formik.errors.companyDistrictName}
-                </FormHelperText>
-              )}
-          </FormControl>
-        )}
-        {formik.values.companyCountry == "RW" && (
-          <FormControl
-            variant="filled"
-            error={
-              formik.errors.companySectorId && formik.touched.companySectorId
-                ? true
-                : false
-            }
-            sx={{ minWidth: 120, width: "100%" }}
+            {districtsEmployed.map((item: residentDistrict) => (
+              <MenuItem key={item?.id} value={item?.name}>
+                {item?.name}
+              </MenuItem>
+            ))}
+          </Select>
+          {formik.errors.companyDistrictName &&
+            formik.touched.companyDistrictName && (
+              <FormHelperText>
+                {formik.errors.companyDistrictName}
+              </FormHelperText>
+            )}
+        </FormControl>
+        <FormControl
+          variant="filled"
+          error={
+            formik.errors.companySectorId && formik.touched.companySectorId
+              ? true
+              : false
+          }
+          sx={{ minWidth: 120, width: "100%" }}
+        >
+          <InputLabel>District</InputLabel>
+          <Select
+            value={formik.values.companySectorId}
+            onChange={(e) => {
+              formik.setFieldValue("companySectorId", e.target.value);
+            }}
           >
-            <InputLabel>District</InputLabel>
-            <Select
-              value={formik.values.companySectorId}
-              onChange={(e) => {
-                formik.setFieldValue("companySectorId", e.target.value);
-              }}
-            >
-              {sectorsEmployed.map((item: residentSector) => (
-                <MenuItem key={item?.id} value={item?.id}>
-                  {item?.name}
-                </MenuItem>
-              ))}
-            </Select>
-            {formik.errors.companySectorId &&
-              formik.touched.companySectorId && (
-                <FormHelperText>{formik.errors.companySectorId}</FormHelperText>
-              )}
-          </FormControl>
-        )}
+            {sectorsEmployed.map((item: residentSector) => (
+              <MenuItem key={item?.id} value={item?.id}>
+                {item?.name}
+              </MenuItem>
+            ))}
+          </Select>
+          {formik.errors.companySectorId && formik.touched.companySectorId && (
+            <FormHelperText>{formik.errors.companySectorId}</FormHelperText>
+          )}
+        </FormControl>
       </Box>
+
+      <ChangeOrganization rel="employed" user={newUser} />
     </Box>
   );
 }
