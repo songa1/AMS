@@ -107,16 +107,8 @@ function NotificationSetup() {
   }, [currentNotification, notification, notifications]);
 
   const handleOpenNotification = async (id: string) => {
+    setNotification(notifications.find((noti: any) => noti?.id === id));
     setCurrentNotification(id);
-    setNotification(
-      notifications.find((noti: any) => noti.id == currentNotification)
-    );
-    console.log(
-      "Notification: ",
-      notification,
-      "NotificationID",
-      currentNotification
-    );
     if (notification) {
       formik.setValues({
         message: notification?.message,
