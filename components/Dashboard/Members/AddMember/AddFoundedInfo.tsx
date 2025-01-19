@@ -11,7 +11,9 @@ import React, { useEffect, useState } from "react";
 import * as Yup from "yup";
 import { useFormik } from "formik";
 import {
+  Alert,
   Box,
+  Button,
   FormControl,
   FormHelperText,
   InputLabel,
@@ -27,9 +29,15 @@ import {
   State,
   WorkingSector,
 } from "@/types/user";
-import { useOrganizationsQuery } from "@/lib/features/orgSlice";
+import {
+  useAddOrgMutation,
+  useAssignOrgMutation,
+  useOrganizationsQuery,
+} from "@/lib/features/orgSlice";
+import { getUser } from "@/helpers/auth";
 
 function AddFoundedInfo({ canMove }: { canMove: any }) {
+  const user = getUser();
   const [foundedCountry, setFoundedCountry] = useState("");
   const [foundedStates, setFoundedStates] = useState([]);
   const [countriesFounded, setCountriesFounded] = useState([]);
@@ -40,6 +48,11 @@ function AddFoundedInfo({ canMove }: { canMove: any }) {
   const [organizations, setOrganizations] = useState([]);
   const [selectedDistrictFounded, setSelectedDistrictFounded] = useState("");
   const [newOrg, setNewOrg] = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+
+  const [addOrg] = useAddOrgMutation();
+  const [assignOrg] = useAssignOrgMutation();
 
   const [workingSectors, setWorkingSectors] = useState([]);
   const { data: CountryData } = useCountriesQuery("");
@@ -56,6 +69,15 @@ function AddFoundedInfo({ canMove }: { canMove: any }) {
     }
   );
   const { data: WorkingSectorsData } = useWorkingSectorQuery("");
+
+  useEffect(() => {
+    if (success || error) {
+      setInterval(() => {
+        setSuccess("");
+        setError("");
+      }, 10000);
+    }
+  }, [success, error]);
 
   useEffect(() => {
     if (WorkingSectorsData) {
@@ -128,78 +150,58 @@ function AddFoundedInfo({ canMove }: { canMove: any }) {
   });
 
   const handleSubmit = async () => {
-    // const values: any = formik.values;
-    // try {
-    //   const res = await addUser({
-    //     user: {
-    //       firstName: values.firstName,
-    //       middleName: values.middleName,
-    //       lastName: values.lastName,
-    //       email: values.email,
-    //       linkedin: values?.linkedin,
-    //       instagram: values?.instagram,
-    //       twitter: values?.twitter,
-    //       facebook: values?.facebook,
-    //       bio: values?.bio,
-    //       phoneNumber: values.phoneNumber,
-    //       whatsappNumber: values.whatsAppNumber,
-    //       genderName: values.gender.name,
-    //       nearestLandmark: values.nearlestLandmark,
-    //       cohortId: values?.cohortId?.id,
-    //       trackId: values?.track?.id,
-    //       residentDistrictId: values?.districtName.id,
-    //       residentSectorId: values?.sectorId.id,
-    //       state: values?.state?.id,
-    //       residentCountryId: values?.residentCountryId.id,
-    //       positionInFounded: values?.foundedPosition,
-    //       positionInEmployed: values?.companyPosition,
-    //       profileImageId: values?.profileImageId,
-    //     },
-    //     organizationFounded: {
-    //       name: values?.initiativeName,
-    //       workingSector: values?.mainSector?.id,
-    //       countryId: values?.foundedCountry?.id,
-    //       state: values?.foundedState?.id,
-    //       districtId: values.foundedDistrictName.name,
-    //       sectorId: values?.foundedSectorId.id,
-    //       website: values?.foundedWebsite,
-    //     },
-    //     organizationEmployed: {
-    //       name: values?.companyName,
-    //       workingSector: values?.companySector?.id,
-    //       countryId: values?.companyCountry?.id,
-    //       state: values?.companyState?.id,
-    //       districtId: values?.companyDistrictName.name,
-    //       sectorId: values?.companySectorId.id,
-    //       website: values?.companyWebsite,
-    //     },
-    //   }).unwrap();
-    //   if (res.message) {
-    //     formik.resetForm();
-    //     setImagePreview(null);
-    //     setImageData(null);
-    //     setUploadSuccess(false);
-    //     if (formik.values.profileImageId)
-    //       formik.setFieldValue("profileImageId", "");
-    //     setSuccess("User added successfully!");
-    //   }
-    // } catch (error: any) {
-    //   console.log(error);
-    //   if (error?.status === 409) {
-    //     setError(error?.data?.error);
-    //   } else {
-    //     setError(
-    //       "Adding user Failed! Try again, or contact the administrator!"
-    //     );
-    //   }
-    // } finally {
-    //   setIsLoading(false);
-    // }
+    const values = formik.values;
+    try {
+      const res = await addOrg({
+        name: values?.initiativeName,
+        workingSectorId: values?.mainSector,
+        countryId: values?.foundedCountry,
+        stateId: values?.foundedState,
+        districtId: values?.foundedDistrictName,
+        sectorId: values?.foundedSectorId,
+        website: values?.foundedWebsite,
+      }).unwrap();
+      const assign = await assignOrg({
+        userId: user?.id,
+        organizationId: res?.data?.id,
+        relationshipType: "founded",
+        position: formik.values.foundedPosition,
+      }).unwrap();
+      setSuccess("Organization added successfully!");
+      canMove();
+      // RefetchUser();
+    } catch (error: any) {
+      console.log(error);
+      setError(error?.data?.error);
+    }
   };
 
   return (
     <Box sx={{ marginTop: "15px" }}>
-      <FormControl
+      {error && (
+        <Alert variant="filled" severity="error">
+          {error}
+        </Alert>
+      )}
+      {success && (
+        <Alert variant="filled" severity="success">
+          {success}
+        </Alert>
+      )}
+      <div className="flex items-start justify-between py-4">
+        <div></div>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={(e) => {
+            e.preventDefault();
+            handleSubmit();
+          }}
+        >
+          Submit
+        </Button>
+      </div>
+      {/* <FormControl
         variant="filled"
         sx={{ minWidth: 120, width: "100%", marginBottom: "15px" }}
       >
@@ -214,226 +216,211 @@ function AddFoundedInfo({ canMove }: { canMove: any }) {
             </MenuItem>
           ))}
         </Select>
-      </FormControl>
-      {newOrg === "new" && (
-        <Box
-          sx={{
-            width: "100%",
-            display: "grid",
-            gridTemplateColumns: {
-              xs: "1fr",
-              sm: "repeat(2, 1fr)",
-            },
-            gap: 2,
-            paddingTop: "30px",
-          }}
+      </FormControl> */}
+
+      <Box
+        sx={{
+          width: "100%",
+          display: "grid",
+          gridTemplateColumns: {
+            xs: "1fr",
+            sm: "repeat(2, 1fr)",
+          },
+          gap: 2,
+          paddingTop: "30px",
+        }}
+      >
+        <TextField
+          label="Your Initiative Name:"
+          variant="filled"
+          value={formik.values.initiativeName}
+          onChange={(e) =>
+            formik.setFieldValue("initiativeName", e.target.value)
+          }
+          placeholder="Name of your initiative"
+          error={
+            formik.errors.initiativeName && formik.touched.initiativeName
+              ? true
+              : false
+          }
+          helperText={
+            formik.errors.initiativeName && formik.touched.initiativeName
+              ? formik.errors.initiativeName
+              : ""
+          }
+        />
+        <FormControl
+          variant="filled"
+          error={
+            formik.errors.mainSector && formik.touched.mainSector ? true : false
+          }
+          sx={{ minWidth: 120, width: "100%" }}
         >
-          <TextField
-            label="Your Initiative Name:"
-            variant="filled"
-            value={formik.values.initiativeName}
-            onChange={(e) =>
-              formik.setFieldValue("initiativeName", e.target.value)
-            }
-            placeholder="Name of your initiative"
-            error={
-              formik.errors.initiativeName && formik.touched.initiativeName
-                ? true
-                : false
-            }
-            helperText={
-              formik.errors.initiativeName && formik.touched.initiativeName
-                ? formik.errors.initiativeName
-                : ""
-            }
-          />
-          <FormControl
-            variant="filled"
-            error={
-              formik.errors.mainSector && formik.touched.mainSector
-                ? true
-                : false
-            }
-            sx={{ minWidth: 120, width: "100%" }}
+          <InputLabel>Working Sector</InputLabel>
+          <Select
+            value={formik.values.mainSector}
+            onChange={(e) => formik.setFieldValue("mainSector", e.target.value)}
           >
-            <InputLabel>Working Sector</InputLabel>
-            <Select
-              value={formik.values.mainSector}
-              onChange={(e) =>
-                formik.setFieldValue("mainSector", e.target.value)
-              }
-            >
-              {workingSectors.map((item: WorkingSector) => (
-                <MenuItem key={item?.id} value={item?.id}>
-                  {item?.name}
-                </MenuItem>
-              ))}
-            </Select>
-            {formik.errors.mainSector && formik.touched.mainSector && (
-              <FormHelperText>{formik.errors.mainSector}</FormHelperText>
-            )}
-          </FormControl>
-          <TextField
-            label="Your Position:"
-            variant="filled"
-            value={formik.values.foundedPosition}
-            onChange={(e) =>
-              formik.setFieldValue("foundedPosition", e.target.value)
-            }
-            placeholder="eg: The Founder, Managing Director, etc"
-            error={
-              formik.errors.foundedPosition && formik.touched.foundedPosition
-                ? true
-                : false
-            }
-            helperText={
-              formik.errors.foundedPosition && formik.touched.foundedPosition
-                ? formik.errors.foundedPosition
-                : ""
-            }
-          />
-          <TextField
-            label="Website:"
-            variant="filled"
-            value={formik.values.foundedWebsite}
-            onChange={(e) =>
-              formik.setFieldValue("foundedWebsite", e.target.value)
-            }
-            placeholder="https://example.com"
-            error={
-              formik.errors.foundedWebsite && formik.touched.foundedWebsite
-                ? true
-                : false
-            }
-            helperText={
-              formik.errors.foundedWebsite && formik.touched.foundedWebsite
-                ? formik.errors.foundedWebsite
-                : ""
-            }
-          />
-          <FormControl
-            variant="filled"
-            error={
-              formik.errors.foundedCountry && formik.touched.foundedCountry
-                ? true
-                : false
-            }
-            sx={{ minWidth: 120, width: "100%" }}
+            {workingSectors.map((item: WorkingSector) => (
+              <MenuItem key={item?.id} value={item?.id}>
+                {item?.name}
+              </MenuItem>
+            ))}
+          </Select>
+          {formik.errors.mainSector && formik.touched.mainSector && (
+            <FormHelperText>{formik.errors.mainSector}</FormHelperText>
+          )}
+        </FormControl>
+        <TextField
+          label="Your Position:"
+          variant="filled"
+          value={formik.values.foundedPosition}
+          onChange={(e) =>
+            formik.setFieldValue("foundedPosition", e.target.value)
+          }
+          placeholder="eg: The Founder, Managing Director, etc"
+          error={
+            formik.errors.foundedPosition && formik.touched.foundedPosition
+              ? true
+              : false
+          }
+          helperText={
+            formik.errors.foundedPosition && formik.touched.foundedPosition
+              ? formik.errors.foundedPosition
+              : ""
+          }
+        />
+        <TextField
+          label="Website:"
+          variant="filled"
+          value={formik.values.foundedWebsite}
+          onChange={(e) =>
+            formik.setFieldValue("foundedWebsite", e.target.value)
+          }
+          placeholder="https://example.com"
+          error={
+            formik.errors.foundedWebsite && formik.touched.foundedWebsite
+              ? true
+              : false
+          }
+          helperText={
+            formik.errors.foundedWebsite && formik.touched.foundedWebsite
+              ? formik.errors.foundedWebsite
+              : ""
+          }
+        />
+        <FormControl
+          variant="filled"
+          error={
+            formik.errors.foundedCountry && formik.touched.foundedCountry
+              ? true
+              : false
+          }
+          sx={{ minWidth: 120, width: "100%" }}
+        >
+          <InputLabel>Country</InputLabel>
+          <Select
+            value={formik.values.foundedCountry}
+            onChange={(e) => {
+              formik.setFieldValue("foundedCountry", e.target.value);
+              setFoundedCountry(e.target.value);
+            }}
           >
-            <InputLabel>Country</InputLabel>
-            <Select
-              value={formik.values.foundedCountry}
-              onChange={(e) => {
-                formik.setFieldValue("foundedCountry", e.target.value);
-                setFoundedCountry(e.target.value);
-              }}
-            >
-              {countriesFounded.map((item: Country) => (
-                <MenuItem key={item?.id} value={item?.id}>
-                  {item?.name}
-                </MenuItem>
-              ))}
-            </Select>
-            {formik.errors.foundedCountry && formik.touched.foundedCountry && (
-              <FormHelperText>{formik.errors.foundedCountry}</FormHelperText>
-            )}
-          </FormControl>
-          {formik.values.foundedCountry &&
-            formik.values.foundedCountry !== "RW" && (
-              <FormControl
-                variant="filled"
-                error={
-                  formik.errors.foundedState && formik.touched.foundedState
-                    ? true
-                    : false
-                }
-                sx={{ minWidth: 120, width: "100%" }}
-              >
-                <InputLabel>State</InputLabel>
-                <Select
-                  value={formik.values.foundedState}
-                  onChange={(e) => {
-                    formik.setFieldValue("foundedState", e.target.value);
-                  }}
-                >
-                  {foundedStates.map((item: State) => (
-                    <MenuItem key={item?.id} value={item?.id}>
-                      {item?.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-                {formik.errors.foundedState && formik.touched.foundedState && (
-                  <FormHelperText>{formik.errors.foundedState}</FormHelperText>
-                )}
-              </FormControl>
-            )}
-          {formik.values.foundedCountry == "RW" && (
-            <FormControl
-              variant="filled"
-              error={
-                formik.errors.foundedDistrictName &&
-                formik.touched.foundedDistrictName
-                  ? true
-                  : false
-              }
-              sx={{ minWidth: 120, width: "100%" }}
-            >
-              <InputLabel>District</InputLabel>
-              <Select
-                value={formik.values.foundedDistrictName}
-                onChange={(e) => {
-                  setSelectedDistrictFounded(e.target.value);
-                  formik.setFieldValue("foundedDistrictName", e.target.value);
-                  formik.setFieldValue("foundedSectorId", "");
-                }}
-              >
-                {districtsFounded.map((item: residentDistrict) => (
-                  <MenuItem key={item?.id} value={item?.name}>
-                    {item?.name}
-                  </MenuItem>
-                ))}
-              </Select>
-              {formik.errors.foundedDistrictName &&
-                formik.touched.foundedDistrictName && (
-                  <FormHelperText>
-                    {formik.errors.foundedDistrictName}
-                  </FormHelperText>
-                )}
-            </FormControl>
+            {countriesFounded.map((item: Country) => (
+              <MenuItem key={item?.id} value={item?.id}>
+                {item?.name}
+              </MenuItem>
+            ))}
+          </Select>
+          {formik.errors.foundedCountry && formik.touched.foundedCountry && (
+            <FormHelperText>{formik.errors.foundedCountry}</FormHelperText>
           )}
-          {formik.values.foundedCountry == "RW" && (
-            <FormControl
-              variant="filled"
-              error={
-                formik.errors.foundedSectorId && formik.touched.foundedSectorId
-                  ? true
-                  : false
-              }
-              sx={{ minWidth: 120, width: "100%" }}
-            >
-              <InputLabel>District</InputLabel>
-              <Select
-                value={formik.values.foundedSectorId}
-                onChange={(e) => {
-                  formik.setFieldValue("foundedSectorId", e.target.value);
-                }}
-              >
-                {sectorsFounded.map((item: residentSector) => (
-                  <MenuItem key={item?.id} value={item?.id}>
-                    {item?.name}
-                  </MenuItem>
-                ))}
-              </Select>
-              {formik.errors.foundedSectorId &&
-                formik.touched.foundedSectorId && (
-                  <FormHelperText>
-                    {formik.errors.foundedSectorId}
-                  </FormHelperText>
-                )}
-            </FormControl>
+        </FormControl>
+        <FormControl
+          variant="filled"
+          error={
+            formik.errors.foundedState && formik.touched.foundedState
+              ? true
+              : false
+          }
+          sx={{ minWidth: 120, width: "100%" }}
+        >
+          <InputLabel>State</InputLabel>
+          <Select
+            value={formik.values.foundedState}
+            onChange={(e) => {
+              formik.setFieldValue("foundedState", e.target.value);
+            }}
+          >
+            {foundedStates.map((item: State) => (
+              <MenuItem key={item?.id} value={item?.id}>
+                {item?.name}
+              </MenuItem>
+            ))}
+          </Select>
+          {formik.errors.foundedState && formik.touched.foundedState && (
+            <FormHelperText>{formik.errors.foundedState}</FormHelperText>
           )}
-        </Box>
-      )}
+        </FormControl>
+        <FormControl
+          variant="filled"
+          error={
+            formik.errors.foundedDistrictName &&
+            formik.touched.foundedDistrictName
+              ? true
+              : false
+          }
+          sx={{ minWidth: 120, width: "100%" }}
+        >
+          <InputLabel>District</InputLabel>
+          <Select
+            value={formik.values.foundedDistrictName}
+            onChange={(e) => {
+              setSelectedDistrictFounded(e.target.value);
+              formik.setFieldValue("foundedDistrictName", e.target.value);
+              formik.setFieldValue("foundedSectorId", "");
+            }}
+          >
+            {districtsFounded.map((item: residentDistrict) => (
+              <MenuItem key={item?.id} value={item?.name}>
+                {item?.name}
+              </MenuItem>
+            ))}
+          </Select>
+          {formik.errors.foundedDistrictName &&
+            formik.touched.foundedDistrictName && (
+              <FormHelperText>
+                {formik.errors.foundedDistrictName}
+              </FormHelperText>
+            )}
+        </FormControl>
+        <FormControl
+          variant="filled"
+          error={
+            formik.errors.foundedSectorId && formik.touched.foundedSectorId
+              ? true
+              : false
+          }
+          sx={{ minWidth: 120, width: "100%" }}
+        >
+          <InputLabel>District</InputLabel>
+          <Select
+            value={formik.values.foundedSectorId}
+            onChange={(e) => {
+              formik.setFieldValue("foundedSectorId", e.target.value);
+            }}
+          >
+            {sectorsFounded.map((item: residentSector) => (
+              <MenuItem key={item?.id} value={item?.id}>
+                {item?.name}
+              </MenuItem>
+            ))}
+          </Select>
+          {formik.errors.foundedSectorId && formik.touched.foundedSectorId && (
+            <FormHelperText>{formik.errors.foundedSectorId}</FormHelperText>
+          )}
+        </FormControl>
+      </Box>
     </Box>
   );
 }

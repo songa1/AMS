@@ -428,7 +428,17 @@ function AddPersonalInfo({ canMove }: { canMove: any }) {
             label="Email:"
             variant="filled"
             value={formik.values.email}
-            onChange={(e) => formik.setFieldValue("email", e.target.value)}
+            type="email"
+            onChange={(e) => {
+              if (
+                !/^[a-zA-Z0-9._:$!%-]+@[a-zA-Z0-9.-]+.[a-zA-Z]$/.test(
+                  e.target.value
+                )
+              ) {
+                formik.setFieldError("email", "Invalid email address");
+              }
+              formik.setFieldValue("email", e.target.value);
+            }}
             placeholder="Email"
             required
             error={formik.errors.email && formik.touched.email ? true : false}
