@@ -27,7 +27,7 @@ function NewProfile() {
   const [newUser, setNewUser] = useState<User>();
 
   const isStepOptional = (step: number) => {
-    return step === 1;
+    return step === 1 || step === 2;
   };
 
   const isStepSkipped = (step: number) => {
@@ -153,7 +153,7 @@ function NewProfile() {
                   </Button>
                 )}
                 <Button
-                  // disabled={!canMove}
+                  disabled={!canMove}
                   onClick={handleNext}
                   variant="contained"
                 >

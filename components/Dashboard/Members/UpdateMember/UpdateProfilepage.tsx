@@ -179,9 +179,7 @@ function UpdateProfilepage() {
       firstName: Yup.string().required("First name is required"),
       middleName: Yup.string(),
       lastName: Yup.string().required("Last name is required"),
-      email: Yup.string()
-        .email("Invalid email address")
-        .required("Email is required"),
+      email: Yup.string().email("Invalid email address"),
       linkedin: Yup.string().url("Invalid LinkedIn URL"),
       instagram: Yup.string().url("Invalid Instagram URL"),
       twitter: Yup.string().url("Invalid Twitter URL"),
@@ -227,6 +225,12 @@ function UpdateProfilepage() {
   }, [error, success]);
 
   const handleSubmit = async () => {
+    if (formik.errors.email || formik?.errors?.bio) {
+      setError(
+        `Please solve this problem first: ${formik?.errors?.email || formik?.errors?.bio}`
+      );
+      return;
+    }
     setIsLoading(true);
     const values: any = formik.values;
     try {
@@ -308,9 +312,11 @@ function UpdateProfilepage() {
           rows={5}
           defaultValue={usr?.bio}
           value={formik.values.bio}
+          error={formik?.errors?.bio ? true : false}
           onChange={(e) => formik.setFieldValue("bio", e.target.value)}
           className="w-full"
           placeholder="Enter the user's BIO..."
+          helperText={formik?.errors?.bio}
         />
         <Box
           sx={{
@@ -326,8 +332,11 @@ function UpdateProfilepage() {
         >
           <TextField
             label="Email"
+            type="email"
             defaultValue={usr?.email}
             value={formik.values.email}
+            error={formik?.errors?.email ? true : false}
+            helperText={formik?.errors?.email}
             onChange={(e) => formik.setFieldValue("email", e.target.value)}
           />
           <TextField
