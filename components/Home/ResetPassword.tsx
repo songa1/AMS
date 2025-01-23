@@ -2,21 +2,49 @@
 
 import Header from "@/components/Home/Header";
 import { useResetPasswordMutation } from "@/lib/features/authSlice";
-import { Alert, Box, Button, TextField, Typography } from "@mui/material";
+import {
+  Alert,
+  Box,
+  Button,
+  FilledInput,
+  FormControl,
+  FormHelperText,
+  IconButton,
+  InputAdornment,
+  InputLabel,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { useFormik } from "formik";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import * as Yup from "yup";
-import { SectionTitle } from "../Other/TopTitle";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
 const ResetPassword = () => {
   const { token } = useParams();
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [success, setSuccess] = useState("");
+  const [showPassword, setShowPassword] = React.useState(false);
 
   const [resetPassword] = useResetPasswordMutation();
+
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+  const handleMouseDownPassword = (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    event.preventDefault();
+  };
+
+  const handleMouseUpPassword = (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    event.preventDefault();
+  };
 
   const formik = useFormik({
     initialValues: {
@@ -24,12 +52,26 @@ const ResetPassword = () => {
       cPassword: "",
     },
     validationSchema: Yup.object({
-      password: Yup.string().min(8).required("Password is required"),
+      password: Yup.string()
+        .min(8, "Password must be at least 8 characters")
+        .matches(/[a-zA-Z]/, "Password must contain at least one letter")
+        .matches(/\d/, "Password must contain at least one number")
+        .matches(
+          /[!@#$%^&*(),.?":{}|<>]/,
+          "Password must contain at least one special character"
+        )
+        .required("Password is required"),
       cPassword: Yup.string()
         .required("Kindly repeat the new password!")
         .oneOf([Yup.ref("password")], "Passwords must match"),
     }),
     onSubmit: async (values) => {
+      if (formik.errors.password || formik.errors.cPassword) {
+        setError(
+          `Please correct these problems: ${formik.errors.password || formik.errors.cPassword}`
+        );
+        return;
+      }
       setIsLoading(true);
       try {
         const result = await resetPassword({
@@ -94,17 +136,37 @@ const ResetPassword = () => {
               </Alert>
             )}
             <Box sx={{ display: "flex", flexDirection: "column", gap: "15px" }}>
-              <TextField
-                label="New Password:"
-                type="password"
-                value={formik.values.password}
-                onChange={(e) =>
-                  formik.setFieldValue("password", e.target.value)
-                }
-                required
-                variant="filled"
-                placeholder="Enter the new password"
-              />
+              <FormControl>
+                <InputLabel>New Password:</InputLabel>
+                <FilledInput
+                  type={showPassword ? "text" : "password"}
+                  error={formik.errors.password ? true : false}
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label={
+                          showPassword
+                            ? "hide the password"
+                            : "display the password"
+                        }
+                        onClick={handleClickShowPassword}
+                        onMouseDown={handleMouseDownPassword}
+                        onMouseUp={handleMouseUpPassword}
+                        edge="end"
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                  value={formik.values.password}
+                  onChange={(e) =>
+                    formik.setFieldValue("password", e.target.value)
+                  }
+                  required
+                  placeholder="Enter the new password"
+                />
+                <FormHelperText>{formik.errors.password}</FormHelperText>
+              </FormControl>
               <TextField
                 label="Repeat Password:"
                 type="password"
@@ -115,6 +177,8 @@ const ResetPassword = () => {
                 required
                 variant="filled"
                 placeholder="Repeat the new password"
+                error={formik.errors.cPassword ? true : false}
+                helperText={formik.errors.cPassword}
               />
             </Box>
             <Button

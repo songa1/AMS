@@ -26,6 +26,12 @@ const LoginPage = () => {
       password: Yup.string().required("Password is required"),
     }),
     onSubmit: async (values) => {
+      if (formik.errors.email || formik.errors.password) {
+        setError(
+          `Please correct these problems: ${formik.errors.email || formik.errors.password}`
+        );
+        return;
+      }
       setIsLoading(true);
       try {
         const result = await login(values).unwrap();
@@ -99,6 +105,8 @@ const LoginPage = () => {
               required
               variant="filled"
               placeholder="Enter your email address"
+              error={formik.errors.email ? true : false}
+              helperText={formik.errors.email}
             />
 
             <TextField
@@ -109,6 +117,8 @@ const LoginPage = () => {
               onChange={(e) => formik.setFieldValue("password", e.target.value)}
               required
               placeholder="Enter your password"
+              error={formik.errors.password ? true : false}
+              helperText={formik.errors.password}
             />
           </Box>
 

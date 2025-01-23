@@ -343,17 +343,23 @@ function UpdateProfilepage() {
             defaultValue={usr?.phoneNumber}
             value={formik.values.phoneNumber}
             label="Phone Number"
+            type="number"
             onChange={(e) =>
               formik.setFieldValue("phoneNumber", e.target.value)
             }
+            error={formik.errors.phoneNumber ? true : false}
+            helperText={formik.errors.phoneNumber}
           />
           <TextField
             label="WhatsApp Number"
+            type="number"
             value={formik.values.whatsAppNumber}
             defaultValue={usr?.whatsappNumber}
             onChange={(e) =>
               formik.setFieldValue("whatsAppNumber", e.target.value)
             }
+            error={formik.errors.whatsAppNumber ? true : false}
+            helperText={formik.errors.whatsAppNumber}
           />
           <FormControl variant="outlined" sx={{ minWidth: 120, width: "100%" }}>
             <InputLabel id="gender">Gender</InputLabel>

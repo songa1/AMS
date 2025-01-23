@@ -33,6 +33,16 @@ const ChangePasswordPage = () => {
         .oneOf([Yup.ref("newPassword")], "Passwords must match"),
     }),
     onSubmit: async (values) => {
+      if (
+        formik.errors.newPassword ||
+        formik.errors.oldPassword ||
+        formik.errors.confirmPassword
+      ) {
+        setError(
+          `Please resolve these issues first: ${formik.errors.newPassword || formik.errors.oldPassword || formik.errors.confirmPassword}`
+        );
+        return;
+      }
       try {
         const res = await changePassword({
           userId: user?.id,
@@ -74,16 +84,8 @@ const ChangePasswordPage = () => {
             onChange={(e) =>
               formik.setFieldValue("oldPassword", e.target.value)
             }
-            error={
-              formik.errors.oldPassword && formik.touched.oldPassword
-                ? true
-                : false
-            }
-            helperText={
-              formik.errors.oldPassword && formik.touched.oldPassword
-                ? formik.errors.oldPassword
-                : ""
-            }
+            error={formik.errors.oldPassword ? true : false}
+            helperText={formik.errors.oldPassword}
           />
 
           <TextField
@@ -97,16 +99,8 @@ const ChangePasswordPage = () => {
             onChange={(e) =>
               formik.setFieldValue("newPassword", e.target.value)
             }
-            error={
-              formik.errors.newPassword && formik.touched.newPassword
-                ? true
-                : false
-            }
-            helperText={
-              formik.errors.newPassword && formik.touched.newPassword
-                ? formik.errors.newPassword
-                : ""
-            }
+            error={formik.errors.newPassword ? true : false}
+            helperText={formik.errors.newPassword}
           />
 
           <TextField
@@ -120,16 +114,8 @@ const ChangePasswordPage = () => {
             onChange={(e) =>
               formik.setFieldValue("confirmPassword", e.target.value)
             }
-            error={
-              formik.errors.confirmPassword && formik.touched.confirmPassword
-                ? true
-                : false
-            }
-            helperText={
-              formik.errors.confirmPassword && formik.touched.confirmPassword
-                ? formik.errors.confirmPassword
-                : ""
-            }
+            error={formik.errors.confirmPassword ? true : false}
+            helperText={formik.errors.confirmPassword}
           />
 
           <Button
