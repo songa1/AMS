@@ -67,7 +67,7 @@ function NewProfile() {
   };
 
   const handleViewUser = () => {
-    globalThis.location.href = `/dashboard/profile/${newUser?.id}`;
+    globalThis.location.href = `/dashboard/users/${newUser?.id}`;
   };
 
   return (
