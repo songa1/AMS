@@ -24,7 +24,7 @@ function ChatPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const { username } = useParams();
 
-  const { data: chatsData } = useChatsQuery("", {
+  const { data: chatsData } = useChatsQuery(user?.id, {
     skip: !!username,
     pollingInterval: 500,
   });
