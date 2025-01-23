@@ -260,6 +260,7 @@ function UpdateFoundedInfo() {
         >
           <TextField
             label="Initiative Name"
+            variant="filled"
             defaultValue={usr?.organizationFounded?.name}
             value={formik.values.initiativeName}
             onChange={(e) =>
@@ -271,6 +272,7 @@ function UpdateFoundedInfo() {
             <Select
               defaultValue={usr?.organizationFounded?.workingSector?.id}
               value={formik.values.mainSector}
+              variant="filled"
               onChange={(e) =>
                 formik.setFieldValue("mainSector", e.target.value)
               }
@@ -286,6 +288,7 @@ function UpdateFoundedInfo() {
             defaultValue={usr?.positionInFounded}
             label="Position"
             value={formik.values.foundedPosition}
+            variant="filled"
             onChange={(e) =>
               formik.setFieldValue("foundedPosition", e.target.value)
             }
@@ -294,6 +297,7 @@ function UpdateFoundedInfo() {
             label="Website"
             defaultValue={usr?.organizationFounded?.website}
             value={formik.values.foundedWebsite}
+            variant="filled"
             onChange={(e) =>
               formik.setFieldValue("foundedWebsite", e.target.value)
             }
@@ -303,6 +307,7 @@ function UpdateFoundedInfo() {
             <Select
               defaultValue={usr?.organizationFounded?.country?.id}
               value={formik.values.foundedCountry}
+              variant="filled"
               onChange={(e) => {
                 formik.setFieldValue("foundedCountry", e.target.value);
                 setFoundedCountry(e.target.value);
@@ -319,6 +324,7 @@ function UpdateFoundedInfo() {
             <InputLabel>{`State (If you are not in Rwanda)`}</InputLabel>
             <Select
               value={formik.values.foundedState}
+              variant="filled"
               defaultValue={usr?.organizationFounded?.state?.id}
               onChange={(e) => {
                 formik.setFieldValue("foundedState", e.target.value);
@@ -336,6 +342,7 @@ function UpdateFoundedInfo() {
             <InputLabel>{`District  (If you are in Rwanda)`}</InputLabel>
             <Select
               value={formik.values.foundedDistrictName}
+              variant="filled"
               defaultValue={usr?.organizationFounded?.district?.id}
               onChange={(e) => {
                 setSelectedDistrictFounded(e.target.value);
@@ -355,6 +362,7 @@ function UpdateFoundedInfo() {
             <InputLabel>{`Sector (If you are in Rwanda)`}</InputLabel>
             <Select
               value={formik.values.foundedSectorId}
+              variant="filled"
               defaultValue={usr?.organizationFounded?.sector?.id}
               onChange={(e) => {
                 formik.setFieldValue("foundedSectorId", e.target.value);

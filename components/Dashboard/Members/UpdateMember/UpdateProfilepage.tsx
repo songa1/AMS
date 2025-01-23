@@ -333,10 +333,13 @@ function UpdateProfilepage() {
           <TextField
             label="Email"
             type="email"
+            variant="filled"
             defaultValue={usr?.email}
             value={formik.values.email}
             error={formik?.errors?.email ? true : false}
-            helperText={formik?.errors?.email}
+            helperText={
+              "Changing email will change your login credentials. Proceed with caution."
+            }
             onChange={(e) => formik.setFieldValue("email", e.target.value)}
           />
           <TextField
@@ -344,6 +347,7 @@ function UpdateProfilepage() {
             value={formik.values.phoneNumber}
             label="Phone Number"
             type="number"
+            variant="filled"
             onChange={(e) =>
               formik.setFieldValue("phoneNumber", e.target.value)
             }
@@ -353,6 +357,7 @@ function UpdateProfilepage() {
           <TextField
             label="WhatsApp Number"
             type="number"
+            variant="filled"
             value={formik.values.whatsAppNumber}
             defaultValue={usr?.whatsappNumber}
             onChange={(e) =>
@@ -366,6 +371,7 @@ function UpdateProfilepage() {
             <Select
               labelId="gender-label"
               id="gender"
+              variant="filled"
               defaultValue={usr?.gender?.id}
               value={formik.values.gender}
               onChange={(e) => formik.setFieldValue("gender", e.target.value)}
@@ -383,6 +389,7 @@ function UpdateProfilepage() {
             <Select
               labelId="country-label"
               id="country"
+              variant="filled"
               defaultValue={usr?.residentCountry?.id}
               value={formik.values.residentCountryId}
               onChange={(e) => {
@@ -403,6 +410,7 @@ function UpdateProfilepage() {
               labelId="state-label"
               value={formik.values.state}
               defaultValue={usr?.state?.id}
+              variant="filled"
               onChange={(e) => {
                 console.log(e);
                 formik.setFieldValue("state", e.target.value);
@@ -422,6 +430,7 @@ function UpdateProfilepage() {
               labelId="district-label"
               value={formik.values.districtName}
               defaultValue={usr?.residentDistrict?.id}
+              variant="filled"
               onChange={(e) => {
                 setSelectedDistrict(e.target.value);
                 formik.setFieldValue("districtName", e.target.value);
@@ -440,6 +449,7 @@ function UpdateProfilepage() {
             <Select
               labelId="sector-label"
               value={formik.values.sectorId}
+              variant="filled"
               defaultValue={usr?.residentSector?.id}
               onChange={(e) => formik.setFieldValue("sectorId", e.target.value)}
             >
@@ -455,6 +465,7 @@ function UpdateProfilepage() {
             <Select
               labelId="cohort-label"
               value={formik.values.cohortId}
+              variant="filled"
               defaultValue={usr?.cohort?.id}
               onChange={(e) => formik.setFieldValue("cohortId", e.target.value)}
             >
@@ -470,6 +481,7 @@ function UpdateProfilepage() {
             label="Nearest Landmark"
             value={formik.values.nearlestLandmark}
             defaultValue={usr?.nearestLandmark}
+            variant="filled"
             onChange={(e) =>
               formik.setFieldValue("nearlestLandmark", e.target.value)
             }
@@ -480,6 +492,7 @@ function UpdateProfilepage() {
               labelId="track-label"
               value={formik.values.track}
               defaultValue={usr?.track?.id}
+              variant="filled"
               onChange={(e) => formik.setFieldValue("track", e.target.value)}
             >
               {tracks.map((item: Track) => (
@@ -492,24 +505,28 @@ function UpdateProfilepage() {
           <TextField
             label="Facebook Account"
             defaultValue={usr?.facebook}
+            variant="filled"
             value={formik.values.facebook}
             onChange={(e) => formik.setFieldValue("facebook", e.target.value)}
           />
           <TextField
             label="Instagram Account"
             defaultValue={usr?.instagram}
+            variant="filled"
             value={formik.values.instagram}
             onChange={(e) => formik.setFieldValue("instagram", e.target.value)}
           />
           <TextField
             label="LinkedIn Account"
             defaultValue={usr?.linkedin}
+            variant="filled"
             value={formik.values.linkedin}
             onChange={(e) => formik.setFieldValue("linkedin", e.target.value)}
           />
           <TextField
             label="Twitter Account"
             defaultValue={usr?.twitter}
+            variant="filled"
             value={formik.values.twitter}
             onChange={(e) => formik.setFieldValue("twitter", e.target.value)}
           />

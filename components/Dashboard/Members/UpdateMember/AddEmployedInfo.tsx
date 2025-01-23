@@ -268,6 +268,7 @@ function UpdateEmployedInfo() {
             label="Company Name"
             defaultValue={usr?.organizationEmployed?.name}
             value={formik.values.companyName}
+            variant="filled"
             onChange={(e) =>
               formik.setFieldValue("companyName", e.target.value)
             }
@@ -278,6 +279,7 @@ function UpdateEmployedInfo() {
             <Select
               defaultValue={usr?.organizationEmployed?.workingSector?.id}
               value={formik.values.companySector}
+              variant="filled"
               onChange={(e) =>
                 formik.setFieldValue("companySector", e.target.value)
               }
@@ -293,6 +295,7 @@ function UpdateEmployedInfo() {
             defaultValue={usr?.positionInEmployed}
             label="Position"
             value={formik.values.companyPosition}
+            variant="filled"
             onChange={(e) =>
               formik.setFieldValue("companyPosition", e.target.value)
             }
@@ -301,6 +304,7 @@ function UpdateEmployedInfo() {
             defaultValue={usr?.organizationEmployed?.website}
             label="Website"
             value={formik.values.companyWebsite}
+            variant="filled"
             onChange={(e) =>
               formik.setFieldValue("companyWebsite", e.target.value)
             }
@@ -310,6 +314,7 @@ function UpdateEmployedInfo() {
             <Select
               defaultValue={usr?.organizationEmployed?.country?.id}
               value={formik.values.companyCountry}
+              variant="filled"
               onChange={(e) => {
                 formik.setFieldValue("companyCountry", e.target.value);
                 setEmployedCountry(e.target.value);
@@ -327,6 +332,7 @@ function UpdateEmployedInfo() {
             <Select
               value={formik.values.companyState}
               defaultValue={usr?.organizationEmployed?.state?.id}
+              variant="filled"
               onChange={(e) => {
                 formik.setFieldValue("companyState", e.target.value);
               }}
@@ -342,6 +348,7 @@ function UpdateEmployedInfo() {
             <InputLabel>{`District (If you are in Rwanda)`}</InputLabel>
             <Select
               value={formik.values.companyDistrictName}
+              variant="filled"
               onChange={(e) => {
                 setSelectedDistrictEmployed(e.target.value);
                 formik.setFieldValue("companyDistrictName", e.target.value);
@@ -361,6 +368,7 @@ function UpdateEmployedInfo() {
             <InputLabel>{`Sector (If you are in Rwanda)`}</InputLabel>
             <Select
               value={formik.values.companySectorId}
+              variant="filled"
               defaultValue={usr?.organizationEmployed?.sector?.id}
               onChange={(e) => {
                 formik.setFieldValue("companySectorId", e.target.value);

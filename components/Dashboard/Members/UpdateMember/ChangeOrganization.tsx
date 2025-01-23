@@ -120,7 +120,11 @@ function ChangeOrganization({
           sx={{ minWidth: 120, width: "100%", marginBottom: "15px" }}
         >
           <InputLabel>Choose your organization:</InputLabel>
-          <Select value={newOrg} onChange={(e) => setNewOrg(e.target.value)}>
+          <Select
+            value={newOrg}
+            variant="filled"
+            onChange={(e) => setNewOrg(e.target.value)}
+          >
             <MenuItem key={100} value="new">
               Add a new company
             </MenuItem>
