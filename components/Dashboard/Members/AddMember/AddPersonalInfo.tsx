@@ -70,6 +70,7 @@ function AddPersonalInfo({
   const [countries, setCountries] = useState([]);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [imageData, setImageData] = useState<any>(null);
@@ -243,6 +244,7 @@ function AddPersonalInfo({
   });
 
   const handleSubmit = async () => {
+    setLoading(true);
     const values: any = formik.values;
     try {
       const res = await createUserProfile({
@@ -281,7 +283,9 @@ function AddPersonalInfo({
         setNewUser(res?.user);
       }
     } catch (error: any) {
-      setError(error?.error);
+      setError(error?.data?.error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -352,7 +356,7 @@ function AddPersonalInfo({
             variant="contained"
             size="medium"
           >
-            Submit
+            {loading ? "Submitting..." : "Submit"}
           </Button>
         </div>
       </div>
