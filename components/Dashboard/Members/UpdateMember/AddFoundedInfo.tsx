@@ -26,7 +26,6 @@ import {
 } from "@mui/material";
 import {
   Country,
-  organization,
   residentDistrict,
   residentSector,
   State,
@@ -36,8 +35,6 @@ import {
 import {
   useAddOrgMutation,
   useAssignOrgMutation,
-  useOrganizationQuery,
-  useOrganizationsQuery,
   useUpdateOrgMutation,
 } from "@/lib/features/orgSlice";
 import ChangeOrganization from "./ChangeOrganization";
@@ -124,6 +121,18 @@ function UpdateFoundedInfo() {
       setFoundedStates(FoundedStatesData?.data);
     }
   }, [FoundedStatesData]);
+
+  useEffect(() => {
+    if (usr?.organizationFounded?.districtId) {
+      setSelectedDistrictFounded(usr?.organizationFounded?.districtId);
+    }
+  }, [usr]);
+
+  useEffect(() => {
+    if (usr?.organizationFounded?.country?.id) {
+      setFoundedCountry(usr?.organizationFounded?.country?.id);
+    }
+  }, [usr]);
 
   const formik = useFormik({
     initialValues: {

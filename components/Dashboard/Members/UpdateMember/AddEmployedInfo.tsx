@@ -16,7 +16,6 @@ import Loading from "@/app/loading";
 import { getUser } from "@/helpers/auth";
 import {
   Country,
-  organization,
   residentDistrict,
   residentSector,
   State,
@@ -36,8 +35,6 @@ import {
 import {
   useAddOrgMutation,
   useAssignOrgMutation,
-  useOrganizationQuery,
-  useOrganizationsQuery,
   useUpdateOrgMutation,
 } from "@/lib/features/orgSlice";
 import ChangeOrganization from "./ChangeOrganization";
@@ -130,6 +127,18 @@ function UpdateEmployedInfo() {
       setEmployedStates(EmployedStatesData?.data);
     }
   }, [EmployedStatesData]);
+
+  useEffect(() => {
+    if (usr?.organizationEmployed?.districtId) {
+      setSelectedDistrictEmployed(usr?.organizationEmployed?.districtId);
+    }
+  }, [usr]);
+
+  useEffect(() => {
+    if (usr?.organizationEmployed?.country?.id) {
+      setEmployedCountry(usr?.organizationEmployed?.country?.id);
+    }
+  }, [usr]);
 
   const formik = useFormik({
     initialValues: {
