@@ -29,7 +29,7 @@ function Logout() {
       setLoading(false);
     };
     logoutFn();
-  }, [token, user, logout, router]);
+  }, [token, user]);
 
   if (loading) {
     return <Loading />;
