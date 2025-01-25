@@ -72,7 +72,7 @@ function ProfilePage() {
 
   const changeRole = async () => {
     try {
-      const res = await change(id || userData?.id).unwrap();
+      await change(id || userData?.id).unwrap();
       setSuccess("You have changed the user's role.");
     } catch (error: any) {
       setError(error.message);

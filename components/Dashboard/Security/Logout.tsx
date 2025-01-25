@@ -18,7 +18,7 @@ function Logout() {
 
   useEffect(() => {
     const logoutFn = async () => {
-      setLoading(false);
+      setLoading(true);
       const res = await logout({ userId: user?.id, token }).unwrap();
       if (res.status === 200) {
         localStorage.removeItem(AUTH_STORED_DATA?.USER);
@@ -29,7 +29,7 @@ function Logout() {
       setLoading(false);
     };
     logoutFn();
-  }, []);
+  }, [token, user, logout, router]);
 
   if (loading) {
     return <Loading />;

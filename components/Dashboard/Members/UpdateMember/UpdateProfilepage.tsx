@@ -236,19 +236,6 @@ function UpdateProfilepage() {
     },
   });
 
-  useEffect(() => {
-    if (error) {
-      setTimeout(() => {
-        setError("");
-      }, 10000);
-    }
-    if (success) {
-      setTimeout(() => {
-        setSuccess("");
-      }, 10000);
-    }
-  }, [error, success]);
-
   const handleSubmit = async () => {
     if (formik.errors.email || formik?.errors?.bio) {
       setError(

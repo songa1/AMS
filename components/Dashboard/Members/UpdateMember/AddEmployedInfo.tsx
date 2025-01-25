@@ -82,12 +82,6 @@ function UpdateEmployedInfo() {
   );
 
   useEffect(() => {
-    if (UserData) {
-      setUsr(UserData);
-    }
-  }, [UserData]);
-
-  useEffect(() => {
     if (success || error) {
       setInterval(() => {
         setSuccess("");
@@ -101,6 +95,9 @@ function UpdateEmployedInfo() {
       setIsLoading(true);
     } else {
       setIsLoading(false);
+    }
+    if (UserData) {
+      setUsr(UserData);
     }
   }, [UserData, CountryData, DistrictData, WorkingSectorsData]);
 
@@ -135,16 +132,16 @@ function UpdateEmployedInfo() {
   }, [EmployedStatesData]);
 
   useEffect(() => {
-    if (usr?.organizationEmployed?.districtId) {
-      setSelectedDistrictEmployed(usr?.organizationEmployed?.districtId);
-    }
-  }, [usr]);
-
-  useEffect(() => {
     if (usr?.organizationEmployed?.country?.id) {
       setEmployedCountry(usr?.organizationEmployed?.country?.id);
     }
-  }, [usr]);
+    if (usr?.organizationEmployed?.districtId) {
+      setSelectedDistrictEmployed(usr?.organizationEmployed?.districtId);
+    }
+    if (userHasOrg) {
+      formik.setFieldValue("orgId", usr?.organizationEmployed?.id);
+    }
+  }, [usr, userHasOrg]);
 
   const formik = useFormik({
     initialValues: {
@@ -171,25 +168,6 @@ function UpdateEmployedInfo() {
       // Being done in another function
     },
   });
-
-  useEffect(() => {
-    if (error) {
-      setTimeout(() => {
-        setError("");
-      }, 10000);
-    }
-    if (success) {
-      setTimeout(() => {
-        setSuccess("");
-      }, 10000);
-    }
-  }, [error, success]);
-
-  useEffect(() => {
-    if (userHasOrg) {
-      formik.setFieldValue("orgId", usr?.organizationEmployed?.id);
-    }
-  }, [userHasOrg, usr, formik]);
 
   const handleSubmit = async () => {
     setIsLoading(true);
@@ -219,7 +197,7 @@ function UpdateEmployedInfo() {
         }).unwrap();
       }
       if (res.data) {
-        const assign = await assignOrg({
+        await assignOrg({
           userId: usr?.id,
           organizationId: res?.data?.id,
           relationshipType: "employed",

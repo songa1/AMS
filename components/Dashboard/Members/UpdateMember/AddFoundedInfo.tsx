@@ -76,17 +76,12 @@ function UpdateFoundedInfo() {
   });
 
   useEffect(() => {
-    if (UserData) {
-      setUsr(UserData);
-    }
-  }, [UserData]);
-
-  useEffect(() => {
     if (success || error) {
-      setInterval(() => {
+      const timer = setTimeout(() => {
         setSuccess("");
         setError("");
       }, 10000);
+      return () => clearTimeout(timer);
     }
   }, [success, error]);
 
@@ -95,6 +90,9 @@ function UpdateFoundedInfo() {
       setIsLoading(true);
     } else {
       setIsLoading(false);
+    }
+    if (UserData) {
+      setUsr(UserData);
     }
   }, [UserData, CountryData, DistrictData, WorkingSectorsData]);
 
@@ -129,16 +127,16 @@ function UpdateFoundedInfo() {
   }, [FoundedStatesData]);
 
   useEffect(() => {
-    if (usr?.organizationFounded?.districtId) {
-      setSelectedDistrictFounded(usr?.organizationFounded?.districtId);
+    if (userHasOrg) {
+      formik.setFieldValue("orgId", usr?.organizationFounded?.id);
     }
-  }, [usr]);
-
-  useEffect(() => {
     if (usr?.organizationFounded?.country?.id) {
       setFoundedCountry(usr?.organizationFounded?.country?.id);
     }
-  }, [usr]);
+    if (usr?.organizationFounded?.districtId) {
+      setSelectedDistrictFounded(usr?.organizationFounded?.districtId);
+    }
+  }, [userHasOrg, usr]);
 
   const formik = useFormik({
     initialValues: {
@@ -165,25 +163,6 @@ function UpdateFoundedInfo() {
       // Being done in another function
     },
   });
-
-  useEffect(() => {
-    if (error) {
-      setTimeout(() => {
-        setError("");
-      }, 10000);
-    }
-    if (success) {
-      setTimeout(() => {
-        setSuccess("");
-      }, 10000);
-    }
-  }, [error, success]);
-
-  useEffect(() => {
-    if (userHasOrg) {
-      formik.setFieldValue("orgId", usr?.organizationFounded?.id);
-    }
-  }, [userHasOrg, usr, formik]);
 
   const handleSubmit = async () => {
     setIsLoading(true);
@@ -214,7 +193,7 @@ function UpdateFoundedInfo() {
         }).unwrap();
       }
       if (res?.data) {
-        const assign = await assignOrg({
+        await assignOrg({
           userId: user?.id,
           organizationId: res?.data?.id,
           relationshipType: "founded",

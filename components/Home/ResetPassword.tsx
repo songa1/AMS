@@ -95,11 +95,14 @@ const ResetPassword = () => {
   });
 
   useEffect(() => {
-    error &&
-      setTimeout(() => {
+    if (success || error) {
+      const timer = setTimeout(() => {
+        setSuccess("");
         setError("");
-      }, 5000);
-  }, [error]);
+      }, 10000);
+      return () => clearTimeout(timer);
+    }
+  }, [error, success]);
 
   return (
     <Box className="w-full h-screen flex flex-col md:flex-row">

@@ -75,10 +75,12 @@ const LoginPage = () => {
   });
 
   useEffect(() => {
-    error &&
-      setTimeout(() => {
+    if (error) {
+      const timer = setTimeout(() => {
         setError("");
-      }, 5000);
+      }, 10000);
+      return () => clearTimeout(timer);
+    }
   }, [error]);
 
   return (

@@ -75,7 +75,7 @@ function ChatPage() {
     }),
     onSubmit: async (values: any) => {
       try {
-        const res = await addMessage({ data: values }).unwrap();
+        await addMessage({ data: values }).unwrap();
         formik.resetForm();
       } catch (error) {
         console.log(error);

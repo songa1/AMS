@@ -14,7 +14,7 @@ function Header() {
         flexDirection: "column",
       }}
     >
-      <img src="/yali.png" width={150} />
+      <img alt="YALI Logo" src="/yali.png" width={150} />
       <Typography
         variant="h6"
         className="text-center text-mainBlue"
