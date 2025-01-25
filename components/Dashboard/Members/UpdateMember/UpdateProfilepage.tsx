@@ -108,6 +108,8 @@ function UpdateProfilepage() {
     TracksData,
   ]);
 
+  const usr = UserData;
+
   useEffect(() => {
     if (TracksData) {
       setTracks(TracksData?.data);
@@ -150,7 +152,23 @@ function UpdateProfilepage() {
     }
   }, [StatesData]);
 
-  const usr = UserData;
+  useEffect(() => {
+    if (StatesData) {
+      setStates(StatesData?.data);
+    }
+  }, [StatesData]);
+
+  useEffect(() => {
+    if (usr?.residentDistrictId) {
+      setSelectedDistrict(usr?.residentDistrictId);
+    }
+  }, [usr]);
+
+  useEffect(() => {
+    if (usr?.residentCountry?.id) {
+      setCountry(usr?.residentCountry?.id);
+    }
+  }, [usr]);
 
   const formik = useFormik({
     initialValues: {
