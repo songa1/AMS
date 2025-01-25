@@ -60,7 +60,7 @@ function UpdateFoundedInfo() {
   const { data: UserData, refetch: RefetchUser } = useGetOneUserQuery<{
     data: User;
   }>(id || user?.id);
-  const userHasOrg = usr?.organizationEmployed ? true : false;
+  const userHasOrg = usr?.organizationFounded ? true : false;
   const { data: CountryData } = useCountriesQuery("");
   const { data: DistrictData } = useDistrictsQuery("");
   const { data: SectorsDataFounded } = useSectorsByDistrictQuery(
@@ -181,7 +181,7 @@ function UpdateFoundedInfo() {
 
   useEffect(() => {
     if (userHasOrg) {
-      formik.setFieldValue("orgId", usr?.organizationEmployed?.id);
+      formik.setFieldValue("orgId", usr?.organizationFounded?.id);
     }
   }, [userHasOrg, usr, formik]);
 
