@@ -55,6 +55,7 @@ function UpdateProfilepage() {
   const [isLoading, setIsLoading] = useState(false);
   const [country, setCountry] = useState("");
   const [states, setStates] = useState([]);
+  const [usr, setUsr] = useState<User>();
 
   const [updatedUser] = useUpdatedUserMutation();
   const { data: UserData, refetch: RefetchUser } = useGetOneUserQuery<{
@@ -87,6 +88,12 @@ function UpdateProfilepage() {
   }, [success, error]);
 
   useEffect(() => {
+    if (UserData) {
+      setUsr(UserData);
+    }
+  }, [UserData]);
+
+  useEffect(() => {
     if (
       !UserData ||
       !GenderData ||
@@ -107,8 +114,6 @@ function UpdateProfilepage() {
     CohortsData,
     TracksData,
   ]);
-
-  const usr = UserData;
 
   useEffect(() => {
     if (TracksData) {

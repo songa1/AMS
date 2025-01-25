@@ -52,6 +52,7 @@ function UpdateFoundedInfo() {
   const [isLoading, setIsLoading] = useState(false);
   const [foundedCountry, setFoundedCountry] = useState("");
   const [foundedStates, setFoundedStates] = useState([]);
+  const [usr, setUsr] = useState<User>();
 
   const [addOrg] = useAddOrgMutation();
   const [assignOrg] = useAssignOrgMutation();
@@ -59,7 +60,6 @@ function UpdateFoundedInfo() {
   const { data: UserData, refetch: RefetchUser } = useGetOneUserQuery<{
     data: User;
   }>(id || user?.id);
-  const usr = UserData;
   const userHasOrg = usr?.organizationEmployed ? true : false;
   const { data: CountryData } = useCountriesQuery("");
   const { data: DistrictData } = useDistrictsQuery("");
@@ -74,6 +74,12 @@ function UpdateFoundedInfo() {
   const { data: FoundedStatesData } = useStatesByCountryQuery(foundedCountry, {
     skip: !foundedCountry,
   });
+
+  useEffect(() => {
+    if (UserData) {
+      setUsr(UserData);
+    }
+  }, [UserData]);
 
   useEffect(() => {
     if (success || error) {

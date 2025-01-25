@@ -33,6 +33,7 @@ function ChangeOrganization({
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [info, setInfo] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const { data: OrganizationsData } = useOrganizationsQuery("");
   const [assignOrg] = useAssignOrgMutation();
@@ -44,6 +45,7 @@ function ChangeOrganization({
   }, [OrganizationsData]);
 
   const handleSubmit = async () => {
+    setLoading(true);
     try {
       if (newOrg === "new" || newOrg === "") {
         setInfo("Add a new organization above.");
@@ -62,6 +64,8 @@ function ChangeOrganization({
     } catch (error: any) {
       console.log(error);
       setError(error?.error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -79,7 +83,7 @@ function ChangeOrganization({
           Or, choose among existing organizations;
         </Typography>
         <Button onClick={handleSubmit} size="small" variant="outlined">
-          Save
+          {loading ? "Saving..." : "Save"}
         </Button>
       </Box>
       <Box sx={{ margin: "10px 0px 10px 0px" }}>

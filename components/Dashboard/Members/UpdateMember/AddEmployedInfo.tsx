@@ -52,6 +52,7 @@ function UpdateEmployedInfo() {
   const [isLoading, setIsLoading] = useState(false);
   const [employedCountry, setEmployedCountry] = useState("");
   const [employedStates, setEmployedStates] = useState([]);
+  const [usr, setUsr] = useState<User>();
 
   const [addOrg] = useAddOrgMutation();
   const [assignOrg] = useAssignOrgMutation();
@@ -69,7 +70,6 @@ function UpdateEmployedInfo() {
     }
   );
 
-  const usr = UserData;
   const userHasOrg = usr?.organizationEmployed ? true : false;
 
   const { data: WorkingSectorsData } = useWorkingSectorQuery("");
@@ -80,6 +80,12 @@ function UpdateEmployedInfo() {
       skip: !employedCountry,
     }
   );
+
+  useEffect(() => {
+    if (UserData) {
+      setUsr(UserData);
+    }
+  }, [UserData]);
 
   useEffect(() => {
     if (success || error) {
