@@ -24,7 +24,14 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
 const ResetPassword = () => {
-  const { token } = useParams();
+  const { tokendata } = useParams<{ tokendata: string }>();
+
+  const decodedData = decodeURIComponent(tokendata);
+
+  const [token, email] = decodedData.split("+email+");
+
+  console.log(decodedData, email, token);
+
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [success, setSuccess] = useState("");
@@ -139,6 +146,14 @@ const ResetPassword = () => {
               </Alert>
             )}
             <Box sx={{ display: "flex", flexDirection: "column", gap: "15px" }}>
+              <TextField
+                label="Email/Username"
+                type="email"
+                value={email}
+                defaultValue={email}
+                disabled
+                variant="filled"
+              />
               <FormControl>
                 <InputLabel>New Password:</InputLabel>
                 <FilledInput
