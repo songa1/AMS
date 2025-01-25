@@ -150,6 +150,7 @@ const FullScreenModal = ({
             row[
               "Nearest Landmark (School, Church, Mosque, Hotel, or any other common known mark)"
             ] || "",
+          fieldOfStudy: row["Field of Study"],
           cohort: row["Cohort"] || "",
           track: row["Track"] || "",
           initiativeName:
@@ -257,6 +258,12 @@ const FullScreenModal = ({
       field: "nearestLandmark",
       headerName:
         "Nearest Landmark (School, Church, Mosque, Hotel, or any other common known mark)",
+      width: 300,
+      editable: true,
+    },
+    {
+      field: "fieldOfStudy",
+      headerName: "Field of Study",
       width: 300,
       editable: true,
     },
