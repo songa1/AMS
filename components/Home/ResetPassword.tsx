@@ -30,8 +30,6 @@ const ResetPassword = () => {
 
   const [token, email] = decodedData.split("+email+");
 
-  console.log(decodedData, email, token);
-
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [success, setSuccess] = useState("");
