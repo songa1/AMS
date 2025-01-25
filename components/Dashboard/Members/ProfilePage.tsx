@@ -223,7 +223,7 @@ function ProfilePage() {
             disabled={!edit}
           />
           <TextField
-            label="Track"
+            label="Field of Study"
             value={user?.fieldOfStudy ? user?.fieldOfStudy : "--"}
             disabled={!edit}
           />
