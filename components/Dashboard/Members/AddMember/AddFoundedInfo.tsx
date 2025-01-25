@@ -223,9 +223,13 @@ function AddFoundedInfo({ canMove, newUser }: { canMove: any; newUser: any }) {
         >
           <InputLabel>Working Sector</InputLabel>
           <Select
+            defaultValue="undefined"
             value={formik.values.mainSector}
             onChange={(e) => formik.setFieldValue("mainSector", e.target.value)}
           >
+            <MenuItem value="undefined">
+              <i>- Select Working Sector -</i>
+            </MenuItem>
             {workingSectors.map((item: WorkingSector) => (
               <MenuItem key={item?.id} value={item?.id}>
                 {item?.name}
@@ -285,12 +289,16 @@ function AddFoundedInfo({ canMove, newUser }: { canMove: any; newUser: any }) {
         >
           <InputLabel>Country</InputLabel>
           <Select
+            defaultValue="undefined"
             value={formik.values.foundedCountry}
             onChange={(e) => {
               formik.setFieldValue("foundedCountry", e.target.value);
               setFoundedCountry(e.target.value);
             }}
           >
+            <MenuItem value="undefined">
+              <i>- Select Country -</i>
+            </MenuItem>
             {countriesFounded.map((item: Country) => (
               <MenuItem key={item?.id} value={item?.id}>
                 {item?.name}
@@ -312,11 +320,15 @@ function AddFoundedInfo({ canMove, newUser }: { canMove: any; newUser: any }) {
         >
           <InputLabel>State</InputLabel>
           <Select
+            defaultValue="undefined"
             value={formik.values.foundedState}
             onChange={(e) => {
               formik.setFieldValue("foundedState", e.target.value);
             }}
           >
+            <MenuItem value="undefined">
+              <i>- Select State -</i>
+            </MenuItem>
             {foundedStates.map((item: State) => (
               <MenuItem key={item?.id} value={item?.id}>
                 {item?.name}
@@ -339,6 +351,7 @@ function AddFoundedInfo({ canMove, newUser }: { canMove: any; newUser: any }) {
         >
           <InputLabel>District</InputLabel>
           <Select
+            defaultValue="undefined"
             value={formik.values.foundedDistrictName}
             onChange={(e) => {
               setSelectedDistrictFounded(e.target.value);
@@ -346,6 +359,9 @@ function AddFoundedInfo({ canMove, newUser }: { canMove: any; newUser: any }) {
               formik.setFieldValue("foundedSectorId", "");
             }}
           >
+            <MenuItem value="undefined">
+              <i>- Select District -</i>
+            </MenuItem>
             {districtsFounded.map((item: residentDistrict) => (
               <MenuItem key={item?.id} value={item?.name}>
                 {item?.name}
@@ -370,11 +386,15 @@ function AddFoundedInfo({ canMove, newUser }: { canMove: any; newUser: any }) {
         >
           <InputLabel>District</InputLabel>
           <Select
+            defaultValue="undefined"
             value={formik.values.foundedSectorId}
             onChange={(e) => {
               formik.setFieldValue("foundedSectorId", e.target.value);
             }}
           >
+            <MenuItem value="undefined">
+              <i>- Select District -</i>
+            </MenuItem>
             {sectorsFounded.map((item: residentSector) => (
               <MenuItem key={item?.id} value={item?.id}>
                 {item?.name}

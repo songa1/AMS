@@ -487,7 +487,11 @@ function AddPersonalInfo({
               id="gender"
               value={formik.values.gender}
               onChange={(e) => formik.setFieldValue("gender", e.target.value)}
+              defaultValue="1"
             >
+              <MenuItem value="1">
+                <i>- Select Gender -</i>
+              </MenuItem>
               {genders.map((gen: gender) => (
                 <MenuItem key={gen?.id} value={gen.id}>
                   {gen?.name}
@@ -518,7 +522,11 @@ function AddPersonalInfo({
                 setCountry(e.target.value);
                 console.log(country);
               }}
+              defaultValue="unspecified"
             >
+              <MenuItem value="unspecified">
+                <i>- Select Resident Country -</i>
+              </MenuItem>
               {countries.map((item: Country) => (
                 <MenuItem key={item?.id} value={item.id}>
                   {item?.name}
@@ -546,7 +554,11 @@ function AddPersonalInfo({
                   console.log(e);
                   formik.setFieldValue("state", e.target.value);
                 }}
+                defaultValue="unspecified"
               >
+                <MenuItem value="unspecified">
+                  <i>- Select State -</i>
+                </MenuItem>
                 {states.map((item: State) => (
                   <MenuItem key={item?.id} value={item.id}>
                     {item?.name}
@@ -577,7 +589,11 @@ function AddPersonalInfo({
                   formik.setFieldValue("districtName", e.target.value);
                   formik.setFieldValue("sectorId", "");
                 }}
+                defaultValue="unspecified"
               >
+                <MenuItem value="unspecified">
+                  <i>- Select District -</i>
+                </MenuItem>
                 {districts.map((item: residentDistrict) => (
                   <MenuItem key={item?.id} value={item.id}>
                     {item?.name}
@@ -604,7 +620,11 @@ function AddPersonalInfo({
                 onChange={(e) =>
                   formik.setFieldValue("sectorId", e.target.value)
                 }
+                defaultValue="unspecified"
               >
+                <MenuItem value="unspecified">
+                  <i>- Select Sector -</i>
+                </MenuItem>
                 {sectors.map((item: residentSector) => (
                   <MenuItem key={item?.id} value={item.id}>
                     {item?.name}
@@ -629,7 +649,11 @@ function AddPersonalInfo({
               labelId="cohort-label"
               value={formik.values.cohortId}
               onChange={(e) => formik.setFieldValue("cohortId", e.target.value)}
+              defaultValue="1"
             >
+              <MenuItem value="1">
+                <i>- Select Cohort -</i>
+              </MenuItem>
               {cohorts.map((item: cohort) => (
                 <MenuItem key={item?.id} value={item.id}>
                   {item?.name}

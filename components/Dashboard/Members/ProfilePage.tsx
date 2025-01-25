@@ -223,6 +223,11 @@ function ProfilePage() {
             disabled={!edit}
           />
           <TextField
+            label="Track"
+            value={user?.fieldOfStudy ? user?.fieldOfStudy : "--"}
+            disabled={!edit}
+          />
+          <TextField
             label="Facebook Account"
             value={user?.facebook ? user?.facebook : "--"}
             disabled={!edit}

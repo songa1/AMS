@@ -192,22 +192,6 @@ function AddEmployedInfo({ canMove, newUser }: { canMove: any; newUser: any }) {
           Submit
         </Button>
       </div>
-      {/* <FormControl
-        variant="filled"
-        sx={{ minWidth: 120, width: "100%", marginBottom: "15px" }}
-      >
-        <InputLabel>Choose your organization:</InputLabel>
-        <Select value={newOrg} onChange={(e) => setNewOrg(e.target.value)}>
-          <MenuItem key={100} value="new">
-            Add a new company
-          </MenuItem>
-          {organizations.map((item: organization) => (
-            <MenuItem key={item?.id} value={item.id}>
-              {item?.name}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl> */}
       <Box
         sx={{
           width: "100%",
@@ -248,11 +232,15 @@ function AddEmployedInfo({ canMove, newUser }: { canMove: any; newUser: any }) {
         >
           <InputLabel>Working Sector</InputLabel>
           <Select
+            defaultValue="undefined"
             value={formik.values.companySector}
             onChange={(e) =>
               formik.setFieldValue("companySector", e.target.value)
             }
           >
+            <MenuItem value="undefined">
+              <i>- Select Working Sector -</i>
+            </MenuItem>
             {workingSectorsEmployed.map((item: WorkingSector) => (
               <MenuItem key={item?.id} value={item?.id}>
                 {item?.name}
@@ -312,12 +300,16 @@ function AddEmployedInfo({ canMove, newUser }: { canMove: any; newUser: any }) {
         >
           <InputLabel>Country</InputLabel>
           <Select
+            defaultValue="undefined"
             value={formik.values.companyCountry}
             onChange={(e) => {
               formik.setFieldValue("companyCountry", e.target.value);
               setEmployedCountry(e.target.value);
             }}
           >
+            <MenuItem value="undefined">
+              <i>- Select Country -</i>
+            </MenuItem>
             {countriesEmployed.map((item: Country) => (
               <MenuItem key={item?.id} value={item?.id}>
                 {item?.name}
@@ -339,11 +331,15 @@ function AddEmployedInfo({ canMove, newUser }: { canMove: any; newUser: any }) {
         >
           <InputLabel>State</InputLabel>
           <Select
+            defaultValue="undefined"
             value={formik?.values?.companyState}
             onChange={(e) => {
               formik.setFieldValue("companyState", e.target.value);
             }}
           >
+            <MenuItem value="undefined">
+              <i>- Select State -</i>
+            </MenuItem>
             {employedStates.map((item: State) => (
               <MenuItem key={item?.id} value={item?.id}>
                 {item?.name}
@@ -366,6 +362,7 @@ function AddEmployedInfo({ canMove, newUser }: { canMove: any; newUser: any }) {
         >
           <InputLabel>District</InputLabel>
           <Select
+            defaultValue="undefined"
             value={formik?.values?.companyDistrictName}
             onChange={(e) => {
               setSelectedDistrictEmployed(e.target.value);
@@ -373,6 +370,9 @@ function AddEmployedInfo({ canMove, newUser }: { canMove: any; newUser: any }) {
               formik.setFieldValue("companySectorId", "");
             }}
           >
+            <MenuItem value="undefined">
+              <i>- Select District -</i>
+            </MenuItem>
             {districtsEmployed.map((item: residentDistrict) => (
               <MenuItem key={item?.id} value={item?.name}>
                 {item?.name}
@@ -397,11 +397,15 @@ function AddEmployedInfo({ canMove, newUser }: { canMove: any; newUser: any }) {
         >
           <InputLabel>District</InputLabel>
           <Select
+            defaultValue="undefined"
             value={formik.values.companySectorId}
             onChange={(e) => {
               formik.setFieldValue("companySectorId", e.target.value);
             }}
           >
+            <MenuItem value="undefined">
+              <i>- Select District -</i>
+            </MenuItem>
             {sectorsEmployed.map((item: residentSector) => (
               <MenuItem key={item?.id} value={item?.id}>
                 {item?.name}
