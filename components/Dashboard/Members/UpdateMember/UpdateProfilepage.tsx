@@ -191,6 +191,7 @@ function UpdateProfilepage() {
       districtName: usr?.residentDistrict?.id,
       sectorId: usr?.residentSector?.id,
       residentCountryId: usr?.residentCountry?.id,
+      fieldOfStudy: usr?.fieldOfStudy,
       state: usr?.state?.id,
       whatsAppNumber: usr?.whatsappNumber,
       nearlestLandmark: usr?.nearestLandmark,
@@ -215,6 +216,7 @@ function UpdateProfilepage() {
         /^[0-9]+$/,
         "Phone number must be digits only"
       ),
+      fieldOfStudy: Yup.string(),
       districtName: Yup.string(),
       sectorId: Yup.string(),
       residentCountryId: Yup.string().required("Resident country is required"),
@@ -270,6 +272,7 @@ function UpdateProfilepage() {
           facebook: values?.facebook,
           bio: values?.bio,
           phoneNumber: values?.phoneNumber,
+          fieldOfStudy: values?.fieldOfStudy,
           whatsappNumber: values?.whatsAppNumber,
           genderId: values?.gender,
           nearestLandmark: values?.nearlestLandmark,
@@ -525,6 +528,15 @@ function UpdateProfilepage() {
               ))}
             </Select>
           </FormControl>
+          <TextField
+            label="Field of Study"
+            defaultValue={usr?.fieldOfStudy}
+            variant="filled"
+            value={formik.values.fieldOfStudy}
+            onChange={(e) =>
+              formik.setFieldValue("fieldOfStudy", e.target.value)
+            }
+          />
           <TextField
             label="Facebook Account"
             defaultValue={usr?.facebook}

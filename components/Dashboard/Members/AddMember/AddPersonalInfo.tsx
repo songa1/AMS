@@ -196,6 +196,7 @@ function AddPersonalInfo({
       facebook: "",
       gender: "",
       phoneNumber: "",
+      fieldOfStudy: "",
       districtName: "",
       sectorId: "",
       residentCountryId: "",
@@ -220,6 +221,7 @@ function AddPersonalInfo({
       instagram: Yup.string().url("Invalid Instagram URL"),
       twitter: Yup.string().url("Invalid Twitter URL"),
       facebook: Yup.string().url("Invalid Facebook URL"),
+      fieldOfStudy: Yup.string(),
       gender: Yup.string().oneOf(
         ["Male", "Female", "Other"],
         "Select a valid gender"
@@ -260,6 +262,7 @@ function AddPersonalInfo({
           bio: values?.bio,
           phoneNumber: values.phoneNumber,
           whatsappNumber: values.whatsAppNumber,
+          fieldOfStudy: values?.fieldOfStudy,
           genderName: values.gender.name,
           nearestLandmark: values.nearlestLandmark,
           cohortId: values?.cohortId?.id,
@@ -675,6 +678,14 @@ function AddPersonalInfo({
               formik.errors.nearlestLandmark && formik.touched.nearlestLandmark
                 ? formik.errors.nearlestLandmark
                 : ""
+            }
+          />
+          <TextField
+            label="Field of Study"
+            variant="filled"
+            value={formik.values.fieldOfStudy}
+            onChange={(e) =>
+              formik.setFieldValue("fieldOfStudy", e.target.value)
             }
           />
           <TextField

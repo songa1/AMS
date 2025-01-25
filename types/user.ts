@@ -24,6 +24,7 @@ export interface User {
   bio: string;
   gender: gender;
   track: Track | null;
+  fieldOfStudy: string;
   organizationFoundedId: number | null;
   organizationFounded: organization;
   positionInFounded: string | null;
