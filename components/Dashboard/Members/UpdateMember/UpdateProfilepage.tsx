@@ -344,6 +344,30 @@ function UpdateProfilepage() {
           }}
         >
           <TextField
+            label="First Name"
+            type="text"
+            variant="filled"
+            defaultValue={usr?.firstName}
+            value={formik.values.firstName}
+            onChange={(e) => formik.setFieldValue("firstName", e.target.value)}
+          />
+          <TextField
+            label="Middle Name"
+            type="text"
+            variant="filled"
+            defaultValue={usr?.middleName}
+            value={formik.values.middleName}
+            onChange={(e) => formik.setFieldValue("middleName", e.target.value)}
+          />
+          <TextField
+            label="Last Name"
+            type="text"
+            variant="filled"
+            defaultValue={usr?.lastName}
+            value={formik.values.lastName}
+            onChange={(e) => formik.setFieldValue("lastName", e.target.value)}
+          />
+          <TextField
             label="Email"
             type="email"
             variant="filled"
