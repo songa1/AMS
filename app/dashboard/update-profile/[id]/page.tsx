@@ -8,7 +8,7 @@ import React from "react";
 function page() {
   return (
     <div>
-      <TopTitle title=" UpdateUser" />
+      <TopTitle title=" Update Member Details" />
       <OnlyAdmin>
         <UpdateProfile />
       </OnlyAdmin>

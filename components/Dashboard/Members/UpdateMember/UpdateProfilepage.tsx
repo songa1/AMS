@@ -316,7 +316,7 @@ function UpdateProfilepage() {
               handleSubmit();
             }}
           >
-            Update
+            {isLoading ? "Updating..." : "Update"}
           </Button>
         </div>
         <TextField
