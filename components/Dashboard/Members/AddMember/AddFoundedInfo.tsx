@@ -23,7 +23,6 @@ import {
 } from "@mui/material";
 import {
   Country,
-  organization,
   residentDistrict,
   residentSector,
   State,
@@ -97,6 +96,7 @@ function AddFoundedInfo({ canMove, newUser }: { canMove: any; newUser: any }) {
     if (DistrictData) {
       setDistrictsFounded(DistrictData?.data);
     }
+    canMove(false);
   }, [DistrictData]);
 
   useEffect(() => {
@@ -143,14 +143,14 @@ function AddFoundedInfo({ canMove, newUser }: { canMove: any; newUser: any }) {
         sectorId: values?.foundedSectorId,
         website: values?.foundedWebsite,
       }).unwrap();
-      const assign = await assignOrg({
+      await assignOrg({
         userId: newUser?.id,
         organizationId: res?.data?.id,
         relationshipType: "founded",
         position: formik.values.foundedPosition,
       }).unwrap();
       setSuccess("Organization added successfully!");
-      canMove();
+      canMove(true);
     } catch (error: any) {
       console.log(error);
       setError(error?.data?.error);

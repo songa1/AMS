@@ -108,6 +108,7 @@ function AddEmployedInfo({ canMove, newUser }: { canMove: any; newUser: any }) {
     if (DistrictData) {
       setDistrictsEmployed(DistrictData?.data);
     }
+    canMove(false);
   }, [DistrictData]);
 
   useEffect(() => {
@@ -153,14 +154,14 @@ function AddEmployedInfo({ canMove, newUser }: { canMove: any; newUser: any }) {
         sectorId: values?.companySectorId,
         website: values?.companyWebsite,
       }).unwrap();
-      const assign = await assignOrg({
+      await assignOrg({
         userId: newUser?.id,
         organizationId: res?.data?.id,
-        relationshipType: "founded",
+        relationshipType: "employed",
         position: formik.values.companyPosition,
       }).unwrap();
       setSuccess("Organization added successfully!");
-      canMove();
+      canMove(true);
     } catch (error: any) {
       console.log(error);
       setError(error?.data?.error);
