@@ -260,6 +260,7 @@ function UpdateFoundedInfo() {
             onChange={(e) =>
               formik.setFieldValue("initiativeName", e.target.value)
             }
+            helperText="If your company has multiple branches, mention your branch in the name."
           />
           <FormControl variant="outlined" sx={{ minWidth: 120, width: "100%" }}>
             <InputLabel>Working Sector</InputLabel>

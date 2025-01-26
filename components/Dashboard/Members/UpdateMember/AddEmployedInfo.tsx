@@ -265,6 +265,7 @@ function UpdateEmployedInfo() {
             onChange={(e) =>
               formik.setFieldValue("companyName", e.target.value)
             }
+            helperText="If your company has multiple branches, mention your branch in the name."
           />
 
           <FormControl variant="outlined" sx={{ minWidth: 120, width: "100%" }}>
