@@ -186,6 +186,7 @@ const FullScreenModal = ({
           facebook:
             row["Facebook Profile Link (https://facebook.com/...)"] || "",
           twitter: row["X (Twitter) Profile Link (https://x.com/...)"] || "",
+          profileImage: row["Profile Picture"],
         }));
 
         setRows(mappedRows);
@@ -346,6 +347,12 @@ const FullScreenModal = ({
       field: "twitter",
       headerName: "X (Twitter) Profile Link",
       width: 300,
+      editable: true,
+    },
+    {
+      field: "profileImage",
+      headerName: "Profile Picture",
+      width: 400,
       editable: true,
     },
   ];
