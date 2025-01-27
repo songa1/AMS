@@ -35,9 +35,11 @@ import {
 import {
   useAddOrgMutation,
   useAssignOrgMutation,
+  useRemoveOrgMutation,
   useUpdateOrgMutation,
 } from "@/lib/features/orgSlice";
 import ChangeOrganization from "./ChangeOrganization";
+import ConfirmModal from "@/components/Other/confirmModal";
 
 function UpdateEmployedInfo() {
   const { id } = useParams();
@@ -53,9 +55,11 @@ function UpdateEmployedInfo() {
   const [employedCountry, setEmployedCountry] = useState("");
   const [employedStates, setEmployedStates] = useState([]);
   const [usr, setUsr] = useState<User>();
+  const [modal, setModal] = useState(false);
 
   const [addOrg] = useAddOrgMutation();
   const [assignOrg] = useAssignOrgMutation();
+  const [removeOrg] = useRemoveOrgMutation();
   const [updateOrg] = useUpdateOrgMutation();
   const { data: UserData, refetch: RefetchUser } = useGetOneUserQuery<{
     data: User;
@@ -207,12 +211,40 @@ function UpdateEmployedInfo() {
     }
   };
 
+  const handleRemoveOrg = async () => {
+    setIsLoading(true);
+    try {
+      await removeOrg({
+        userId: user?.id,
+        organizationId: usr?.id,
+        relationshipType: "employed",
+      }).unwrap();
+      setSuccess("Organization removed successfully!");
+      RefetchUser();
+      setModal(false);
+    } catch (error: any) {
+      console.log(error);
+      setError(error?.data?.error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   if (isLoading) {
     return <Loading />;
   }
 
   return (
     <div>
+      <ConfirmModal
+        open={modal}
+        cancelText="Cancel"
+        confirmText={isLoading ? "Removing..." : "Remove"}
+        title="Are you sure you want to remove the company?"
+        description="Please note that you can assign another organization if you need."
+        closeModal={() => setModal(false)}
+        action={handleRemoveOrg}
+      />
       <div className="w-full">
         {error && (
           <Alert variant="filled" severity="error">
@@ -225,7 +257,16 @@ function UpdateEmployedInfo() {
           </Alert>
         )}
         <div className="flex items-start justify-between py-4">
-          <div></div>
+          <Button
+            variant="contained"
+            color="error"
+            onClick={(e) => {
+              e.preventDefault();
+              setModal(true);
+            }}
+          >
+            Remove Company
+          </Button>
           <Button
             variant="contained"
             color="primary"

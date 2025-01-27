@@ -26,6 +26,13 @@ export const orgsSlices = createApi({
         body: credentials,
       }),
     }),
+    removeOrg: builder.mutation({
+      query: (credentials) => ({
+        url: "organizations/remove",
+        method: "PATCH",
+        body: credentials,
+      }),
+    }),
     updateOrg: builder.mutation({
       query: (credentials) => ({
         url: "organizations",
@@ -42,4 +49,5 @@ export const {
   useAddOrgMutation,
   useAssignOrgMutation,
   useUpdateOrgMutation,
+  useRemoveOrgMutation,
 } = orgsSlices;

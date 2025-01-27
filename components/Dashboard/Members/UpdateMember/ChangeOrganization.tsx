@@ -129,9 +129,6 @@ function ChangeOrganization({
             variant="filled"
             onChange={(e) => setNewOrg(e.target.value)}
           >
-            <MenuItem key={100} value="new">
-              Add a new company
-            </MenuItem>
             {organizations.map((item: organization) => (
               <MenuItem key={item?.id} value={item.id}>
                 {item?.name}
