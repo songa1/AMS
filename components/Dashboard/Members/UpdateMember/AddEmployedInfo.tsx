@@ -348,7 +348,7 @@ function UpdateEmployedInfo() {
                 formik.setFieldValue("companyDistrictName", e.target.value);
                 formik.setFieldValue("companySectorId", "");
               }}
-              defaultValue={usr?.organizationEmployed?.district?.id}
+              defaultValue={usr?.organizationEmployed?.district?.name}
             >
               {districtsEmployed.map((item: residentDistrict) => (
                 <MenuItem key={item?.id} value={item?.name}>

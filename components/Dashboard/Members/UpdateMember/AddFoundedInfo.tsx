@@ -338,7 +338,7 @@ function UpdateFoundedInfo() {
             <Select
               value={formik.values.foundedDistrictName}
               variant="filled"
-              defaultValue={usr?.organizationFounded?.district?.id}
+              defaultValue={usr?.organizationFounded?.district?.name}
               onChange={(e) => {
                 setSelectedDistrictFounded(e.target.value);
                 formik.setFieldValue("foundedDistrictName", e.target.value);

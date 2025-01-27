@@ -104,43 +104,33 @@ function AddPersonalInfo({
     if (TracksData) {
       setTracks(TracksData?.data);
     }
-  }, [TracksData]);
-
-  useEffect(() => {
     if (GenderData) {
       setGenders(GenderData?.data);
     }
-  }, [GenderData]);
-
-  useEffect(() => {
     if (CohortsData) {
       setCohorts(CohortsData?.data);
     }
-  }, [CohortsData]);
-
-  useEffect(() => {
     if (SectorsData) {
       setSectors(SectorsData?.data);
     }
-  }, [SectorsData]);
-
-  useEffect(() => {
     if (StatesData) {
       setStates(StatesData?.data);
     }
-  }, [StatesData]);
-
-  useEffect(() => {
     if (DistrictData) {
       setDistricts(DistrictData?.data);
     }
-  }, [DistrictData]);
-
-  useEffect(() => {
     if (CountryData) {
       setCountries(CountryData?.data);
     }
-  }, [CountryData]);
+  }, [
+    TracksData,
+    GenderData,
+    CohortsData,
+    SectorsData,
+    StatesData,
+    DistrictData,
+    CountryData,
+  ]);
 
   useEffect(() => {
     if (success || error) {
@@ -211,9 +201,9 @@ function AddPersonalInfo({
     },
     validationSchema: Yup.object({
       bio: Yup.string().max(500, "Bio cannot exceed 500 characters"),
-      firstName: Yup.string().required("First name is required"),
+      firstName: Yup.string(),
       middleName: Yup.string(),
-      lastName: Yup.string().required("Last name is required"),
+      lastName: Yup.string(),
       email: Yup.string()
         .email("Invalid email address")
         .required("Email is required"),
@@ -238,7 +228,7 @@ function AddPersonalInfo({
         255,
         "Landmark cannot exceed 255 characters"
       ),
-      track: Yup.string().required("Track is required"),
+      track: Yup.string(),
       cohortId: Yup.number().nullable(),
       profileImageId: Yup.string(),
     }),
@@ -263,13 +253,13 @@ function AddPersonalInfo({
           phoneNumber: values.phoneNumber,
           whatsappNumber: values.whatsAppNumber,
           fieldOfStudy: values?.fieldOfStudy,
-          genderName: values.gender.name,
+          genderName: values.gender,
           nearestLandmark: values.nearlestLandmark,
-          cohortId: values?.cohortId?.id,
-          trackId: values?.track?.id,
+          cohortId: values?.cohortId,
+          trackId: values?.track,
           residentDistrictId: values?.districtName,
-          residentSectorId: values?.sectorId.id,
-          state: values?.state?.id,
+          residentSectorId: values?.sectorId,
+          state: values?.state,
           residentCountryId: values?.residentCountryId,
           profileImageId: values?.profileImageId,
         },
@@ -391,14 +381,8 @@ function AddPersonalInfo({
             value={formik.values.firstName}
             onChange={(e) => formik.setFieldValue("firstName", e.target.value)}
             placeholder="First Name"
-            error={
-              formik.errors.firstName && formik.touched.firstName ? true : false
-            }
-            helperText={
-              formik.errors.firstName && formik.touched.firstName
-                ? formik.errors.firstName
-                : ""
-            }
+            error={formik.errors.firstName ? true : false}
+            helperText={formik.errors.firstName}
           />
           <TextField
             label="Middle Name:"
@@ -406,16 +390,8 @@ function AddPersonalInfo({
             value={formik.values.middleName}
             onChange={(e) => formik.setFieldValue("middleName", e.target.value)}
             placeholder="Middle Name"
-            error={
-              formik.errors.middleName && formik.touched.middleName
-                ? true
-                : false
-            }
-            helperText={
-              formik.errors.middleName && formik.touched.middleName
-                ? formik.errors.middleName
-                : ""
-            }
+            error={formik.errors.middleName ? true : false}
+            helperText={formik.errors.middleName}
           />
           <TextField
             label="Last Name:"
@@ -423,14 +399,8 @@ function AddPersonalInfo({
             value={formik.values.lastName}
             onChange={(e) => formik.setFieldValue("lastName", e.target.value)}
             placeholder="Last Name"
-            error={
-              formik.errors.lastName && formik.touched.lastName ? true : false
-            }
-            helperText={
-              formik.errors.lastName && formik.touched.lastName
-                ? formik.errors.lastName
-                : ""
-            }
+            error={formik.errors.lastName ? true : false}
+            helperText={formik.errors.lastName}
           />
           <TextField
             label="Email:"
@@ -449,12 +419,8 @@ function AddPersonalInfo({
             }}
             placeholder="Email"
             required
-            error={formik.errors.email && formik.touched.email ? true : false}
-            helperText={
-              formik.errors.email && formik.touched.email
-                ? formik.errors.email
-                : ""
-            }
+            error={formik.errors.email ? true : false}
+            helperText={formik.errors.email}
           />
           <MuiTelInput
             value={formik.values.phoneNumber}
@@ -478,10 +444,10 @@ function AddPersonalInfo({
           />
           <FormControl
             variant="filled"
-            error={formik.errors.gender && formik.touched.gender ? true : false}
+            error={formik.errors.gender ? true : false}
             sx={{ minWidth: 120, width: "100%" }}
           >
-            <InputLabel id="gender">Gender</InputLabel>
+            <InputLabel id="gender-label">Gender</InputLabel>
             <Select
               labelId="gender-label"
               id="gender"
@@ -493,23 +459,16 @@ function AddPersonalInfo({
                 <i>- Select Gender -</i>
               </MenuItem>
               {genders.map((gen: gender) => (
-                <MenuItem key={gen?.id} value={gen.id}>
+                <MenuItem key={gen?.id} value={gen.name}>
                   {gen?.name}
                 </MenuItem>
               ))}
             </Select>
-            {formik.errors.gender && formik.touched.gender && (
-              <FormHelperText>{formik.errors.gender}</FormHelperText>
-            )}
+            <FormHelperText>{formik.errors.gender}</FormHelperText>
           </FormControl>
           <FormControl
             variant="filled"
-            error={
-              formik.errors.residentCountryId &&
-              formik.touched.residentCountryId
-                ? true
-                : false
-            }
+            error={formik.errors.residentCountryId ? true : false}
             sx={{ minWidth: 120, width: "100%" }}
           >
             <InputLabel id="gender">Resident Country</InputLabel>
@@ -533,17 +492,12 @@ function AddPersonalInfo({
                 </MenuItem>
               ))}
             </Select>
-            {formik.errors.residentCountryId &&
-              formik.touched.residentCountryId && (
-                <FormHelperText>
-                  {formik.errors.residentCountryId}
-                </FormHelperText>
-              )}
+            <FormHelperText>{formik.errors.residentCountryId}</FormHelperText>
           </FormControl>
           {formik.values.residentCountryId !== "RW" && (
             <FormControl
               variant="filled"
-              error={formik.errors.state && formik.touched.state ? true : false}
+              error={formik.errors.state ? true : false}
               sx={{ minWidth: 120, width: "100%" }}
             >
               <InputLabel>State</InputLabel>
@@ -565,19 +519,13 @@ function AddPersonalInfo({
                   </MenuItem>
                 ))}
               </Select>
-              {formik.errors.state && formik.touched.state && (
-                <FormHelperText>{formik.errors.state}</FormHelperText>
-              )}
+              <FormHelperText>{formik.errors.state}</FormHelperText>
             </FormControl>
           )}
           {formik.values.residentCountryId === "RW" && (
             <FormControl
               variant="filled"
-              error={
-                formik.errors.districtName && formik.touched.districtName
-                  ? true
-                  : false
-              }
+              error={formik.errors.districtName ? true : false}
               sx={{ minWidth: 120, width: "100%" }}
             >
               <InputLabel>District</InputLabel>
@@ -600,17 +548,13 @@ function AddPersonalInfo({
                   </MenuItem>
                 ))}
               </Select>
-              {formik.errors.districtName && formik.touched.districtName && (
-                <FormHelperText>{formik.errors.districtName}</FormHelperText>
-              )}
+              <FormHelperText>{formik.errors.districtName}</FormHelperText>
             </FormControl>
           )}
           {formik.values.residentCountryId === "RW" && (
             <FormControl
               variant="filled"
-              error={
-                formik.errors.sectorId && formik.touched.sectorId ? true : false
-              }
+              error={formik.errors.sectorId ? true : false}
               sx={{ minWidth: 120, width: "100%" }}
             >
               <InputLabel>Sector</InputLabel>
@@ -631,17 +575,13 @@ function AddPersonalInfo({
                   </MenuItem>
                 ))}
               </Select>
-              {formik.errors.sectorId && formik.touched.sectorId && (
-                <FormHelperText>{formik.errors.sectorId}</FormHelperText>
-              )}
+              <FormHelperText>{formik.errors.sectorId}</FormHelperText>
             </FormControl>
           )}
 
           <FormControl
             variant="filled"
-            error={
-              formik.errors.cohortId && formik.touched.cohortId ? true : false
-            }
+            error={formik.errors.cohortId ? true : false}
             sx={{ minWidth: 120, width: "100%" }}
           >
             <InputLabel>Cohort</InputLabel>
@@ -660,13 +600,11 @@ function AddPersonalInfo({
                 </MenuItem>
               ))}
             </Select>
-            {formik.errors.cohortId && formik.touched.cohortId && (
-              <FormHelperText>{formik.errors.cohortId}</FormHelperText>
-            )}
+            <FormHelperText>{formik.errors.cohortId}</FormHelperText>
           </FormControl>
           <FormControl
             variant="filled"
-            error={formik.errors.track && formik.touched.track ? true : false}
+            error={formik.errors.track ? true : false}
             sx={{ minWidth: 120, width: "100%" }}
           >
             <InputLabel>Track</InputLabel>
@@ -681,9 +619,7 @@ function AddPersonalInfo({
                 </MenuItem>
               ))}
             </Select>
-            {formik.errors.track && formik.touched.track && (
-              <FormHelperText>{formik.errors.track}</FormHelperText>
-            )}
+            <FormHelperText>{formik.errors.track}</FormHelperText>
           </FormControl>
           <TextField
             label="Nearest Landmark:"
@@ -693,16 +629,8 @@ function AddPersonalInfo({
               formik.setFieldValue("nearlestLandmark", e.target.value)
             }
             placeholder="What's the popular place near you?"
-            error={
-              formik.errors.nearlestLandmark && formik.touched.nearlestLandmark
-                ? true
-                : false
-            }
-            helperText={
-              formik.errors.nearlestLandmark && formik.touched.nearlestLandmark
-                ? formik.errors.nearlestLandmark
-                : ""
-            }
+            error={formik.errors.nearlestLandmark ? true : false}
+            helperText={formik.errors.nearlestLandmark}
           />
           <TextField
             label="Field of Study"
@@ -718,14 +646,8 @@ function AddPersonalInfo({
             value={formik.values.linkedin}
             onChange={(e) => formik.setFieldValue("linkedin", e.target.value)}
             placeholder="https://linkedin.com/in/..."
-            error={
-              formik.errors.linkedin && formik.touched.linkedin ? true : false
-            }
-            helperText={
-              formik.errors.linkedin && formik.touched.linkedin
-                ? formik.errors.linkedin
-                : ""
-            }
+            error={formik.errors.linkedin ? true : false}
+            helperText={formik.errors.linkedin}
           />
           <TextField
             label="X (Twitter) Account:"
@@ -733,14 +655,8 @@ function AddPersonalInfo({
             value={formik.values.twitter}
             onChange={(e) => formik.setFieldValue("twitter", e.target.value)}
             placeholder="https://x.com/..."
-            error={
-              formik.errors.twitter && formik.touched.twitter ? true : false
-            }
-            helperText={
-              formik.errors.twitter && formik.touched.twitter
-                ? formik.errors.twitter
-                : ""
-            }
+            error={formik.errors.twitter ? true : false}
+            helperText={formik.errors.twitter}
           />
           <TextField
             label="Instagram Account:"
@@ -748,14 +664,8 @@ function AddPersonalInfo({
             value={formik.values.instagram}
             onChange={(e) => formik.setFieldValue("instagram", e.target.value)}
             placeholder="https://instagram.com/..."
-            error={
-              formik.errors.instagram && formik.touched.instagram ? true : false
-            }
-            helperText={
-              formik.errors.instagram && formik.touched.instagram
-                ? formik.errors.instagram
-                : ""
-            }
+            error={formik.errors.instagram ? true : false}
+            helperText={formik.errors.instagram}
           />
           <TextField
             label="Facebook Account:"
@@ -763,14 +673,8 @@ function AddPersonalInfo({
             value={formik.values.facebook}
             onChange={(e) => formik.setFieldValue("facebook", e.target.value)}
             placeholder="https://facebook.com/..."
-            error={
-              formik.errors.facebook && formik.touched.facebook ? true : false
-            }
-            helperText={
-              formik.errors.facebook && formik.touched.facebook
-                ? formik.errors.facebook
-                : ""
-            }
+            error={formik.errors.facebook ? true : false}
+            helperText={formik.errors.facebook}
           />
         </Box>
       </div>
