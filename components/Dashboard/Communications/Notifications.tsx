@@ -10,6 +10,7 @@ import {
 import { getUser } from "@/helpers/auth";
 import {
   Box,
+  Button,
   List,
   ListItemButton,
   ListItemText,
@@ -18,12 +19,14 @@ import {
 } from "@mui/material";
 import { SectionTitle } from "@/components/Other/TopTitle";
 import Loading from "@/app/loading";
+import { actionOptions } from "../Settings/Data/NotificationSetup";
 
 function Notifications() {
   dayjs.extend(relativeTime);
   const [notifications, setNotifications] = useState<any>([]);
   const [currentNotification, setCurrentNotification] = useState<string>();
   const [notification, setNotification] = useState<string | null>();
+  const [actions, setActions] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const user = getUser();
 
@@ -41,6 +44,9 @@ function Notifications() {
         notifications.find((noti: any) => noti.id == currentNotification)
           ?.message
       );
+    }
+    if (nots?.actions) {
+      setActions(nots?.actions.split("+"));
     }
   }, [currentNotification, data, nots]);
 
@@ -122,6 +128,22 @@ function Notifications() {
             }}
           ></Typography>
         )}
+        <div className="flex justify-center items-center flex-wrap gap-2 p-4">
+          {actionOptions
+            .filter((option) => actions.includes(option?.id))
+            .map((action: any) => {
+              return (
+                <Button
+                  variant="contained"
+                  color={action?.color ? action?.color : "primary"}
+                  key={action?.id}
+                  onClick={action?.click}
+                >
+                  {action?.action}
+                </Button>
+              );
+            })}
+        </div>
       </Box>
     </Box>
   );

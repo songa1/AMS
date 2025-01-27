@@ -78,7 +78,7 @@
 }
 
 .noti-sticky-header {
-  @apply text-center w-full bg-gray-100 p-3 rounded-t-md flex items-center justify-center h-10 font-bold text-mainBlue sticky top-0 right-0 left-0;
+  @apply text-center w-full bg-gray-100 p-3 rounded-t-md flex items-center justify-center h-10 font-bold text-mainBlue sticky top-0 right-0 left-0 z-50;
 }
 
 .notifications-right {

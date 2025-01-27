@@ -178,7 +178,7 @@ const UsersPage = () => {
   };
 
   return (
-    <Box className="container mx-auto p-4">
+    <div className="container mx-auto p-4">
       <FullScreenModal
         refetch={refetch}
         setIsOpen={setIsOpen}
@@ -200,7 +200,7 @@ const UsersPage = () => {
       />
 
       <TopTitle title="Members List" />
-      <Box className="flex justify-between items-center my-2">
+      <div className="flex justify-between items-center my-2">
         <SearchInput
           value={searchText}
           setValue={handleSearch}
@@ -279,7 +279,7 @@ const UsersPage = () => {
             </ButtonGroup>
           </Box>
         )}
-      </Box>
+      </div>
       <div>
         <DataGrid
           checkboxSelection
@@ -306,7 +306,7 @@ const UsersPage = () => {
           pageSizeOptions={[10, 20, 50, 100]}
         />
       </div>
-    </Box>
+    </div>
   );
 };
 

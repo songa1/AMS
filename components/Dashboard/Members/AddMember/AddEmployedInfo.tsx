@@ -23,7 +23,6 @@ import {
 } from "@mui/material";
 import {
   Country,
-  organization,
   residentDistrict,
   residentSector,
   State,
@@ -32,7 +31,6 @@ import {
 import {
   useAddOrgMutation,
   useAssignOrgMutation,
-  useOrganizationsQuery,
 } from "@/lib/features/orgSlice";
 import ChangeOrganization from "../UpdateMember/ChangeOrganization";
 
@@ -45,8 +43,6 @@ function AddEmployedInfo({ canMove, newUser }: { canMove: any; newUser: any }) {
   const [districtsEmployed, setDistrictsEmployed] = useState<
     residentDistrict[]
   >([]);
-  const [newOrg, setNewOrg] = useState("");
-  const [organizations, setOrganizations] = useState([]);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
@@ -56,7 +52,6 @@ function AddEmployedInfo({ canMove, newUser }: { canMove: any; newUser: any }) {
   const [assignOrg] = useAssignOrgMutation();
   const { data: DistrictData } = useDistrictsQuery("");
   const { data: CountryData } = useCountriesQuery("");
-  const { data: OrganizationsData } = useOrganizationsQuery("");
   const { data: EmployedStatesData } = useStatesByCountryQuery(
     employedCountry,
     {
@@ -81,41 +76,29 @@ function AddEmployedInfo({ canMove, newUser }: { canMove: any; newUser: any }) {
   }, [success, error]);
 
   useEffect(() => {
-    if (WorkingSectorsData) {
-      setWorkingSectorsEmployed(WorkingSectorsData?.data);
-    }
-  }, [WorkingSectorsData]);
-
-  useEffect(() => {
-    if (SectorsDataEmployed) {
-      setSectorsEmployed(SectorsDataEmployed?.data);
-    }
-  }, [SectorsDataEmployed]);
-
-  useEffect(() => {
-    if (OrganizationsData) {
-      setOrganizations(OrganizationsData?.data);
-    }
-  }, [OrganizationsData]);
-
-  useEffect(() => {
     if (EmployedStatesData) {
       setEmployedStates(EmployedStatesData?.data);
     }
-  }, [EmployedStatesData]);
-
-  useEffect(() => {
+    if (CountryData) {
+      setCountriesEmployed(CountryData?.data);
+    }
+    if (SectorsDataEmployed) {
+      setSectorsEmployed(SectorsDataEmployed?.data);
+    }
+    if (WorkingSectorsData) {
+      setWorkingSectorsEmployed(WorkingSectorsData?.data);
+    }
     if (DistrictData) {
       setDistrictsEmployed(DistrictData?.data);
     }
     canMove(false);
-  }, [DistrictData]);
-
-  useEffect(() => {
-    if (CountryData) {
-      setCountriesEmployed(CountryData?.data);
-    }
-  }, [CountryData]);
+  }, [
+    EmployedStatesData,
+    DistrictData,
+    WorkingSectorsData,
+    SectorsDataEmployed,
+    CountryData,
+  ]);
 
   const formik = useFormik({
     initialValues: {
@@ -169,7 +152,7 @@ function AddEmployedInfo({ canMove, newUser }: { canMove: any; newUser: any }) {
   };
 
   return (
-    <Box sx={{ marginTop: "15px" }}>
+    <div className="mt-4">
       {error && (
         <Alert variant="filled" severity="error">
           {error}
@@ -424,7 +407,7 @@ function AddEmployedInfo({ canMove, newUser }: { canMove: any; newUser: any }) {
         rel="employed"
         user={newUser}
       />
-    </Box>
+    </div>
   );
 }
 

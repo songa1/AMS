@@ -80,7 +80,7 @@ function ProfilePage() {
   };
 
   return (
-    <div className="">
+    <div>
       <ConfirmModal
         open={roleModal}
         cancelText="Cancel"

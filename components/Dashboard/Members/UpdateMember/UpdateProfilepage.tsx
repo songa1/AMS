@@ -91,9 +91,27 @@ function UpdateProfilepage() {
     if (UserData) {
       setUsr(UserData);
     }
-  }, [UserData]);
-
-  useEffect(() => {
+    if (StatesData) {
+      setStates(StatesData?.data);
+    }
+    if (CountryData) {
+      setCountries(CountryData?.data);
+    }
+    if (DistrictData) {
+      setDistricts(DistrictData?.data);
+    }
+    if (SectorsData) {
+      setSectors(SectorsData?.data);
+    }
+    if (CohortsData) {
+      setCohorts(CohortsData?.data);
+    }
+    if (GenderData) {
+      setGenders(GenderData?.data);
+    }
+    if (TracksData) {
+      setTracks(TracksData?.data);
+    }
     if (
       !UserData ||
       !GenderData ||
@@ -107,69 +125,20 @@ function UpdateProfilepage() {
       setIsLoading(false);
     }
   }, [
-    UserData,
-    GenderData,
-    CountryData,
-    DistrictData,
-    CohortsData,
+    StatesData,
     TracksData,
+    GenderData,
+    CohortsData,
+    SectorsData,
+    DistrictData,
+    CountryData,
+    UserData,
   ]);
-
-  useEffect(() => {
-    if (TracksData) {
-      setTracks(TracksData?.data);
-    }
-  }, [TracksData]);
-
-  useEffect(() => {
-    if (GenderData) {
-      setGenders(GenderData?.data);
-    }
-  }, [GenderData]);
-
-  useEffect(() => {
-    if (CohortsData) {
-      setCohorts(CohortsData?.data);
-    }
-  }, [CohortsData]);
-
-  useEffect(() => {
-    if (SectorsData) {
-      setSectors(SectorsData?.data);
-    }
-  }, [SectorsData]);
-
-  useEffect(() => {
-    if (DistrictData) {
-      setDistricts(DistrictData?.data);
-    }
-  }, [DistrictData]);
-
-  useEffect(() => {
-    if (CountryData) {
-      setCountries(CountryData?.data);
-    }
-  }, [CountryData]);
-
-  useEffect(() => {
-    if (StatesData) {
-      setStates(StatesData?.data);
-    }
-  }, [StatesData]);
-
-  useEffect(() => {
-    if (StatesData) {
-      setStates(StatesData?.data);
-    }
-  }, [StatesData]);
 
   useEffect(() => {
     if (usr?.residentDistrictId) {
       setSelectedDistrict(usr?.residentDistrictId);
     }
-  }, [usr]);
-
-  useEffect(() => {
     if (usr?.residentCountry?.id) {
       setCountry(usr?.residentCountry?.id);
     }

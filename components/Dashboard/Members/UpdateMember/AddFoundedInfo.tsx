@@ -86,6 +86,21 @@ function UpdateFoundedInfo() {
   }, [success, error]);
 
   useEffect(() => {
+    if (FoundedStatesData) {
+      setFoundedStates(FoundedStatesData?.data);
+    }
+    if (CountryData) {
+      setCountriesFounded(CountryData?.data);
+    }
+    if (DistrictData) {
+      setDistrictsFounded(DistrictData?.data);
+    }
+    if (SectorsDataFounded) {
+      setSectorsFounded(SectorsDataFounded?.data);
+    }
+    if (WorkingSectorsData) {
+      setWorkingSectors(WorkingSectorsData?.data);
+    }
     if (!UserData || !CountryData || !DistrictData || !WorkingSectorsData) {
       setIsLoading(true);
     } else {
@@ -94,37 +109,14 @@ function UpdateFoundedInfo() {
     if (UserData) {
       setUsr(UserData);
     }
-  }, [UserData, CountryData, DistrictData, WorkingSectorsData]);
-
-  useEffect(() => {
-    if (WorkingSectorsData) {
-      setWorkingSectors(WorkingSectorsData?.data);
-    }
-  }, [WorkingSectorsData]);
-
-  useEffect(() => {
-    if (SectorsDataFounded) {
-      setSectorsFounded(SectorsDataFounded?.data);
-    }
-  }, [SectorsDataFounded]);
-
-  useEffect(() => {
-    if (DistrictData) {
-      setDistrictsFounded(DistrictData?.data);
-    }
-  }, [DistrictData]);
-
-  useEffect(() => {
-    if (CountryData) {
-      setCountriesFounded(CountryData?.data);
-    }
-  }, [CountryData]);
-
-  useEffect(() => {
-    if (FoundedStatesData) {
-      setFoundedStates(FoundedStatesData?.data);
-    }
-  }, [FoundedStatesData]);
+  }, [
+    FoundedStatesData,
+    CountryData,
+    DistrictData,
+    SectorsDataFounded,
+    WorkingSectorsData,
+    UserData,
+  ]);
 
   useEffect(() => {
     if (userHasOrg) {
@@ -215,7 +207,7 @@ function UpdateFoundedInfo() {
   }
 
   return (
-    <div className="">
+    <div>
       <div className="w-full">
         {error && (
           <Alert variant="filled" severity="error">

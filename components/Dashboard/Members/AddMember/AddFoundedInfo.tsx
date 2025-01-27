@@ -78,32 +78,26 @@ function AddFoundedInfo({ canMove, newUser }: { canMove: any; newUser: any }) {
     if (WorkingSectorsData) {
       setWorkingSectors(WorkingSectorsData?.data);
     }
-  }, [WorkingSectorsData]);
-
-  useEffect(() => {
     if (FoundedStatesData) {
       setFoundedStates(FoundedStatesData?.data);
     }
-  }, [FoundedStatesData]);
-
-  useEffect(() => {
     if (SectorsDataFounded) {
       setSectorsFounded(SectorsDataFounded?.data);
     }
-  }, [SectorsDataFounded]);
-
-  useEffect(() => {
     if (DistrictData) {
       setDistrictsFounded(DistrictData?.data);
     }
-    canMove(false);
-  }, [DistrictData]);
-
-  useEffect(() => {
     if (CountryData) {
       setCountriesFounded(CountryData?.data);
     }
-  }, [CountryData]);
+    canMove(false);
+  }, [
+    WorkingSectorsData,
+    FoundedStatesData,
+    SectorsDataFounded,
+    DistrictData,
+    CountryData,
+  ]);
 
   const formik = useFormik({
     initialValues: {
@@ -158,7 +152,7 @@ function AddFoundedInfo({ canMove, newUser }: { canMove: any; newUser: any }) {
   };
 
   return (
-    <Box sx={{ marginTop: "15px" }}>
+    <div className="mt-4">
       {error && (
         <Alert variant="filled" severity="error">
           {error}
@@ -412,7 +406,7 @@ function AddFoundedInfo({ canMove, newUser }: { canMove: any; newUser: any }) {
         rel="founded"
         user={newUser}
       />
-    </Box>
+    </div>
   );
 }
 

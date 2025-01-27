@@ -91,6 +91,21 @@ function UpdateEmployedInfo() {
   }, [success, error]);
 
   useEffect(() => {
+    if (CountryData) {
+      setCountriesEmployed(CountryData?.data);
+    }
+    if (EmployedStatesData) {
+      setEmployedStates(EmployedStatesData?.data);
+    }
+    if (DistrictData) {
+      setDistrictsEmployed(DistrictData?.data);
+    }
+    if (SectorsDataEmployed) {
+      setSectorsEmployed(SectorsDataEmployed?.data);
+    }
+    if (WorkingSectorsData) {
+      setWorkingSectorsEmployed(WorkingSectorsData?.data);
+    }
     if (!UserData || !CountryData || !DistrictData || !WorkingSectorsData) {
       setIsLoading(true);
     } else {
@@ -99,37 +114,14 @@ function UpdateEmployedInfo() {
     if (UserData) {
       setUsr(UserData);
     }
-  }, [UserData, CountryData, DistrictData, WorkingSectorsData]);
-
-  useEffect(() => {
-    if (WorkingSectorsData) {
-      setWorkingSectorsEmployed(WorkingSectorsData?.data);
-    }
-  }, [WorkingSectorsData]);
-
-  useEffect(() => {
-    if (SectorsDataEmployed) {
-      setSectorsEmployed(SectorsDataEmployed?.data);
-    }
-  }, [SectorsDataEmployed]);
-
-  useEffect(() => {
-    if (DistrictData) {
-      setDistrictsEmployed(DistrictData?.data);
-    }
-  }, [DistrictData]);
-
-  useEffect(() => {
-    if (CountryData) {
-      setCountriesEmployed(CountryData?.data);
-    }
-  }, [CountryData]);
-
-  useEffect(() => {
-    if (EmployedStatesData) {
-      setEmployedStates(EmployedStatesData?.data);
-    }
-  }, [EmployedStatesData]);
+  }, [
+    CountryData,
+    EmployedStatesData,
+    DistrictData,
+    SectorsDataEmployed,
+    WorkingSectorsData,
+    UserData,
+  ]);
 
   useEffect(() => {
     if (usr?.organizationEmployed?.country?.id) {
@@ -220,7 +212,7 @@ function UpdateEmployedInfo() {
   }
 
   return (
-    <div className="">
+    <div>
       <div className="w-full">
         {error && (
           <Alert variant="filled" severity="error">
