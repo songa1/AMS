@@ -1,15 +1,10 @@
 import TopTitle from "@/components/Other/TopTitle";
-import dynamic from "next/dynamic";
-const IndividualChatPage = dynamic(
-  () => import("@/components/Dashboard/IndividualChatPage"),
-  { ssr: false }
-);
 
 function page() {
   return (
     <div>
       <TopTitle title="AMS Community Chat" />
-      <IndividualChatPage />
+      {/* <IndividualChatPage username="all" /> */}
     </div>
   );
 }

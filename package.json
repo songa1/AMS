@@ -2,6 +2,7 @@
   "name": "amsfronted",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -15,6 +16,7 @@
     "@mui/material": "^7.3.5",
     "@mui/x-data-grid": "^8.17.0",
     "@reduxjs/toolkit": "^2.10.1",
+    "@tailwindcss/postcss": "^4.1.17",
     "@toolpad/core": "^0.16.0",
     "dayjs": "^1.11.19",
     "formik": "^2.4.9",

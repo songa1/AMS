@@ -15,7 +15,7 @@ function ChatInput({
   return (
     <div className="relative flex h-10 w-full min-w-[200px]">
       <button
-        className="!absolute right-1 top-1 select-none rounded bg-mainBlue py-2 px-4 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md transition-all hover:shadow-md focus:shadow-lg active:shadow-md"
+        className="absolute! right-1 top-1 select-none rounded bg-mainBlue py-2 px-4 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md transition-all hover:shadow-md focus:shadow-lg active:shadow-md"
         type="submit"
         onClick={(e) => {
           e.preventDefault();
