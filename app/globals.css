@@ -1,6 +1,13 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=Stack+Sans+Text:wght@200..700&display=swap')
+layer(base);
+
+@import 'tailwindcss';
+
+@layer utilities {
+  * {
+    font-family: 'Stack Sans Text', sans-serif;
+  }
+}
 
 @layer utilities {
   .no-scrollbar::-webkit-scrollbar {
@@ -18,10 +25,6 @@
   overflow-x: hidden;
 }
 
-.chat {
-  @apply flex flex-col gap-2 rounded-xl border border-gray-200 p-3;
-}
-
 .received {
   border-top-right-radius: 15px;
   border-bottom-right-radius: 15px;
@@ -31,7 +34,6 @@
 }
 
 .sent {
-  @apply bg-mainBlue;
   border-top-left-radius: 15px;
   border-bottom-right-radius: 15px;
   border-bottom-left-radius: 15px;
@@ -45,74 +47,11 @@
 }
 
 .message {
-  @apply flex flex-col gap-2;
   font-size: medium;
   padding: 10px;
   width: 50%;
   margin-bottom: 20px;
   word-wrap: break-word;
-}
-
-.p-panel {
-  @apply flex flex-col gap-0;
-}
-
-.p-panel-header {
-  @apply bg-white py-0 my-0;
-}
-
-.p-panel-content {
-  @apply py-2;
-}
-
-.notifications {
-  @apply grid grid-cols-3 gap-3 h-[75vh];
-}
-
-.data-hold {
-  @apply grid grid-cols-3 gap-3 h-[50vh];
-}
-
-.notifications-left {
-  @apply border border-gray-200 rounded-md h-full overflow-scroll no-scrollbar relative;
-}
-
-.noti-sticky-header {
-  @apply text-center w-full bg-gray-100 p-3 rounded-t-md flex items-center justify-center h-10 font-bold text-mainBlue sticky top-0 right-0 left-0 z-50;
-}
-
-.notifications-right {
-  @apply border border-gray-200 col-span-2 rounded-md h-full overflow-scroll no-scrollbar relative;
-}
-
-.sidebar-menu {
-  @apply flex items-center p-2 rounded-lg text-white hover:bg-gray-800;
-}
-
-.notification ul {
-  @apply list-disc list-inside;
-}
-
-.notification div {
-  @apply w-full flex items-center justify-evenly py-2;
-}
-
-.notification div a {
-  @apply select-none rounded bg-mainBlue py-2 px-4 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md transition-all hover:shadow-md focus:shadow-lg active:shadow-md;
-}
-
-.field {
-  @apply flex flex-col w-full;
-}
-
-.td {
-  @apply flex items-center justify-center;
-}
-
-table,
-tr,
-td {
-  @apply border border-gray-200;
 }
 
 .phone-input-container input {

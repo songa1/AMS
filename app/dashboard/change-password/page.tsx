@@ -1,8 +1,4 @@
-import dynamic from "next/dynamic";
-const ChangePasswordPage = dynamic(
-  () => import("@/components/Dashboard/ResetPassword"),
-  { ssr: false }
-);
+import ChangePasswordPage from "@/components/Dashboard/ResetPassword";
 
 function page() {
   return (

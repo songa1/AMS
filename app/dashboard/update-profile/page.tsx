@@ -1,6 +1,5 @@
-import TopTitle from "@/components/Other/TopTitle";
 import UpdateProfilepage from "@/components/Dashboard/Members/UpdateMember/UpdateProfilepage";
-import React from "react";
+import TopTitle from "@/components/Other/TopTitle";
 
 function page() {
   return (

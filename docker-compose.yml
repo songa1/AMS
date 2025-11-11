@@ -15,15 +15,12 @@ services:
       - BACKEND_ADDR=${NEXT_PUBLIC_API_URL}
     ports:
       - ${NGINX_PORT}:${NGINX_PORT}
-      - 80:80
 
     env_file:
       - .env
     networks:
       - yali-network
 
-    volumes:
-      - ~/certs:/etc/certs
 networks:
   yali-network:
     name: yali-network

@@ -1,11 +1,13 @@
 import IndividualChatPage from "@/components/Dashboard/Communications/IndividualChatPage";
 import TopTitle from "@/components/Other/TopTitle";
 
-function page() {
+async function page({ params }: { params: Promise<{ username: string }> }) {
+  const { username } = await params;
+  console.log(username);
   return (
     <div>
       <TopTitle title="Messages" />
-      <IndividualChatPage />
+      <IndividualChatPage username={username} />
     </div>
   );
 }

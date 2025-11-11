@@ -1,20 +1,32 @@
 FROM node:alpine
 
-WORKDIR /usr/app
+# Set working directory
+WORKDIR /usr/src/app
 
-RUN npm install --global pm2
+# Copy package files first for better layer caching
+COPY package*.json ./
 
+# Install dependencies (without dev packages for production)
+RUN npm ci --legacy-peer-deps
+
+# Copy the rest of the app
 COPY . .
-
-RUN npm install
 
 RUN npm run build
 
-RUN chown -R node /usr/app/.next/cache
-RUN chmod -R 744 /usr/app/.next/cache
+# Install PM2 globally
+RUN npm install --global pm2
 
+# Ensure cache and .next have correct permissions
+RUN mkdir -p .next/cache && \
+    chown -R node:node .next && \
+    chmod -R 755 .next
+
+# Expose port
 EXPOSE 3000
 
+# Switch to non-root user
 USER node
 
-CMD [ "pm2-runtime", "npm", "--", "start" ]
+# Start the app with PM2 (using npm start)
+CMD ["pm2-runtime", "start", "npm", "--", "start"]
