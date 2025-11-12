@@ -6,15 +6,11 @@ import * as Yup from "yup";
 import dayjs from "dayjs";
 import { Toast } from "primereact/toast";
 import relativeTime from "dayjs/plugin/relativeTime";
-import "react-quill/dist/quill.snow.css";
 import {
   useNotSetupsQuery,
   useUpdateSetupMutation,
 } from "@/lib/features/notificationSlice";
 import Button from "../Other/Button";
-import dynamic from "next/dynamic";
-
-const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 export const notificationTypes = {
   SIGNUP: "signup",
@@ -186,7 +182,7 @@ function NotificationSetup() {
             <label className="py-2">
               <b>Message:</b>
             </label>
-            <ReactQuill
+            {/* <ReactQuill
               className="w-full bg-gray-100 rounded-md h-[30vh] mb-11"
               theme="snow"
               defaultValue={
@@ -194,7 +190,7 @@ function NotificationSetup() {
               }
               value={formik.values.message}
               onChange={(e) => formik.setFieldValue("message", e)}
-            />
+            /> */}
             <label className="py-2">
               <b>Action:</b>
             </label>
