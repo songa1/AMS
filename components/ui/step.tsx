@@ -1,3 +1,5 @@
+import { steps } from "../Dashboard/AddNewUserPage";
+
 // Custom Step Component (Tailwind version of Step + StepLabel)
 interface CustomStepProps {
   label: string;
@@ -19,7 +21,6 @@ const CustomStep: React.FC<CustomStepProps> = ({
   const isActive = index === activeStep;
   const isAfter = index < activeStep;
 
-  // Determine circle style
   let circleStyle =
     "w-8 h-8 flex items-center justify-center rounded-full text-white font-bold transition duration-300";
   if (isCompleted || isAfter) {
@@ -40,7 +41,6 @@ const CustomStep: React.FC<CustomStepProps> = ({
     labelStyle += " text-gray-500";
   }
 
-  // Determine line style
   const lineStyle =
     "absolute top-4 left-[calc(50%+16px)] right-[calc(-50%+16px)] h-1 bg-gray-300 transition-colors duration-300 z-0";
   const completedLineStyle = "bg-green-500";
@@ -48,7 +48,6 @@ const CustomStep: React.FC<CustomStepProps> = ({
 
   return (
     <div className="flex-1 relative">
-      {/* Line connecting steps (excluding the last one) */}
       {index < steps.length - 1 && (
         <div
           className={`${lineStyle} ${isAfter ? completedLineStyle : ""} ${isActive ? activeLineStyle : ""}`}

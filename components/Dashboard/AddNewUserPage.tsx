@@ -6,7 +6,7 @@ import AddPersonalInfo from "./AddMember/AddPersonalInfo";
 import AddFoundedInfo from "./AddMember/AddFoundedInfo";
 import AddEmployedInfo from "./AddMember/AddEmployedInfo";
 
-const steps = [
+export const steps = [
   "Personal Information",
   "Founded Initiative information",
   "Employment information",
