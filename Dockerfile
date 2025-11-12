@@ -4,15 +4,14 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 RUN npm install --legacy-peer-deps
 COPY . .
-RUN npm run build
+RUN npm run build -- --no-turbo
 
 # ---- Production Stage ----
 FROM node:20-alpine
 WORKDIR /usr/src/app
-COPY --from=builder /usr/src/app/.next ./.next
-COPY --from=builder /usr/src/app/public ./public
-COPY --from=builder /usr/src/app/package*.json ./
+COPY .next ./.next
+COPY public ./public
+COPY package*.json ./
 RUN npm install --production --legacy-peer-deps
-
 EXPOSE 3000
 CMD ["npm", "start"]
