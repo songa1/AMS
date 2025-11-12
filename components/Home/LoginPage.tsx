@@ -4,26 +4,8 @@ import { useLoginMutation } from "@/lib/features/authSlice";
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { CustomInputError } from "../ui/input-error";
+import Header from "./Header";
 
-// Placeholder for Header (Replaces original Header)
-const SimpleHeader = () => (
-  <div className="text-center mb-8">
-    <div className="inline-flex items-center space-x-2 p-3 rounded-xl bg-indigo-600 shadow-lg">
-      {/* Simple App Icon */}
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        className="h-7 w-7 text-white"
-        viewBox="0 0 20 20"
-        fill="currentColor"
-      >
-        <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 110-6 3 3 0 010 6z" />
-      </svg>
-      <h1 className="text-2xl font-extrabold text-white tracking-wider font-sans">
-        APP NAME
-      </h1>
-    </div>
-  </div>
-);
 
 const AUTH_STORED_DATA = {
   USER: "auth_user_data",
@@ -126,7 +108,7 @@ const LoginPage = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-4">
       <div className="w-full max-w-md bg-white p-8 sm:p-10 rounded-3xl shadow-2xl border border-gray-100 transition duration-500 ease-in-out hover:shadow-xl">
-        <SimpleHeader />
+        <Header />
 
         <h2 className="text-3xl font-extrabold text-gray-900 text-center mb-8">
           Sign in to your account
