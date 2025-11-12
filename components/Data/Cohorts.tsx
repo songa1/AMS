@@ -5,183 +5,292 @@ import {
   useCohortsQuery,
   useDeleteCohortMutation,
 } from "@/lib/features/otherSlice";
-import { useFormik } from "formik";
-import React, { useEffect, useRef, useState } from "react";
-import * as Yup from "yup";
-import InputError from "../Other/InputError";
-import { DataTable } from "primereact/datatable";
-import { Column } from "primereact/column";
+import React, { useEffect, useState } from "react";
 import dayjs from "dayjs";
-import { Toast } from "primereact/toast";
 import { FiDelete } from "react-icons/fi";
+import { ToastNotification } from "../ui/toast";
+import { CustomInputError } from "../ui/input-error";
+
+interface CohortType {
+  id: number;
+  name: string;
+  description: string;
+  createdAt: string;
+}
 
 function Cohorts() {
-  const toast: any = useRef(null);
-  const [error, setError] = useState();
-  const [loading, setLoading] = useState();
+  const [toast, setToast] = useState<{
+    type: "success" | "error" | "info";
+    message: string;
+  } | null>(null);
+
+  const [cohortName, setCohortName] = useState("");
+  const [cohortDescription, setCohortDescription] = useState("");
+
+  // Validation error state replacement for Formik.errors
+  const [formErrors, setFormErrors] = useState<{
+    name?: string;
+    description?: string;
+  }>({});
+
+  const [loading, setLoading] = useState(false);
   const [data, setData] = useState<any>([]);
 
   const { data: CohortsData, refetch } = useCohortsQuery("");
   const [addCohort] = useAddCohortMutation();
   const [deleteCohort] = useDeleteCohortMutation();
 
+  const handleCloseToast = () => setToast(null);
+
   useEffect(() => {
-    if (CohortsData) {
-      setData(
-        CohortsData?.data
-          .map((c: any) => {
-            return {
-              Name: c?.name,
-              Description: c?.description,
-              CreatedAt: dayjs(c.createdAt).format("DD-MM-YYYY"),
-              Action: (
-                <button
-                  className=" bg-red-600 text-xs p-1 rounded"
-                  disabled={c?.name === "Not Specified"}
-                  onClick={async (e) => {
-                    e.preventDefault();
-                    await handleDelete(c.id);
-                  }}
-                >
-                  <FiDelete />
-                </button>
-              ),
-            };
-          })
-          .sort((a: any, b: any) => a.createdAt - b.createdAt)
-      );
+    if (CohortsData && CohortsData.data) {
+      // Mapping logic remains similar, but directly uses the API data structure
+      const processedData = CohortsData.data
+        .map((c: CohortType) => {
+          return {
+            id: c.id,
+            Name: c?.name,
+            Description: c?.description,
+            CreatedAt: dayjs(c.createdAt).format("DD-MM-YYYY"),
+            isDefault: c?.name === "Not Specified", // Use a flag for easy check
+          };
+        })
+        .sort(
+          (a: any, b: any) =>
+            new Date(a.CreatedAt).getTime() - new Date(b.CreatedAt).getTime()
+        );
+      setData(processedData);
     }
   }, [CohortsData]);
 
   const handleDelete = async (id: number) => {
     try {
-      const res = await deleteCohort(id).unwrap();
-      if (res) {
-        refetch();
-        toast.current.show({
-          severity: "info",
-          summary: "Success",
-          detail: "Cohort deleted successfully!",
-        });
-      }
-    } catch (error) {
-      console.log(error);
+      setLoading(true);
+      await deleteCohort(id).unwrap();
+
+      refetch();
+      setToast({
+        type: "info",
+        message: "Cohort deleted successfully!",
+      });
+    } catch (error: any) {
+      console.error("Delete error:", error);
+      setToast({
+        type: "error",
+        message:
+          error?.data?.message ||
+          "Failed to delete cohort. Please check permissions.",
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
-  const formik = useFormik({
-    initialValues: {
-      name: "",
-      description: "",
-    },
-    validationSchema: Yup.object({}),
-    onSubmit: async (values) => {
-      try {
-        const res = await addCohort({
-          name: values?.name,
-          description: values?.description,
-        }).unwrap();
-        if (res && res.status === 400) {
-          toast.current.show({
-            severity: "error",
-            summary: "Error",
-            detail: res?.data?.message,
-          });
-        }
-        if (res) {
-          console.log(res);
-          formik.resetForm();
-          refetch();
-          toast.current.show({
-            severity: "info",
-            summary: "Success",
-            detail: "Cohort added successfully!",
-          });
-        }
-      } catch (error: any) {
-        console.log(error);
-        toast.current.show({
-          severity: "error",
-          summary: "Error",
-          detail: error?.error || error?.data?.message || error?.data?.error,
+  // Custom Validation Logic (Replacing Yup)
+  const validateForm = () => {
+    const errors: { name?: string; description?: string } = {};
+    if (!cohortName.trim()) {
+      errors.name = "Cohort Name is required.";
+    }
+    if (!cohortDescription.trim()) {
+      errors.description = "Description is required.";
+    }
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  // Custom Submission Logic (Replacing Formik.handleSubmit)
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!validateForm()) {
+      setToast({
+        type: "error",
+        message: "Please fix the errors in the form.",
+      });
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const res = await addCohort({
+        name: cohortName,
+        description: cohortDescription,
+      }).unwrap();
+
+      // Check for specific API error response structure
+      if (res && res.status === 400) {
+        setToast({
+          type: "error",
+          message: res?.data?.message || "Error adding cohort.",
         });
+        return;
       }
-    },
-  });
+
+      // Success case
+      setCohortName("");
+      setCohortDescription("");
+      setFormErrors({});
+      refetch();
+      setToast({
+        type: "success",
+        message: "Cohort added successfully!",
+      });
+    } catch (error: any) {
+      console.error("Add cohort error:", error);
+      setToast({
+        type: "error",
+        message: error?.data?.message || "Failed to add cohort.",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const tableHeaders =
+    data.length > 0
+      ? Object.keys(data[0]).filter(
+          (key) => key !== "id" && key !== "isDefault"
+        )
+      : ["Name", "Description", "CreatedAt", "Action"];
 
   return (
-    <div>
-      <Toast ref={toast}></Toast>
-      <div className="data-hold">
-        <div className="notifications-left">
-          <h1 className="noti-sticky-header">Add Cohort</h1>
-          <form className="p-3">
-            {error && (
-              <p className="bg-red-500 text-white rounded-md text-center p-2 w-full">
-                {error}
-              </p>
-            )}
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700 mt-2"
-            >
-              Cohort Name:
-            </label>
-            <input
-              type="text"
-              id="name"
-              value={formik.values.name}
-              onChange={(e) => formik.setFieldValue("name", e.target.value)}
-              required
-              className="w-full p-2 mt-1 border rounded"
-            />
-            {formik.errors.name && formik.touched.name && (
-              <InputError error={formik.errors.name} />
-            )}
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700 mt-3"
-            >
-              Description:
-            </label>
-            <textarea
-              rows={5}
-              id="name"
-              value={formik.values.description}
-              onChange={(e) =>
-                formik.setFieldValue("description", e.target.value)
-              }
-              required
-              className="w-full p-2 mt-1 border rounded"
-            />
-            {formik.errors.description && formik.touched.description && (
-              <InputError error={formik.errors.description} />
-            )}
+    <div className="p-4 sm:p-6 bg-gray-50 min-h-screen">
+      <ToastNotification
+        type={toast?.type || "info"}
+        message={toast?.message || ""}
+        onClose={handleCloseToast}
+      />
+
+      <div className="flex flex-col lg:flex-row gap-6">
+        {/* Left Section: Add Cohort Form */}
+        <div className="lg:w-1/3 bg-white p-6 rounded-xl shadow-lg border border-gray-100 h-fit">
+          <h1 className="text-xl font-bold text-gray-800 mb-4 border-b pb-2">
+            Add Cohort
+          </h1>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Cohort Name Input */}
+            <div>
+              <label
+                htmlFor="name"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
+                Cohort Name:
+              </label>
+              <input
+                type="text"
+                id="name"
+                value={cohortName}
+                onChange={(e) => setCohortName(e.target.value)}
+                className="w-full p-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150"
+                required
+              />
+              <CustomInputError error={formErrors.name} />
+            </div>
+
+            {/* Description Textarea */}
+            <div>
+              <label
+                htmlFor="description"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
+                Description:
+              </label>
+              <textarea
+                rows={4}
+                id="description"
+                value={cohortDescription}
+                onChange={(e) => setCohortDescription(e.target.value)}
+                className="w-full p-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 resize-none"
+                required
+              />
+              <CustomInputError error={formErrors.description} />
+            </div>
+
+            {/* Submit Button */}
             <button
               type="submit"
-              className="w-full px-4 py-2 mt-4 font-bold text-white bg-mainBlue rounded hover:bg-mainblue-700"
+              className={`w-full px-4 py-2 mt-4 font-bold text-white rounded-lg transition duration-150 shadow-md ${
+                loading
+                  ? "bg-indigo-300 cursor-not-allowed"
+                  : "bg-indigo-600 hover:bg-indigo-700"
+              }`}
               disabled={loading}
-              onClick={(e) => {
-                e.preventDefault();
-                formik.handleSubmit();
-              }}
             >
-              {loading ? "Adding..." : "Add"}
+              {loading ? "Adding..." : "Add Cohort"}
             </button>
           </form>
         </div>
-        <div className="notifications-right">
-          <div className="noti-sticky-header">Cohorts</div>
-          <DataTable
-            value={data}
-            tableStyle={{ minWidth: "50rem" }}
-            editMode="cell"
-          >
-            {data.length > 0 &&
-              Object.keys(data[0]).map((key) => (
-                <Column key={key} field={key} header={key}></Column>
-              ))}
-          </DataTable>
+
+        {/* Right Section: Cohorts Table */}
+        <div className="lg:w-2/3 bg-white p-6 rounded-xl shadow-lg border border-gray-100 overflow-x-auto">
+          <h1 className="text-xl font-bold text-gray-800 mb-4 border-b pb-2">
+            Cohorts List
+          </h1>
+
+          <div className="min-w-full">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  {tableHeaders.map((header) => (
+                    <th
+                      key={header}
+                      scope="col"
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      {header}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {data.map((cohort: any) => (
+                  <tr key={cohort.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                      {cohort.Name}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-500 max-w-xs overflow-hidden truncate">
+                      {cohort.Description}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {cohort.CreatedAt}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      <button
+                        className={`p-2 rounded transition duration-150 ${
+                          cohort.isDefault
+                            ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                            : "bg-red-600 text-white hover:bg-red-700"
+                        }`}
+                        disabled={cohort.isDefault || loading}
+                        onClick={async (e) => {
+                          e.preventDefault();
+                          await handleDelete(cohort.id);
+                        }}
+                        title={
+                          cohort.isDefault
+                            ? "Cannot delete default cohort"
+                            : "Delete Cohort"
+                        }
+                      >
+                        <FiDelete className="w-4 h-4" />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+                {data.length === 0 && (
+                  <tr>
+                    <td
+                      colSpan={4}
+                      className="px-6 py-4 text-center text-gray-500 italic"
+                    >
+                      No cohorts found.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>

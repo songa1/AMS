@@ -1,7 +1,7 @@
 "use client";
 
 import dayjs from "dayjs";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import relativeTime from "dayjs/plugin/relativeTime";
 import {
   useNotificationsQuery,

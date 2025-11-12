@@ -1,54 +1,80 @@
+// NAVIGATION.tsx
 "use client";
 
-import { Navigation } from "@toolpad/core";
-import DashboardIcon from "@mui/icons-material/Dashboard";
-import AccountBoxIcon from "@mui/icons-material/AccountBox";
-import EnhancedEncryptionIcon from "@mui/icons-material/EnhancedEncryption";
-import LogoutIcon from "@mui/icons-material/Logout";
-import SettingsAccessibilityIcon from "@mui/icons-material/SettingsAccessibility";
-import CorporateFareIcon from "@mui/icons-material/CorporateFare";
-import FoundationIcon from "@mui/icons-material/Foundation";
-import EditIcon from "@mui/icons-material/Edit";
-import { Chip } from "@mui/material";
-import NotificationsIcon from "@mui/icons-material/Notifications";
-import ChatIcon from "@mui/icons-material/Chat";
-import PeopleIcon from "@mui/icons-material/People";
-import PersonAddIcon from "@mui/icons-material/PersonAdd";
+import {
+  MdDashboard,
+  MdAccountBox,
+  MdVpnKey,
+  MdLogout,
+  MdSettingsAccessibility,
+  MdCorporateFare,
+  MdFoundation,
+  MdEdit,
+  MdNotifications,
+  MdChat,
+  MdPeople,
+  MdPersonAdd,
+} from "react-icons/md";
 
-export const NAVIGATION: Navigation = [
+export type NavItem = {
+  segment: string;
+  title: string;
+  icon: React.ReactNode;
+  action?: React.ReactNode;
+  children?: NavItem[];
+};
+
+export type NavHeader = {
+  kind: "header";
+  title: string;
+};
+
+export type NavDivider = {
+  kind: "divider";
+};
+
+export type NavItemType = NavItem | NavHeader | NavDivider;
+
+const TailwindChip = ({ label }: { label: number }) => (
+  <span className="ml-auto inline-flex items-center justify-center px-2 py-0.5 text-xs font-medium leading-none text-blue-100 bg-blue-600 rounded-full">
+    {label}
+  </span>
+);
+
+export const NAVIGATION: NavItemType[] = [
   {
-    segment: "dashboard",
+    segment: "/dashboard",
     title: "Dashboard",
-    icon: <DashboardIcon />,
+    icon: <MdDashboard className="w-5 h-5" />,
   },
   {
     kind: "header",
     title: "Your Profile",
   },
   {
-    segment: "dashboard/profile",
+    segment: "/dashboard/profile",
     title: "View Profile",
-    icon: <AccountBoxIcon />,
+    icon: <MdAccountBox className="w-5 h-5" />,
   },
   {
-    segment: "dashboard/update-profile",
+    segment: "/dashboard/update-profile",
     title: "Edit Profile",
-    icon: <EditIcon />,
+    icon: <MdEdit className="w-5 h-5" />,
     children: [
       {
-        segment: "#",
+        segment: "/dashboard/update-profile#personal",
         title: "Personal Info",
-        icon: <SettingsAccessibilityIcon />,
+        icon: <MdSettingsAccessibility className="w-5 h-5" />,
       },
       {
-        segment: "#",
+        segment: "/dashboard/update-profile#organization",
         title: "Organization Info",
-        icon: <FoundationIcon />,
+        icon: <MdFoundation className="w-5 h-5" />,
       },
       {
-        segment: "#",
+        segment: "/dashboard/update-profile#employment",
         title: "Employment Info",
-        icon: <CorporateFareIcon />,
+        icon: <MdCorporateFare className="w-5 h-5" />,
       },
     ],
   },
@@ -60,16 +86,16 @@ export const NAVIGATION: Navigation = [
     title: "Communication",
   },
   {
-    segment: "dashboard/notifications",
+    segment: "/dashboard/notifications",
     title: "Notifications",
-    icon: <NotificationsIcon />,
-    action: <Chip label={4} color="info" size="small" />,
+    icon: <MdNotifications className="w-5 h-5" />,
+    action: <TailwindChip label={4} />,
   },
   {
-    segment: "dashboard/chat",
+    segment: "/dashboard/chat",
     title: "Chat",
-    icon: <ChatIcon />,
-    action: <Chip label={4} color="info" size="small" />,
+    icon: <MdChat className="w-5 h-5" />,
+    action: <TailwindChip label={4} />,
   },
   {
     kind: "divider",
@@ -79,14 +105,14 @@ export const NAVIGATION: Navigation = [
     title: "Users",
   },
   {
-    segment: "dashboard/users",
+    segment: "/dashboard/users",
     title: "Members",
-    icon: <PeopleIcon />,
+    icon: <MdPeople className="w-5 h-5" />,
   },
   {
-    segment: "dashboard/add-new-user",
+    segment: "/dashboard/add-new-user",
     title: "Add New User",
-    icon: <PersonAddIcon />,
+    icon: <MdPersonAdd className="w-5 h-5" />,
   },
   {
     kind: "divider",
@@ -96,13 +122,8 @@ export const NAVIGATION: Navigation = [
     title: "Security",
   },
   {
-    segment: "dashboard/change-password",
+    segment: "/dashboard/change-password",
     title: "Change Password",
-    icon: <EnhancedEncryptionIcon />,
-  },
-  {
-    segment: "logout",
-    title: "Logout",
-    icon: <LogoutIcon />,
+    icon: <MdVpnKey className="w-5 h-5" />,
   },
 ];

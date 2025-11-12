@@ -1,10 +1,8 @@
 "use client";
 
-import React from "react";
 import { BiEnvelope, BiNotification, BiUser } from "react-icons/bi";
 import OneStat from "../Other/OneStat";
 import { MdOutlinePending } from "react-icons/md";
-import { FaMessage } from "react-icons/fa6";
 import { useStatsQuery } from "@/lib/features/statsSlice";
 import Loading from "@/app/loading";
 

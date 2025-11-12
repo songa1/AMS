@@ -1,11 +1,7 @@
 "use client";
 
-import { Avatar } from "primereact/avatar";
 import React, { useEffect, useRef, useState } from "react";
-import { BiUser } from "react-icons/bi";
-import ChatInput from "../Other/ChatInput";
-import { useFormik } from "formik";
-import * as Yup from "yup";
+
 import {
   useAddMessageMutation,
   useChatsQuery,
@@ -18,20 +14,24 @@ import { User } from "@/types/user";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { useParams } from "next/navigation";
+import { ChatInput, CustomAvatar } from "../parts/ChatInput";
+
 
 function ChatPage() {
   const user = getUser();
   dayjs.extend(relativeTime);
   const [messages, setMessages] = useState<Message[]>([]);
-  const { username } = useParams();
+  const [messageInput, setMessageInput] = useState(""); // New state for input field
+  const { username } = useParams(); // username is the receiver's ID in private chat
 
+  // RTK Queries
   const { data: chatsData } = useChatsQuery("", {
     skip: !!username,
     pollingInterval: 500,
   });
 
   const { data: privateChatsData } = usePrivateMessagesQuery(
-    { id: username, oid: user?.id },
+    { id: username as string, oid: user?.id as string },
     {
       skip: !username,
       pollingInterval: 500,
@@ -39,22 +39,22 @@ function ChatPage() {
   );
 
   const [addMessage] = useAddMessageMutation();
-  const { data: UsersQuery } = useUsersQuery("");
+  const { data: usersQuery } = useUsersQuery("");
 
+  // Update messages state based on query data
   useEffect(() => {
     if (chatsData && !username) {
-      setMessages(chatsData?.data);
+      setMessages(chatsData?.data || []);
     }
   }, [chatsData, username]);
 
   useEffect(() => {
     if (privateChatsData && username) {
-      setMessages(privateChatsData?.data);
+      setMessages(privateChatsData?.data || []);
     }
   }, [privateChatsData, username]);
 
-  // const messages = username ? privateChatsData?.data : chatsData?.data;
-
+  // Scroll to bottom logic
   const messagesEndRef: any = useRef(null);
 
   const scrollToBottom = () => {
@@ -65,53 +65,72 @@ function ChatPage() {
     scrollToBottom();
   }, [messages]);
 
-  const formik = useFormik({
-    initialValues: {
-      message: "",
+  // --- Replaced Formik Logic with standard React State and Handler ---
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const trimmedMessage = messageInput.trim();
+
+    if (!trimmedMessage) return;
+
+    const values = {
+      message: trimmedMessage,
       senderId: user?.id,
-      receiverId: username ? username : "",
-    },
-    validationSchema: Yup.object({
-      message: Yup.string().required("Message is required"),
-      sender: Yup.string(),
-    }),
-    onSubmit: async (values) => {
-      try {
-        const res = await addMessage({ data: values }).unwrap();
-        formik.resetForm();
-      } catch (error) {
-        console.log(error);
-      }
-    },
-  });
+      receiverId: username ? (username as string) : "",
+    };
+
+    try {
+      // The API call structure based on your original code
+      await addMessage({ data: values }).unwrap();
+      setMessageInput(""); // Reset input field
+    } catch (error) {
+      console.error("Error sending message:", error);
+    }
+  };
+  // --- End Formik Replacement ---
+
+  // Get the recipient's name for private chat header
+  const recipient = username
+    ? usersQuery?.data.find((u: User) => u?.id === username)
+    : null;
+
+  // Get chat header display info
+  const headerTitle = username
+    ? `${recipient?.firstName || "Unknown"} ${recipient?.lastName || ""}`
+    : "Community Chat";
+
+  // Get chat subtitle/participants for community chat
+  const chatParticipants = usersQuery?.data
+    ? usersQuery.data
+        .slice(0, 2)
+        .map((u: User) => u.firstName)
+        .join(", ")
+    : "";
+  const remainingCount = usersQuery?.data ? usersQuery.data.length - 2 : 0;
+  const headerSubtitle = username
+    ? "" // Private chat doesn't need this subtitle
+    : `${chatParticipants}${remainingCount > 0 ? ` and ${remainingCount} others` : ""}`;
 
   return (
-    <div className="chat">
+    <div className="flex flex-col h-full max-h-[90vh] bg-white rounded-xl shadow-lg">
+      {/* Chat Header */}
       <div
-        className="bg-gray-100 left-0 right-0 top-0 p-4 rounded-t-xl flex items-center gap-3"
+        className="sticky top-0 bg-indigo-50 p-4 rounded-t-xl flex items-center gap-3 border-b border-indigo-100 shadow-sm"
         style={{ zIndex: 1 }}
       >
-        <Avatar icon={<BiUser />} />
+        <CustomAvatar
+          image={recipient?.picture || ""} // Use recipient picture if available
+          senderName={recipient?.firstName || ""}
+        />
         <div className="flex flex-col">
-          <h2 className="font-bold text-mainBlue">
-            {username
-              ? UsersQuery?.data.find((user: User) => user?.id == username)
-                  ?.firstName
-              : "Community Chat"}
-          </h2>
-          <p className="text-xs">
-            {!username &&
-              UsersQuery?.data
-                .slice(0, 2)
-                .map((user: User) => user?.firstName + ", ")}
-            {!username &&
-              UsersQuery?.data.length > 2 &&
-              " and " + UsersQuery?.data.length + " others"}
-          </p>
+          <h2 className="font-bold text-lg text-indigo-700">{headerTitle}</h2>
+          <p className="text-xs text-gray-500">{headerSubtitle}</p>
         </div>
       </div>
+
+      {/* Messages Area */}
       <div
-        className={`h-[70vh] p-2 rounded-xl w-full content-end overflow-scroll my-scrollable-div no-scrollbar`}
+        className={`flex-1 p-4 overflow-y-scroll space-y-4 bg-gray-50 custom-scrollbar`}
+        style={{ minHeight: "400px" }} // Added min-height for structure
       >
         {messages &&
           [...messages]
@@ -121,51 +140,79 @@ function ChatPage() {
                 new Date(b.createdAt).getTime()
             )
             .map((message) => {
+              const isSent = message?.senderId === user?.id;
+              const senderUser = usersQuery?.data.find(
+                (u: User) => u.id === message.senderId
+              );
+              const senderName = `${senderUser?.firstName || "Unknown"} ${
+                senderUser?.middleName || ""
+              }`;
+              const senderImage = senderUser?.picture || "";
+
               return (
                 <div
                   key={message?.id}
-                  className={`flex flex-1 gap-1 w-full ${
-                    message?.senderId === user?.id
-                      ? "sentContainer"
-                      : "receivedContainer"
+                  className={`flex gap-2 w-full ${
+                    isSent ? "justify-end" : "justify-start"
                   }`}
                 >
-                  <Avatar
-                    icon={<BiUser />}
-                    image={message?.senderId === user?.id ? user?.picture : ""}
-                  />
+                  {/* Receiver's side (Avatar on left) */}
+                  {!isSent && (
+                    <CustomAvatar image={senderImage} senderName={senderName} />
+                  )}
+
                   <div
-                    className={`message ${
-                      message?.senderId === user?.id ? "sent" : "received"
+                    className={`flex flex-col max-w-xs sm:max-w-md ${
+                      isSent ? "items-end" : "items-start"
                     }`}
                   >
-                    <p className="text-xs font-bold">
-                      {message?.sender?.firstName +
-                        " " +
-                        message?.sender?.middleName || ""}
-                    </p>
-                    <p>{message?.message}</p>
-                    <p className="text-xs text-gray-600">
+                    <div
+                      className={`py-2 px-4 rounded-xl shadow ${
+                        isSent
+                          ? "bg-indigo-600 text-white rounded-br-none"
+                          : "bg-white text-gray-800 rounded-tl-none"
+                      }`}
+                    >
+                      {!isSent && (
+                        <p className="text-xs font-semibold mb-1 opacity-80">
+                          {senderName}
+                        </p>
+                      )}
+                      <p className="text-sm">{message?.message}</p>
+                    </div>
+                    <p
+                      className={`text-xs mt-1 ${
+                        isSent ? "text-gray-500" : "text-gray-400"
+                      }`}
+                    >
                       {dayjs(message?.createdAt).fromNow()}
                     </p>
                   </div>
+
+                  {/* Sender's side (Avatar on right) */}
+                  {isSent && (
+                    <CustomAvatar image={senderImage} senderName={senderName} />
+                  )}
                 </div>
               );
             })}
+
         {messages && messages.length === 0 && (
-          <div className="flex h-full w-full justify-center items-center">
+          <div className="flex h-full w-full justify-center items-center text-gray-500 italic">
             No messages yet, send a message to start the conversation!
           </div>
         )}
         <div ref={messagesEndRef} />
       </div>
-      <form className="flex gap-2 items-center">
+
+      {/* Input Area */}
+      <div className="p-4 border-t border-gray-200 bg-white rounded-b-xl">
         <ChatInput
-          onSubmit={() => formik.handleSubmit()}
-          value={formik.values.message}
-          setValue={(e: any) => formik.setFieldValue("message", e.target.value)}
+          handleSubmit={handleSubmit}
+          value={messageInput}
+          setValue={(e) => setMessageInput(e.target.value)}
         />
-      </form>
+      </div>
     </div>
   );
 }

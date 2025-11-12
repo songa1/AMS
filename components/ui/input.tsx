@@ -6,9 +6,6 @@ interface InputFieldProps {
   value: string;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   placeholder: string;
-  // Note: Validation/Error handling is simplified for this demo, but can be added back
-  // error?: string;
-  // touched?: boolean;
 }
 
 export const InputField: React.FC<InputFieldProps> = ({
@@ -30,11 +27,6 @@ export const InputField: React.FC<InputFieldProps> = ({
       onChange={onChange}
       placeholder={placeholder}
       className="p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out bg-white/70 shadow-sm"
-      // Simplified error display styling:
-      // className={`p-3 border rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out bg-white/70 shadow-sm ${
-      //   error && touched ? 'border-red-500' : 'border-gray-300'
-      // }`}
     />
-    {/* {error && touched && <p className="text-xs text-red-500 mt-1">{error}</p>} */}
   </div>
 );

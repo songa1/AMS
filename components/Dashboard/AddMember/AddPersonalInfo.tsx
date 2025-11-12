@@ -1,15 +1,5 @@
-"use strict";
+"use client";
 
-import {
-  Alert,
-  Button,
-  FormControl,
-  FormHelperText,
-  InputLabel,
-  MenuItem,
-  Select,
-  TextField,
-} from "@mui/material";
 import React, { useEffect, useState } from "react";
 import {
   cohort,
@@ -20,8 +10,6 @@ import {
   State,
   Track,
 } from "@/types/user";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import { styled } from "@mui/material/styles";
 import {
   useCohortsQuery,
   useCountriesQuery,
@@ -36,113 +24,450 @@ import {
   useUploadPictureMutation,
 } from "@/lib/features/userSlice";
 import { getUser } from "@/helpers/auth";
-import * as Yup from "yup";
-import { useFormik } from "formik";
-import "react-phone-number-input/style.css";
-import PhoneInputWithCountrySelect from "react-phone-number-input";
 
-const VisuallyHiddenInput = styled("input")({
-  clip: "rect(0 0 0 0)",
-  clipPath: "inset(50%)",
-  height: 1,
-  overflow: "hidden",
-  position: "absolute",
-  bottom: 0,
-  left: 0,
-  whiteSpace: "nowrap",
-  width: 1,
-});
+
+export const TailwindButton = ({
+  onClick,
+  children,
+  className = "",
+  disabled = false,
+  icon: IconComponent = null,
+}: any) => (
+  <button
+    onClick={onClick}
+    disabled={disabled}
+    className={`flex items-center justify-center px-4 py-2 font-semibold text-white rounded-md transition duration-150 ease-in-out 
+      ${disabled ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"} 
+      ${className}`}
+  >
+    {IconComponent && <IconComponent className="w-5 h-5 mr-2" />}
+    {children}
+  </button>
+);
+
+export const TailwindInput = ({
+  id,
+  label,
+  type = "text",
+  value,
+  onChange,
+  placeholder,
+  required = false,
+  error,
+  helperText,
+  multiline = false,
+  rows = 1,
+}: any) => (
+  <div className="flex flex-col w-full">
+    <label htmlFor={id} className="text-sm font-medium text-gray-700 mb-1">
+      {label} {required && <span className="text-red-500">*</span>}
+    </label>
+    {multiline ? (
+      <textarea
+        id={id}
+        rows={rows}
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        required={required}
+        className={`w-full p-2 border ${error ? "border-red-500" : "border-gray-300"} rounded-md focus:ring-blue-500 focus:border-blue-500`}
+      />
+    ) : (
+      <input
+        id={id}
+        type={type}
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        required={required}
+        className={`w-full p-2 border ${error ? "border-red-500" : "border-gray-300"} rounded-md focus:ring-blue-500 focus:border-blue-500`}
+      />
+    )}
+    {helperText && (
+      <p className={`text-xs mt-1 ${error ? "text-red-500" : "text-gray-500"}`}>
+        {helperText}
+      </p>
+    )}
+  </div>
+);
+
+export const TailwindSelect = ({
+  id,
+  label,
+  value,
+  onChange,
+  options,
+  placeholder,
+  required = false,
+  error,
+  helperText,
+  disabled = false,
+}: any) => (
+  <div className="flex flex-col w-full">
+    <label htmlFor={id} className="text-sm font-medium text-gray-700 mb-1">
+      {label} {required && <span className="text-red-500">*</span>}
+    </label>
+    <select
+      id={id}
+      value={value}
+      onChange={onChange}
+      required={required}
+      disabled={disabled}
+      className={`w-full p-2 border ${error ? "border-red-500" : "border-gray-300"} bg-white rounded-md focus:ring-blue-500 focus:border-blue-500 ${disabled ? "bg-gray-100 cursor-not-allowed" : ""}`}
+    >
+      <option value="" disabled>
+        {placeholder || `Select ${label}`}
+      </option>
+      {options.map((option: any) => (
+        <option key={option.id || option.name} value={option.id || option.name}>
+          {option.name}
+        </option>
+      ))}
+    </select>
+    {helperText && (
+      <p className={`text-xs mt-1 ${error ? "text-red-500" : "text-gray-500"}`}>
+        {helperText}
+      </p>
+    )}
+  </div>
+);
+
+export const TailwindAlert = ({
+  severity,
+  children,
+}: {
+  severity: "success" | "error";
+  children: React.ReactNode;
+}) => {
+  const baseClasses = "p-4 rounded-md text-sm mb-4";
+  const colorClasses =
+    severity === "success"
+      ? "bg-green-100 text-green-700 border border-green-400"
+      : "bg-red-100 text-red-700 border border-red-400";
+  return <div className={`${baseClasses} ${colorClasses}`}>{children}</div>;
+};
+
+const CloudUploadIcon = (props: any) => (
+  <svg
+    {...props}
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    className="w-5 h-5"
+  >
+    <path
+      fillRule="evenodd"
+      d="M10.5 3.75a6 6 0 0 0-5.61 8.845 3.75 3.75 0 0 0-4.162-4.162 6 6 0 0 0 8.845-5.61Z"
+      clipRule="evenodd"
+    />
+    <path d="M11.875 14.125a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0ZM12 18H5.625a3.375 3.375 0 1 1-3.375-3.375V11.25A4.5 4.5 0 0 1 6.375 6.75h11.25A4.5 4.5 0 0 1 22.125 11.25v3.375a3.375 3.375 0 0 1-3.375 3.375H12Z" />
+  </svg>
+);
+
+export const PhoneInputTailwind = ({
+  id,
+  label,
+  value,
+  onChange,
+  error,
+  helperText,
+  placeholder,
+  required = false,
+}: any) => (
+  <div className="flex flex-col w-full">
+    <label htmlFor={id} className="text-sm font-medium text-gray-700 mb-1">
+      {label} {required && <span className="text-red-500">*</span>}
+    </label>
+    <div className="relative">
+      <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+        <span className="text-gray-500">+</span>
+      </div>
+      <input
+        id={id}
+        type="tel"
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        required={required}
+        className={`w-full p-2 pl-6 border ${error ? "border-red-500" : "border-gray-300"} rounded-md focus:ring-blue-500 focus:border-blue-500`}
+      />
+    </div>
+    {helperText && (
+      <p className={`text-xs mt-1 ${error ? "text-red-500" : "text-gray-500"}`}>
+        {helperText}
+      </p>
+    )}
+  </div>
+);
+
+
+interface FormValues {
+  bio: string;
+  firstName: string;
+  middleName: string;
+  lastName: string;
+  email: string;
+  linkedin: string;
+  instagram: string;
+  twitter: string;
+  facebook: string;
+  gender: string; // Will store the ID/Name
+  phoneNumber: string;
+  districtName: string; // Will store the Name/ID
+  sectorId: string; // Will store the ID
+  residentCountryId: string; // Will store the ID (e.g., "RW")
+  whatsAppNumber: string;
+  nearlestLandmark: string;
+  track: string; // Will store the ID
+  cohortId: string; // Will store the ID
+  state: string; // Will store the ID
+  foundedPosition: string;
+  foundedDistrictName: string;
+  profileImageId: string;
+}
+
+interface FormErrors {
+  [key: string]: string;
+}
+
+// Initial form state
+const initialValues: FormValues = {
+  bio: "",
+  firstName: "",
+  middleName: "",
+  lastName: "",
+  email: "",
+  linkedin: "",
+  instagram: "",
+  twitter: "",
+  facebook: "",
+  gender: "",
+  phoneNumber: "",
+  districtName: "",
+  sectorId: "",
+  residentCountryId: "",
+  whatsAppNumber: "",
+  nearlestLandmark: "",
+  track: "",
+  cohortId: "",
+  state: "",
+  foundedPosition: "",
+  foundedDistrictName: "",
+  profileImageId: "",
+};
+
+// Simple manual validation function
+const validate = (values: FormValues) => {
+  const errors: FormErrors = {};
+
+  if (!values.firstName) {
+    errors.firstName = "First name is required";
+  }
+  if (!values.lastName) {
+    errors.lastName = "Last name is required";
+  }
+  if (!values.email) {
+    errors.email = "Email is required";
+  } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
+    errors.email = "Invalid email address";
+  }
+  if (values.bio.length > 500) {
+    errors.bio = "Bio cannot exceed 500 characters";
+  }
+  if (
+    values.linkedin &&
+    !/^https?:\/\/(www\.)?linkedin\.com\//i.test(values.linkedin)
+  ) {
+    errors.linkedin = "Invalid LinkedIn URL";
+  }
+  if (
+    values.instagram &&
+    !/^https?:\/\/(www\.)?instagram\.com\//i.test(values.instagram)
+  ) {
+    errors.instagram = "Invalid Instagram URL";
+  }
+  if (
+    values.twitter &&
+    !/^https?:\/\/(www\.)?twitter\.com\//i.test(values.twitter) &&
+    !/^https?:\/\/(www\.)?x\.com\//i.test(values.twitter)
+  ) {
+    errors.twitter = "Invalid Twitter/X URL";
+  }
+  if (
+    values.facebook &&
+    !/^https?:\/\/(www\.)?facebook\.com\//i.test(values.facebook)
+  ) {
+    errors.facebook = "Invalid Facebook URL";
+  }
+  if (values.phoneNumber && !/^\+?[0-9]+$/i.test(values.phoneNumber)) {
+    errors.phoneNumber = "Phone number must be digits only";
+  }
+  if (values.whatsAppNumber && !/^\+?[0-9]+$/i.test(values.whatsAppNumber)) {
+    errors.whatsAppNumber = "WhatsApp number must be digits only";
+  }
+  if (!values.gender) {
+    errors.gender = "Gender is required";
+  }
+  if (!values.track) {
+    errors.track = "Track is required";
+  }
+  if (!values.residentCountryId) {
+    errors.residentCountryId = "Resident Country is required";
+  }
+
+  // Rwanda specific fields conditional validation
+  if (values.residentCountryId === "RW") {
+    if (!values.districtName) errors.districtName = "District is required";
+    if (!values.sectorId) errors.sectorId = "Sector is required";
+  } else if (values.residentCountryId && !values.state) {
+    // Other countries need a state/province
+    errors.state = "State/Province is required";
+  }
+
+  return errors;
+};
+
+// --- Main Component ---
 
 function AddPersonalInfo({ canMove }: { canMove: any }) {
   const user = getUser();
 
-  const [country, setCountry] = useState("");
-  const [districts, setDistricts] = useState([]);
-  const [states, setStates] = useState([]);
-  const [sectors, setSectors] = useState([]);
-  const [selectedDistrict, setSelectedDistrict] = useState("");
-  const [countries, setCountries] = useState([]);
+  // API Data States (existing)
+  const [countries, setCountries] = useState<Country[]>([]);
+  const [states, setStates] = useState<State[]>([]);
+  const [districts, setDistricts] = useState<residentDistrict[]>([]);
+  const [sectors, setSectors] = useState<residentSector[]>([]);
+  const [tracks, setTracks] = useState<Track[]>([]);
+  const [genders, setGenders] = useState<gender[]>([]);
+  const [cohorts, setCohorts] = useState<cohort[]>([]);
+
+  // UI/Form Flow States (existing)
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [imageData, setImageData] = useState<any>(null);
   const [uploadSuccess, setUploadSuccess] = useState(false);
+  const [loading, setLoading] = useState(false); // New loading state for submit
 
-  const [tracks, setTracks] = useState([]);
-  const [genders, setGenders] = useState([]);
-  const [cohorts, setCohorts] = useState([]);
+  // Form States (replacing Formik)
+  const [formValues, setFormValues] = useState<FormValues>(initialValues);
+  const [formErrors, setFormErrors] = useState<FormErrors>({});
+  const [touched, setTouched] = useState<{ [key: string]: boolean }>({});
 
+  // Memoize state variables for RTK Query skipping logic
+  const residentCountryId = formValues.residentCountryId;
+  const districtName = formValues.districtName;
+
+  // RTK Query Hooks (existing logic preserved)
   const { data: GenderData } = useGenderQuery("");
   const { data: CountryData } = useCountriesQuery("");
-  const { data: StatesData } = useStatesByCountryQuery(country, {
-    skip: !country,
+  const { data: StatesData } = useStatesByCountryQuery(residentCountryId, {
+    skip: !residentCountryId,
   });
   const { data: DistrictData } = useDistrictsQuery("");
   const { data: CohortsData } = useCohortsQuery("");
-  const { data: SectorsData } = useSectorsByDistrictQuery(selectedDistrict, {
-    skip: !selectedDistrict,
+  const { data: SectorsData } = useSectorsByDistrictQuery(districtName, {
+    skip: !districtName || residentCountryId !== "RW",
   });
-
   const { data: TracksData } = useTracksQuery("");
 
   const [createUserProfile] = useCreateUserProfileMutation();
-
   const [uploadPicture] = useUploadPictureMutation();
 
+  // Data fetching effects (existing logic preserved)
   useEffect(() => {
-    if (TracksData) {
-      setTracks(TracksData?.data);
-    }
+    if (TracksData) setTracks(TracksData?.data || []);
   }, [TracksData]);
 
   useEffect(() => {
-    if (GenderData) {
-      setGenders(GenderData?.data);
-    }
+    if (GenderData) setGenders(GenderData?.data || []);
   }, [GenderData]);
 
   useEffect(() => {
-    if (CohortsData) {
-      setCohorts(CohortsData?.data);
-    }
+    if (CohortsData) setCohorts(CohortsData?.data || []);
   }, [CohortsData]);
 
   useEffect(() => {
-    if (SectorsData) {
-      setSectors(SectorsData?.data);
-    }
+    // When district changes, reset sector and states if country is changing
+    if (SectorsData) setSectors(SectorsData?.data || []);
   }, [SectorsData]);
 
   useEffect(() => {
-    if (StatesData) {
-      setStates(StatesData?.data);
-    }
+    if (StatesData) setStates(StatesData?.data || []);
   }, [StatesData]);
 
   useEffect(() => {
-    if (DistrictData) {
-      setDistricts(DistrictData?.data);
-    }
+    if (DistrictData) setDistricts(DistrictData?.data || []);
   }, [DistrictData]);
 
   useEffect(() => {
-    if (CountryData) {
-      setCountries(CountryData?.data);
-    }
+    if (CountryData) setCountries(CountryData?.data || []);
   }, [CountryData]);
 
+  // Error/Success clearing effect (existing logic preserved)
   useEffect(() => {
     if (success || error) {
-      setInterval(() => {
+      const timer = setTimeout(() => {
         setSuccess("");
         setError("");
       }, 10000);
+      return () => clearTimeout(timer);
     }
   }, [success, error]);
 
-  const handlePreview = async (e: any) => {
-    const file = e.target.files[0];
+  // --- New Manual Form Handlers ---
+
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
+    const { id, value } = e.target;
+    setFormValues((prev) => ({ ...prev, [id]: value }));
+
+    // Real-time validation after touch/initial change
+    if (touched[id]) {
+      const newValues = { ...formValues, [id]: value };
+      const newErrors = validate(newValues);
+      setFormErrors((prev) => ({ ...prev, [id]: newErrors[id] || "" }));
+    }
+
+    // Special logic for cascading selects
+    if (id === "residentCountryId") {
+      setFormValues((prev) => ({
+        ...prev,
+        districtName: "",
+        sectorId: "",
+        state: "",
+      })); // Clear dependent fields
+      setFormErrors((prev) => ({
+        ...prev,
+        districtName: "",
+        sectorId: "",
+        state: "",
+      }));
+    }
+    if (id === "districtName") {
+      setFormValues((prev) => ({ ...prev, sectorId: "" })); // Clear dependent field
+      setFormErrors((prev) => ({ ...prev, sectorId: "" }));
+    }
+  };
+
+  const handleBlur = (
+    e: React.FocusEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
+    const { id } = e.target;
+    setTouched((prev) => ({ ...prev, [id]: true }));
+
+    // Validate on blur
+    const newErrors = validate(formValues);
+    setFormErrors((prev) => ({ ...prev, [id]: newErrors[id] || "" }));
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
     if (file) {
       setImageData(file);
       const reader = new FileReader();
@@ -150,11 +475,15 @@ function AddPersonalInfo({ canMove }: { canMove: any }) {
         setImagePreview(reader.result as string);
       };
       reader.readAsDataURL(file);
+      setUploadSuccess(false);
     }
   };
 
-  const handleFileUpload = async (e: any) => {
+  const handleFileUpload = async () => {
     if (imageData) {
+      setLoading(true);
+      setError("");
+      setSuccess("");
       try {
         const formData = new FormData();
         formData.append("profileImage", imageData);
@@ -164,109 +493,84 @@ function AddPersonalInfo({ canMove }: { canMove: any }) {
 
         if (data?.image) {
           setSuccess("Image uploaded successfully!");
-          formik.setFieldValue("profileImageId", data?.image?.id);
+          // Manually update the form value for profileImageId
+          setFormValues((prev) => ({ ...prev, profileImageId: data.image.id }));
           setUploadSuccess(true);
         }
       } catch (error: any) {
-        setError(error?.error);
+        setError(error?.error || "Image upload failed!");
+      } finally {
+        setLoading(false);
       }
     }
   };
 
-  const formik = useFormik({
-    initialValues: {
-      bio: "",
-      firstName: "",
-      middleName: "",
-      lastName: "",
-      email: "",
-      linkedin: "",
-      instagram: "",
-      twitter: "",
-      facebook: "",
-      gender: "",
-      phoneNumber: "",
-      districtName: "",
-      sectorId: "",
-      residentCountryId: "",
-      whatsAppNumber: "",
-      nearlestLandmark: "",
-      track: "",
-      cohortId: null,
-      state: null,
-      foundedPosition: "",
-      foundedDistrictName: "",
-      profileImageId: "",
-    },
-    validationSchema: Yup.object({
-      bio: Yup.string().max(500, "Bio cannot exceed 500 characters"),
-      firstName: Yup.string().required("First name is required"),
-      middleName: Yup.string(),
-      lastName: Yup.string().required("Last name is required"),
-      email: Yup.string()
-        .email("Invalid email address")
-        .required("Email is required"),
-      linkedin: Yup.string().url("Invalid LinkedIn URL"),
-      instagram: Yup.string().url("Invalid Instagram URL"),
-      twitter: Yup.string().url("Invalid Twitter URL"),
-      facebook: Yup.string().url("Invalid Facebook URL"),
-      gender: Yup.string().oneOf(
-        ["Male", "Female", "Other"],
-        "Select a valid gender"
-      ),
-      phoneNumber: Yup.string().matches(
-        /^[0-9]+$/,
-        "Phone number must be digits only"
-      ),
-      whatsAppNumber: Yup.string().matches(
-        /^[0-9]+$/,
-        "WhatsApp number must be digits only"
-      ),
-      nearlestLandmark: Yup.string().max(
-        255,
-        "Landmark cannot exceed 255 characters"
-      ),
-      track: Yup.string().required("Track is required"),
-      cohortId: Yup.number().nullable(),
-      profileImageId: Yup.string(),
-    }),
-    onSubmit: async (values) => {},
-  });
-
+  // Main Submit Handler (replaces formik.handleSubmit and your original handleSubmit logic)
   const handleSubmit = async () => {
-    const values: any = formik.values;
+    // 1. Run full validation
+    const errors = validate(formValues);
+    setFormErrors(errors);
+
+    // Set all fields as touched for visibility
+    const newTouched: { [key: string]: boolean } = {};
+    Object.keys(formValues).forEach((key) => {
+      newTouched[key] = true;
+    });
+    setTouched(newTouched);
+
+    // 2. Check for errors
+    if (Object.keys(errors).length > 0) {
+      setError("Please fix the validation errors before submitting.");
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+    setSuccess("");
+
+    const values = formValues;
+
     try {
+      // Find the gender name to pass to the API (since gender state stores ID)
+      const selectedGender = genders.find((g) => g.id === values.gender);
+
       const res = await createUserProfile({
         user: {
           firstName: values.firstName,
           middleName: values.middleName,
           lastName: values.lastName,
           email: values.email,
-          linkedin: values?.linkedin,
-          instagram: values?.instagram,
-          twitter: values?.twitter,
-          facebook: values?.facebook,
-          bio: values?.bio,
+          linkedin: values.linkedin,
+          instagram: values.instagram,
+          twitter: values.twitter,
+          facebook: values.facebook,
+          bio: values.bio,
+          // Removed react-phone-number-input dependency
           phoneNumber: values.phoneNumber,
           whatsappNumber: values.whatsAppNumber,
-          genderName: values.gender.name,
+          genderName: selectedGender?.name, // Use the actual name
           nearestLandmark: values.nearlestLandmark,
-          cohortId: values?.cohortId?.id,
-          trackId: values?.track?.id,
-          residentDistrictId: values?.districtName,
-          residentSectorId: values?.sectorId.id,
-          state: values?.state?.id,
-          residentCountryId: values?.residentCountryId,
-          profileImageId: values?.profileImageId,
+          cohortId: values.cohortId,
+          trackId: values.track,
+          // Conditional fields based on residentCountryId
+          residentDistrictId:
+            values.residentCountryId === "RW" ? values.districtName : undefined,
+          residentSectorId:
+            values.residentCountryId === "RW" ? values.sectorId : undefined,
+          state: values.residentCountryId !== "RW" ? values.state : undefined,
+          residentCountryId: values.residentCountryId,
+          profileImageId: values.profileImageId,
         },
       }).unwrap();
+
       if (res.message) {
-        formik.resetForm();
+        // Reset form state on success
+        setFormValues(initialValues);
+        setFormErrors({});
+        setTouched({});
         setImagePreview(null);
         setImageData(null);
         setUploadSuccess(false);
-        if (formik.values.profileImageId)
-          formik.setFieldValue("profileImageId", "");
         setSuccess("User added successfully!");
         canMove(true);
       }
@@ -278,458 +582,361 @@ function AddPersonalInfo({ canMove }: { canMove: any }) {
           "Adding user Failed! Try again, or contact the administrator!"
         );
       }
+    } finally {
+      setLoading(false);
     }
   };
 
+  // Use a generic handler for select components, since they use ID/Name as value
+  const handleSelectChange =
+    (id: keyof FormValues) => (e: React.ChangeEvent<HTMLSelectElement>) => {
+      const value = e.target.value;
+      // Update state
+      setFormValues((prev) => ({ ...prev, [id]: value }));
+      setTouched((prev) => ({ ...prev, [id]: true }));
+
+      // Logic for dependent fields
+      if (id === "residentCountryId") {
+        setFormValues((prev) => ({
+          ...prev,
+          districtName: "",
+          sectorId: "",
+          state: "",
+        })); // Clear dependent fields
+      }
+      if (id === "districtName") {
+        setFormValues((prev) => ({ ...prev, sectorId: "" })); // Clear dependent field
+      }
+
+      // Validate
+      const newValues = { ...formValues, [id]: value };
+      const newErrors = validate(newValues);
+      setFormErrors((prev) => ({ ...prev, [id]: newErrors[id] || "" }));
+    };
+
   return (
-    <div>
-      {success && <Alert severity="success">{success}</Alert>}
-      {error && <Alert severity="error">{error}</Alert>}
-      <div className="relative">
+    <div className="p-4">
+      {/* Alert Replacements */}
+      {success && <TailwindAlert severity="success">{success}</TailwindAlert>}
+      {error && <TailwindAlert severity="error">{error}</TailwindAlert>}
+
+      <div className="relative border-b pb-4 mb-4">
         <div className="flex items-start justify-between p-2">
-          <div>
-            <Button
-              component="label"
-              role={undefined}
-              variant="contained"
-              tabIndex={-1}
-              startIcon={<CloudUploadIcon />}
+          {/* File Upload Button Replacement */}
+          <div className="flex flex-col items-start">
+            <label
+              htmlFor="profileImage"
+              className="flex items-center px-4 py-2 font-semibold text-white bg-green-600 hover:bg-green-700 rounded-md cursor-pointer transition duration-150 ease-in-out"
             >
+              <CloudUploadIcon className="w-5 h-5 mr-2" />
               Upload Profile Picture
-              <VisuallyHiddenInput type="file" onChange={handlePreview} />
-            </Button>
-            {imagePreview && (
-              <img
-                src={imagePreview}
-                alt="Image Preview"
-                className="mt-4 h-40 rounded-md w-40 object-cover"
+              <input
+                id="profileImage"
+                type="file"
+                className="sr-only" // Visually hidden input using Tailwind
+                onChange={handleFileChange}
+                accept="image/*"
               />
-            )}
+            </label>
+
             {imagePreview && (
-              <div className="flex gap-1 items-center my-1">
-                {!uploadSuccess && (
-                  <Button
-                    onClick={handleFileUpload}
-                    variant="contained"
-                    color="success"
-                    size="small"
+              <>
+                <img
+                  src={imagePreview}
+                  alt="Image Preview"
+                  className="mt-4 h-40 rounded-md w-40 object-cover border border-gray-300 shadow-md"
+                />
+                <div className="flex gap-2 items-center my-2">
+                  {!uploadSuccess && (
+                    <TailwindButton
+                      onClick={handleFileUpload}
+                      className="bg-green-500 hover:bg-green-600 px-3 py-1 text-sm"
+                      disabled={loading}
+                    >
+                      {loading ? "Uploading..." : "Upload"}
+                    </TailwindButton>
+                  )}
+                  <TailwindButton
+                    onClick={() => {
+                      setImagePreview(null);
+                      setImageData(null);
+                      setUploadSuccess(false);
+                      setFormValues((prev) => ({
+                        ...prev,
+                        profileImageId: "",
+                      }));
+                    }}
+                    className="bg-red-500 hover:bg-red-600 px-3 py-1 text-sm"
                   >
-                    Upload
-                  </Button>
-                )}
-                <Button
-                  onClick={() => {
-                    setImagePreview(null);
-                    setImageData(null);
-                    setUploadSuccess(false);
-                    if (formik.values.profileImageId)
-                      formik.setFieldValue("profileImageId", "");
-                  }}
-                  variant="contained"
-                  color="error"
-                  size="small"
-                >
-                  Clear
-                </Button>
-              </div>
+                    Clear
+                  </TailwindButton>
+                </div>
+              </>
             )}
           </div>
-          <Button
-            type="submit"
-            onClick={() => handleSubmit()}
-            variant="contained"
-            size="medium"
+
+          <TailwindButton
+            onClick={handleSubmit}
+            className="bg-blue-600 hover:bg-blue-700"
+            disabled={loading}
           >
-            Submit
-          </Button>
+            {loading ? "Submitting..." : "Submit"}
+          </TailwindButton>
         </div>
       </div>
-      <div className="p-3">
-        <TextField
+
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSubmit();
+        }}
+        className="space-y-4"
+      >
+        <TailwindInput
+          id="bio"
           label="Biography"
           multiline
           rows={5}
-          value={formik.values.bio}
-          onChange={(e) => formik.setFieldValue("bio", e.target.value)}
-          className="w-full"
+          value={formValues.bio}
+          onChange={handleChange}
+          onBlur={handleBlur}
           placeholder="Enter the user's BIO..."
+          error={!!formErrors.bio}
+          helperText={formErrors.bio}
         />
-        <div className="grid sm:grid-cols-1 md:grid-cols-2 gap-3 py-4">
-          <TextField
+
+        <div className="grid sm:grid-cols-1 md:grid-cols-2 gap-4">
+          <TailwindInput
+            id="firstName"
             label="First Name:"
-            variant="filled"
-            value={formik.values.firstName}
-            onChange={(e) => formik.setFieldValue("firstName", e.target.value)}
+            value={formValues.firstName}
+            onChange={handleChange}
+            onBlur={handleBlur}
             placeholder="First Name"
-            error={
-              formik.errors.firstName && formik.touched.firstName ? true : false
-            }
-            helperText={
-              formik.errors.firstName && formik.touched.firstName
-                ? formik.errors.firstName
-                : ""
-            }
+            required
+            error={!!formErrors.firstName}
+            helperText={formErrors.firstName}
           />
-          <TextField
+          <TailwindInput
+            id="middleName"
             label="Middle Name:"
-            variant="filled"
-            value={formik.values.middleName}
-            onChange={(e) => formik.setFieldValue("middleName", e.target.value)}
+            value={formValues.middleName}
+            onChange={handleChange}
+            onBlur={handleBlur}
             placeholder="Middle Name"
-            error={
-              formik.errors.middleName && formik.touched.middleName
-                ? true
-                : false
-            }
-            helperText={
-              formik.errors.middleName && formik.touched.middleName
-                ? formik.errors.middleName
-                : ""
-            }
+            error={!!formErrors.middleName}
+            helperText={formErrors.middleName}
           />
-          <TextField
+          <TailwindInput
+            id="lastName"
             label="Last Name:"
-            variant="filled"
-            value={formik.values.lastName}
-            onChange={(e) => formik.setFieldValue("lastName", e.target.value)}
+            value={formValues.lastName}
+            onChange={handleChange}
+            onBlur={handleBlur}
             placeholder="Last Name"
-            error={
-              formik.errors.lastName && formik.touched.lastName ? true : false
-            }
-            helperText={
-              formik.errors.lastName && formik.touched.lastName
-                ? formik.errors.lastName
-                : ""
-            }
+            required
+            error={!!formErrors.lastName}
+            helperText={formErrors.lastName}
           />
-          <TextField
+          <TailwindInput
+            id="email"
             label="Email:"
-            variant="filled"
-            value={formik.values.email}
-            onChange={(e) => formik.setFieldValue("email", e.target.value)}
+            type="email"
+            value={formValues.email}
+            onChange={handleChange}
+            onBlur={handleBlur}
             placeholder="Email"
             required
-            error={formik.errors.email && formik.touched.email ? true : false}
-            helperText={
-              formik.errors.email && formik.touched.email
-                ? formik.errors.email
-                : ""
-            }
+            error={!!formErrors.email}
+            helperText={formErrors.email}
           />
-          <PhoneInputWithCountrySelect
-            international
-            countryCallingCodeEditable={false}
-            defaultCountry="RW"
-            className="w-full"
-            value={formik.values.phoneNumber}
-            onChange={(e: any) => {
-              console.log(e);
-              formik.setFieldValue("phoneNumber", e.target.value);
-            }}
-            inputComponent={TextField}
-            variant="filled"
+
+          {/* Phone Input Replacement */}
+          <PhoneInputTailwind
+            id="phoneNumber"
             label="Phone Number:"
-            error={
-              formik.errors.phoneNumber && formik.touched.phoneNumber
-                ? true
-                : false
-            }
-            helperText={
-              formik.errors.phoneNumber && formik.touched.phoneNumber
-                ? formik.errors.phoneNumber
-                : ""
-            }
-            placeholder="Enter phone number"
+            value={formValues.phoneNumber}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            placeholder="e.g. +1 555 123 4567"
+            error={!!formErrors.phoneNumber}
+            helperText={formErrors.phoneNumber}
           />
-          <PhoneInputWithCountrySelect
-            international
-            countryCallingCodeEditable={false}
-            defaultCountry="RW"
-            className="w-full"
-            value={formik.values.whatsAppNumber}
-            onChange={(e: any) => {
-              formik.setFieldValue("whatsAppNumber", e);
-            }}
-            inputComponent={TextField}
-            variant="filled"
+          {/* WhatsApp Input Replacement */}
+          <PhoneInputTailwind
+            id="whatsAppNumber"
             label="WhatsApp Number:"
-            error={
-              formik.errors.whatsAppNumber && formik.touched.whatsAppNumber
-                ? true
-                : false
-            }
-            helperText={
-              formik.errors.whatsAppNumber && formik.touched.whatsAppNumber
-                ? formik.errors.whatsAppNumber
-                : ""
-            }
-            placeholder="Enter WhatsApp number"
+            value={formValues.whatsAppNumber}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            placeholder="e.g. +1 555 123 4567"
+            error={!!formErrors.whatsAppNumber}
+            helperText={formErrors.whatsAppNumber}
           />
-          <FormControl
-            variant="filled"
-            error={formik.errors.gender && formik.touched.gender ? true : false}
-            sx={{ minWidth: 120, width: "100%" }}
-          >
-            <InputLabel id="gender">Gender</InputLabel>
-            <Select
-              labelId="gender-label"
-              id="gender"
-              value={formik.values.gender}
-              onChange={(e) => formik.setFieldValue("gender", e.target.value)}
-            >
-              {genders.map((gen: gender) => (
-                <MenuItem key={gen?.id} value={gen.id}>
-                  {gen?.name}
-                </MenuItem>
-              ))}
-            </Select>
-            {formik.errors.gender && formik.touched.gender && (
-              <FormHelperText>{formik.errors.gender}</FormHelperText>
+
+          <TailwindSelect
+            id="gender"
+            label="Gender"
+            value={formValues.gender}
+            onChange={handleSelectChange("gender")}
+            onBlur={handleBlur}
+            options={genders}
+            required
+            placeholder="Select Gender"
+            error={!!formErrors.gender}
+            helperText={formErrors.gender}
+          />
+
+          <TailwindSelect
+            id="residentCountryId"
+            label="Resident Country"
+            value={formValues.residentCountryId}
+            onChange={handleSelectChange("residentCountryId")}
+            onBlur={handleBlur}
+            options={countries}
+            required
+            placeholder="Select Country"
+            error={!!formErrors.residentCountryId}
+            helperText={formErrors.residentCountryId}
+          />
+
+          {formValues.residentCountryId &&
+            formValues.residentCountryId !== "RW" && (
+              <TailwindSelect
+                id="state"
+                label="State / Province"
+                value={formValues.state}
+                onChange={handleSelectChange("state")}
+                onBlur={handleBlur}
+                options={states}
+                required
+                placeholder="Select State/Province"
+                error={!!formErrors.state}
+                helperText={formErrors.state}
+                disabled={states.length === 0}
+              />
             )}
-          </FormControl>
-          <FormControl
-            variant="filled"
-            error={
-              formik.errors.residentCountryId &&
-              formik.touched.residentCountryId
-                ? true
-                : false
-            }
-            sx={{ minWidth: 120, width: "100%" }}
-          >
-            <InputLabel id="gender">Resident Country</InputLabel>
-            <Select
-              labelId="country-label"
-              id="country"
-              value={formik.values.residentCountryId}
-              onChange={(e) => {
-                formik.setFieldValue("residentCountryId", e.target.value);
-                setCountry(e.target.value);
-                console.log(country);
-              }}
-            >
-              {countries.map((item: Country) => (
-                <MenuItem key={item?.id} value={item.id}>
-                  {item?.name}
-                </MenuItem>
-              ))}
-            </Select>
-            {formik.errors.residentCountryId &&
-              formik.touched.residentCountryId && (
-                <FormHelperText>
-                  {formik.errors.residentCountryId}
-                </FormHelperText>
-              )}
-          </FormControl>
-          {formik.values.residentCountryId !== "RW" && (
-            <FormControl
-              variant="filled"
-              error={formik.errors.state && formik.touched.state ? true : false}
-              sx={{ minWidth: 120, width: "100%" }}
-            >
-              <InputLabel>State</InputLabel>
-              <Select
-                labelId="state-label"
-                value={formik.values.state}
-                onChange={(e) => {
-                  console.log(e);
-                  formik.setFieldValue("state", e.target.value);
-                }}
-              >
-                {states.map((item: State) => (
-                  <MenuItem key={item?.id} value={item.id}>
-                    {item?.name}
-                  </MenuItem>
-                ))}
-              </Select>
-              {formik.errors.state && formik.touched.state && (
-                <FormHelperText>{formik.errors.state}</FormHelperText>
-              )}
-            </FormControl>
-          )}
-          {formik.values.residentCountryId === "RW" && (
-            <FormControl
-              variant="filled"
-              error={
-                formik.errors.districtName && formik.touched.districtName
-                  ? true
-                  : false
-              }
-              sx={{ minWidth: 120, width: "100%" }}
-            >
-              <InputLabel>District</InputLabel>
-              <Select
-                labelId="district-label"
-                value={formik.values.districtName}
-                onChange={(e) => {
-                  setSelectedDistrict(e.target.value);
-                  formik.setFieldValue("districtName", e.target.value);
-                  formik.setFieldValue("sectorId", "");
-                }}
-              >
-                {districts.map((item: residentDistrict) => (
-                  <MenuItem key={item?.id} value={item.name}>
-                    {item?.name}
-                  </MenuItem>
-                ))}
-              </Select>
-              {formik.errors.districtName && formik.touched.districtName && (
-                <FormHelperText>{formik.errors.districtName}</FormHelperText>
-              )}
-            </FormControl>
-          )}
-          {formik.values.residentCountryId === "RW" && (
-            <FormControl
-              variant="filled"
-              error={
-                formik.errors.sectorId && formik.touched.sectorId ? true : false
-              }
-              sx={{ minWidth: 120, width: "100%" }}
-            >
-              <InputLabel>Sector</InputLabel>
-              <Select
-                labelId="sector-label"
-                value={formik.values.sectorId}
-                onChange={(e) =>
-                  formik.setFieldValue("sectorId", e.target.value)
-                }
-              >
-                {sectors.map((item: residentSector) => (
-                  <MenuItem key={item?.id} value={item.id}>
-                    {item?.name}
-                  </MenuItem>
-                ))}
-              </Select>
-              {formik.errors.sectorId && formik.touched.sectorId && (
-                <FormHelperText>{formik.errors.sectorId}</FormHelperText>
-              )}
-            </FormControl>
+
+          {formValues.residentCountryId === "RW" && (
+            <TailwindSelect
+              id="districtName"
+              label="District"
+              value={formValues.districtName}
+              onChange={handleSelectChange("districtName")}
+              onBlur={handleBlur}
+              options={districts}
+              required
+              placeholder="Select District"
+              error={!!formErrors.districtName}
+              helperText={formErrors.districtName}
+              disabled={districts.length === 0}
+            />
           )}
 
-          <FormControl
-            variant="filled"
-            error={
-              formik.errors.cohortId && formik.touched.cohortId ? true : false
-            }
-            sx={{ minWidth: 120, width: "100%" }}
-          >
-            <InputLabel>Cohort</InputLabel>
-            <Select
-              labelId="cohort-label"
-              value={formik.values.cohortId}
-              onChange={(e) => formik.setFieldValue("cohortId", e.target.value)}
-            >
-              {cohorts.map((item: cohort) => (
-                <MenuItem key={item?.id} value={item.id}>
-                  {item?.name}
-                </MenuItem>
-              ))}
-            </Select>
-            {formik.errors.cohortId && formik.touched.cohortId && (
-              <FormHelperText>{formik.errors.cohortId}</FormHelperText>
-            )}
-          </FormControl>
-          <FormControl
-            variant="filled"
-            error={formik.errors.track && formik.touched.track ? true : false}
-            sx={{ minWidth: 120, width: "100%" }}
-          >
-            <InputLabel>Track</InputLabel>
-            <Select
-              labelId="track-label"
-              value={formik.values.track}
-              onChange={(e) => formik.setFieldValue("track", e.target.value)}
-            >
-              {tracks.map((item: Track) => (
-                <MenuItem key={item?.id} value={item.id}>
-                  {item?.name}
-                </MenuItem>
-              ))}
-            </Select>
-            {formik.errors.track && formik.touched.track && (
-              <FormHelperText>{formik.errors.track}</FormHelperText>
-            )}
-          </FormControl>
-          <TextField
+          {formValues.residentCountryId === "RW" && (
+            <TailwindSelect
+              id="sectorId"
+              label="Sector"
+              value={formValues.sectorId}
+              onChange={handleSelectChange("sectorId")}
+              onBlur={handleBlur}
+              options={sectors}
+              required
+              placeholder="Select Sector"
+              error={!!formErrors.sectorId}
+              helperText={formErrors.sectorId}
+              disabled={sectors.length === 0}
+            />
+          )}
+
+          <TailwindSelect
+            id="cohortId"
+            label="Cohort"
+            value={formValues.cohortId}
+            onChange={handleSelectChange("cohortId")}
+            onBlur={handleBlur}
+            options={cohorts}
+            placeholder="Select Cohort (Optional)"
+            error={!!formErrors.cohortId}
+            helperText={formErrors.cohortId}
+          />
+
+          <TailwindSelect
+            id="track"
+            label="Track"
+            value={formValues.track}
+            onChange={handleSelectChange("track")}
+            onBlur={handleBlur}
+            options={tracks}
+            required
+            placeholder="Select Track"
+            error={!!formErrors.track}
+            helperText={formErrors.track}
+          />
+
+          <TailwindInput
+            id="nearlestLandmark"
             label="Nearest Landmark:"
-            variant="filled"
-            value={formik.values.nearlestLandmark}
-            onChange={(e) =>
-              formik.setFieldValue("nearlestLandmark", e.target.value)
-            }
+            value={formValues.nearlestLandmark}
+            onChange={handleChange}
+            onBlur={handleBlur}
             placeholder="What's the popular place near you?"
-            error={
-              formik.errors.nearlestLandmark && formik.touched.nearlestLandmark
-                ? true
-                : false
-            }
-            helperText={
-              formik.errors.nearlestLandmark && formik.touched.nearlestLandmark
-                ? formik.errors.nearlestLandmark
-                : ""
-            }
+            error={!!formErrors.nearlestLandmark}
+            helperText={formErrors.nearlestLandmark}
           />
-          <TextField
-            label="LinkedIn Account:"
-            variant="filled"
-            value={formik.values.linkedin}
-            onChange={(e) => formik.setFieldValue("linkedin", e.target.value)}
+
+          {/* Social Media Links */}
+          <TailwindInput
+            id="linkedin"
+            label="LinkedIn Account (URL):"
+            value={formValues.linkedin}
+            onChange={handleChange}
+            onBlur={handleBlur}
             placeholder="https://linkedin.com/in/..."
-            error={
-              formik.errors.linkedin && formik.touched.linkedin ? true : false
-            }
-            helperText={
-              formik.errors.linkedin && formik.touched.linkedin
-                ? formik.errors.linkedin
-                : ""
-            }
+            error={!!formErrors.linkedin}
+            helperText={formErrors.linkedin}
           />
-          <TextField
-            label="X (Twitter) Account:"
-            variant="filled"
-            value={formik.values.twitter}
-            onChange={(e) => formik.setFieldValue("twitter", e.target.value)}
+          <TailwindInput
+            id="twitter"
+            label="X (Twitter) Account (URL):"
+            value={formValues.twitter}
+            onChange={handleChange}
+            onBlur={handleBlur}
             placeholder="https://x.com/..."
-            error={
-              formik.errors.twitter && formik.touched.twitter ? true : false
-            }
-            helperText={
-              formik.errors.twitter && formik.touched.twitter
-                ? formik.errors.twitter
-                : ""
-            }
+            error={!!formErrors.twitter}
+            helperText={formErrors.twitter}
           />
-          <TextField
-            label="Instagram Account:"
-            variant="filled"
-            value={formik.values.instagram}
-            onChange={(e) => formik.setFieldValue("instagram", e.target.value)}
+          <TailwindInput
+            id="instagram"
+            label="Instagram Account (URL):"
+            value={formValues.instagram}
+            onChange={handleChange}
+            onBlur={handleBlur}
             placeholder="https://instagram.com/..."
-            error={
-              formik.errors.instagram && formik.touched.instagram ? true : false
-            }
-            helperText={
-              formik.errors.instagram && formik.touched.instagram
-                ? formik.errors.instagram
-                : ""
-            }
+            error={!!formErrors.instagram}
+            helperText={formErrors.instagram}
           />
-          <TextField
-            label="Facebook Account:"
-            variant="filled"
-            value={formik.values.facebook}
-            onChange={(e) => formik.setFieldValue("facebook", e.target.value)}
+          <TailwindInput
+            id="facebook"
+            label="Facebook Account (URL):"
+            value={formValues.facebook}
+            onChange={handleChange}
+            onBlur={handleBlur}
             placeholder="https://facebook.com/..."
-            error={
-              formik.errors.facebook && formik.touched.facebook ? true : false
-            }
-            helperText={
-              formik.errors.facebook && formik.touched.facebook
-                ? formik.errors.facebook
-                : ""
-            }
+            error={!!formErrors.facebook}
+            helperText={formErrors.facebook}
           />
         </div>
+      </form>
+
+      <div className="flex justify-end pt-4 mt-4 border-t">
+        <TailwindButton
+          onClick={handleSubmit}
+          className="bg-blue-600 hover:bg-blue-700"
+          disabled={loading}
+        >
+          {loading ? "Submitting..." : "Submit All Data"}
+        </TailwindButton>
       </div>
     </div>
   );

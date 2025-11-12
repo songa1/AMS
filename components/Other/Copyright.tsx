@@ -1,28 +1,23 @@
-"use script";
+import Link from "next/link";
 
-import * as React from "react";
-import Link from "@mui/material/Link";
-import Typography from "@mui/material/Typography";
+const Copyright = () => {
+  const defaultClasses = "text-sm text-gray-500 text-center mt-6 font-sans";
 
-export default function Copyright(props: any) {
+  const combinedClasses = `${defaultClasses}`;
+
   return (
-    <Typography
-      variant="body2"
-      align="center"
-      {...props}
-      sx={[
-        {
-          color: "text.secondary",
-        },
-        ...(Array.isArray(props.sx) ? props.sx : [props.sx]),
-      ]}
-    >
+    <p className={combinedClasses}>
       {"Copyright © "}
-      <Link color="inherit" href="#">
+      <Link
+        href="#"
+        className="text-indigo-600 hover:text-indigo-800 transition-colors duration-150 font-medium"
+      >
         Alumni Management System
       </Link>{" "}
       {new Date().getFullYear()}
       {"."}
-    </Typography>
+    </p>
   );
-}
+};
+
+export default Copyright;

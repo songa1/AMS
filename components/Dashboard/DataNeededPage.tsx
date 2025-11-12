@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import Cohorts from "../Data/Cohorts";
 import Tracks from "../Data/Tracks";
 import WorkingSector from "../Data/WorkingSector";

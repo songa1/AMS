@@ -98,14 +98,12 @@ const UserCard: React.FC<UserCardProps> = ({ user, isAdmin, onDelete }) => {
   );
 };
 
-// 2. Custom Dropdown Menu (Replaces PrimeReact Menu)
 const ExportDropdown: React.FC<{ items: any; menuRef: any }> = ({
   items,
   menuRef,
 }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  // Close dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
@@ -279,7 +277,7 @@ const UsersPage = () => {
         isOpen={isOpen}
       />
       <FullScreenExport
-        refetch={refetch}
+        // refetch={refetch}
         setIsOpen={setExportOpen}
         isOpen={exportOpen}
         users={filteredUsers}

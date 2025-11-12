@@ -1,54 +1,56 @@
+// Layout.tsx
 "use client";
-
-// import React, { useState } from "react";
-// import Sidebar from "./Sidebar";
-// import { AccessDashboard } from "./AccessDashboard";
-
-// function Layout({ children }: { children: React.ReactNode }) {
-//   const [titles, setTitles] = useState(true);
-//   return (
-//     <div className="h-screen flex">
-//       <div className="h-full bg-mainBlue">
-//         <Sidebar titles={titles} setTitles={setTitles} />
-//       </div>
-
-//       <div className={`p-5 w-full h-screen ${!titles ? "ml-14" : "ml-60"}`}>
-//         <AccessDashboard>{children}</AccessDashboard>
-//       </div>
-//     </div>
-//   );
-// }
-
-import * as React from "react";
-import { DashboardLayout } from "@toolpad/core/DashboardLayout";
-import { PageContainer } from "@toolpad/core/PageContainer";
-import SidebarFooterAccount, { ToolbarAccountOverride } from "./SidebarFooter";
-import { NAVIGATION } from "./Sidebar";
-import { AppProvider } from "@toolpad/core";
+import React, { useState } from "react";
 import Copyright from "./Copyright";
+import { MdMenu } from "react-icons/md";
+import Sidebar from "../parts/DashboardSidebar";
 
-function Layout(props: any) {
+const AccessDashboard = ({ children }: { children: React.ReactNode }) => (
+  <div className="h-full w-full">{children}</div>
+);
+
+function Layout({ children }: { children: React.ReactNode }) {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+
+  const contentMargin = isSidebarOpen ? "ml-60" : "ml-20";
+
   return (
-    <AppProvider
-      navigation={NAVIGATION}
-      branding={{
-        logo: <img src="/yali.png" alt="YALI AMS logo" />,
-        title: "",
-        homeUrl: "/dashboard",
-      }}
-    >
-      <DashboardLayout
-        slots={{
-          toolbarAccount: ToolbarAccountOverride,
-          sidebarFooter: SidebarFooterAccount,
-        }}
+    <div className="min-h-screen flex bg-gray-100">
+      <Sidebar
+        isSidebarOpen={isSidebarOpen}
+        setIsSidebarOpen={setIsSidebarOpen}
+      />
+
+      <div
+        className={`flex-1 flex flex-col transition-all duration-300 ease-in-out ${contentMargin}`}
       >
-        <PageContainer>
-          {props.children}
-          <Copyright sx={{ my: 4 }} />
-        </PageContainer>
-      </DashboardLayout>
-    </AppProvider>
+        <header className="h-16 flex items-center justify-between p-4 bg-white border-b border-gray-200 sticky top-0 z-20 shadow-sm">
+          <button
+            onClick={toggleSidebar}
+            className="text-gray-600 hover:text-blue-600 transition-colors"
+            aria-label="Toggle sidebar"
+          >
+            <MdMenu className="w-6 h-6" />
+          </button>
+
+          <div className="flex items-center space-x-4">
+            <span className="text-gray-500">Welcome!</span>
+          </div>
+        </header>
+
+        <main className="flex-1 p-6 md:p-8 overflow-y-auto">
+          <AccessDashboard>{children}</AccessDashboard>
+        </main>
+
+        <footer className="p-4 border-t border-gray-200 bg-white">
+          <Copyright />
+        </footer>
+      </div>
+    </div>
   );
 }
 

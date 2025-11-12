@@ -1,16 +1,14 @@
 "use client";
 
-import { useFormik } from "formik";
-import React, { useEffect, useRef, useState } from "react";
-import * as Yup from "yup";
+import React, { useEffect, useState } from "react";
 import dayjs from "dayjs";
-import { Toast } from "primereact/toast";
 import relativeTime from "dayjs/plugin/relativeTime";
 import {
   useNotSetupsQuery,
   useUpdateSetupMutation,
 } from "@/lib/features/notificationSlice";
-import Button from "../Other/Button";
+import { ToastNotification } from "../ui/toast";
+import { CustomButton } from "../ui/button1";
 
 export const notificationTypes = {
   SIGNUP: "signup",
@@ -28,194 +26,246 @@ export const actionOptions = [
 ];
 
 function NotificationSetup() {
-  const toast: any = useRef(null);
+  const [toast, setToast] = useState<{
+    type: "success" | "error" | "info";
+    message: string;
+  } | null>(null);
+
   dayjs.extend(relativeTime);
   const [notifications, setNotifications] = useState<any>([]);
-  const [currentNotification, setCurrentNotification] = useState<string>();
-  const [notification, setNotification] = useState<any>();
-  const [actions, setActions] = useState<any[]>([]);
+  const [currentNotificationId, setCurrentNotificationId] = useState<
+    string | undefined
+  >();
+  const [selectedNotification, setSelectedNotification] = useState<any>();
 
-  const OnActionChange = (e: any) => {
-    let _actions = [...actions];
+  // Form states replacing Formik.values
+  const [message, setMessage] = useState("");
+  const [usage, setUsage] = useState(""); // This value seems derived from the selected notification
+  const [selectedActionIds, setSelectedActionIds] = useState<string[]>([]);
 
-    if (e.target.checked) {
-      if (!_actions.includes(e.target.value)) {
-        _actions.push(e.target.value);
-      }
-    } else {
-      _actions = _actions.filter((action) => action !== e.target.value);
+  const { data: SetupData, refetch: AllRefetch } = useNotSetupsQuery("");
+  const [updateSetup, { isLoading }] = useUpdateSetupMutation();
+
+  const handleCloseToast = () => setToast(null);
+
+  // 1. Initial Data and Notification Setup
+  useEffect(() => {
+    if (SetupData && SetupData.data && SetupData.data.length > 0) {
+      setNotifications(SetupData.data);
+      // Select the first notification on initial load
+      const firstNotiId = SetupData.data[0].id;
+      setCurrentNotificationId(firstNotiId);
+      setSelectedNotification(
+        SetupData.data.find((n: any) => n.id === firstNotiId)
+      );
     }
+  }, [SetupData]);
 
-    setActions(_actions);
-    console.log(formik.values);
+  // 2. Update form fields when selected notification changes
+  useEffect(() => {
+    if (selectedNotification) {
+      setMessage(selectedNotification.message || "Add the notification here");
+      setUsage(selectedNotification.usage || "");
 
-    formik.setValues({
-      ...formik.values,
-      link: _actions.map((action) => action.id).join("+"),
+      // Parse link string into action IDs
+      const linkIds = selectedNotification.link
+        ? selectedNotification.link.split("+")
+        : [];
+      setSelectedActionIds(linkIds);
+    }
+  }, [selectedNotification]);
+
+  // 3. Update selected notification when ID changes
+  useEffect(() => {
+    if (currentNotificationId && notifications.length > 0) {
+      const noti = notifications.find(
+        (noti: any) => noti.id === currentNotificationId
+      );
+      setSelectedNotification(noti);
+    }
+  }, [currentNotificationId, notifications]);
+
+  const handleOpenNotification = (id: string) => {
+    setCurrentNotificationId(id);
+  };
+
+  // Custom Action Change Handler
+  const OnActionChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    actionId: string
+  ) => {
+    setSelectedActionIds((prevActions) => {
+      let newActions = [...prevActions];
+
+      if (e.target.checked) {
+        if (!newActions.includes(actionId)) {
+          newActions.push(actionId);
+        }
+      } else {
+        newActions = newActions.filter((id) => id !== actionId);
+      }
+      return newActions;
     });
   };
 
-  const { data: SetupData, refetch: AllRefetch } = useNotSetupsQuery("");
-  const [updateSetup] = useUpdateSetupMutation();
-
-  useEffect(() => {
-    if (SetupData) {
-      setNotifications(SetupData?.data);
-      setCurrentNotification(SetupData?.data[0].id);
-    }
-    if (notification) {
-      formik.setValues({
-        ...formik.values,
-        message: notification.message,
-        usage: notification.usage,
+  // Custom Submission Logic (Replacing Formik.handleSubmit)
+  const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    if (!currentNotificationId) {
+      setToast({
+        type: "error",
+        message: "Please select a notification to update.",
       });
-    }
-  }, [SetupData, notification]);
-
-  useEffect(() => {
-    if (currentNotification) {
-      setNotification(
-        notifications.find((noti: any) => noti.id == currentNotification)
-      );
+      return;
     }
 
-    if (notification) {
-      formik.setValues({
-        ...formik.values,
-        message: notification.message,
-        usage: notification.usage,
-      });
-    }
-  }, [currentNotification, notifications]);
+    try {
+      const res = await updateSetup({
+        id: currentNotificationId, // Send the ID of the notification being updated
+        message: message,
+        usage: usage, // usage might not need to be sent if it's not editable, but keeping for safety
+        link: selectedActionIds.join("+"),
+      }).unwrap();
 
-  const handleOpenNotification = async (id: string) => {
-    console.log(id);
-    setCurrentNotification(id);
-    if (notification) {
-      formik.setValues({
-        ...formik.values,
-        message: notification.message,
-        usage: notification.usage,
-        link: notification.link,
+      if (res) {
+        AllRefetch();
+        setToast({
+          type: "success",
+          message: "Notification updated successfully!",
+        });
+      }
+    } catch (error: any) {
+      console.error("Update error:", error);
+      setToast({
+        type: "error",
+        message: error?.data?.message || "An error occurred while updating.",
       });
     }
   };
 
-  const formik = useFormik({
-    initialValues: {
-      message: "Add the notification here",
-      usage: notification?.usage,
-      link: actions.map((action) => action.id).join("+"),
-    },
-    validationSchema: Yup.object({}),
-    onSubmit: async (values) => {
-      try {
-        const res = await updateSetup({
-          message: values.message,
-          usage: values.usage,
-          link: values.link,
-        }).unwrap();
-
-        if (res) {
-          AllRefetch();
-          toast.current.show({
-            severity: "success",
-            summary: "Success",
-            detail: "Notification updated successfully!",
-          });
-        }
-      } catch (error: any) {
-        toast.current.show({
-          severity: "error",
-          summary: "Error",
-          detail: "Error",
-        });
-      }
-    },
-  });
+  // Find the currently selected notification for the header display
+  const currentNotiHeader = selectedNotification
+    ? selectedNotification.usage
+    : "No notification selected!";
 
   return (
-    <div>
-      <Toast ref={toast}></Toast>
-      <div className="data-hold">
-        <div className="notifications-left">
-          <h1 className="noti-sticky-header">Notification Type</h1>
-          <ul className="flex flex-col gap-1">
+    <div className="p-4 sm:p-6 bg-gray-50 min-h-screen">
+      <ToastNotification
+        type={toast?.type || "info"}
+        message={toast?.message || ""}
+        onClose={handleCloseToast}
+      />
+
+      <div className="flex flex-col lg:flex-row gap-6 h-[85vh]">
+        {/* Left Section: Notification List */}
+        <div className="lg:w-1/3 bg-white rounded-xl shadow-lg border border-gray-100 overflow-y-auto flex-shrink-0">
+          <h1 className="sticky top-0 bg-white p-4 text-xl font-bold text-gray-800 border-b z-10">
+            Notification Type
+          </h1>
+          <ul className="flex flex-col">
             {notifications.length > 0 ? (
               notifications.map((noti: any, index: number) => (
                 <li
-                  key={index + 1}
-                  className="border-b border-gray-200 p-2 px-4 cursor-pointer hover:bg-blue-100"
-                  onClick={() => handleOpenNotification(noti?.id)}
+                  key={noti.id || index}
+                  className={`border-b border-gray-100 p-3 px-4 cursor-pointer transition duration-150 ${
+                    currentNotificationId === noti.id
+                      ? "bg-indigo-100 border-l-4 border-indigo-600 font-semibold"
+                      : "hover:bg-gray-50"
+                  }`}
+                  onClick={() => handleOpenNotification(noti.id)}
                 >
                   <div>
-                    <p className="text-xs text-mainBlue">
+                    <p className="text-xs text-indigo-600 mb-1">
                       {dayjs(noti?.updatedAt).fromNow()}
                     </p>
-                    <p>{noti.usage}</p>
+                    <p className="text-sm text-gray-700">{noti.usage}</p>
                   </div>
                 </li>
               ))
             ) : (
-              <p className="py-4 px-2 text-center text-xs">
+              <p className="py-4 px-2 text-center text-sm text-gray-500 italic">
                 No Notifications for Now! Check back later!
               </p>
             )}
           </ul>
         </div>
-        <div className="notifications-right">
-          <div className="noti-sticky-header">
-            <div className="flex justify-between items-center w-full p-2">
-              <div>
-                {currentNotification
-                  ? `${
-                      notifications.find(
-                        (noti: any) => noti.id == currentNotification
-                      )?.usage
-                    }`
-                  : "No notification selected!"}
+
+        {/* Right Section: Notification Editor */}
+        <div className="lg:w-2/3 bg-white rounded-xl shadow-lg border border-gray-100 flex flex-col">
+          <div className="sticky top-0 bg-white p-4 border-b z-10">
+            <div className="flex justify-between items-center w-full">
+              <h2 className="text-xl font-bold text-gray-800">
+                {currentNotiHeader}
+              </h2>
+              <CustomButton
+                onClick={handleSubmit}
+                disabled={isLoading || !currentNotificationId}
+              >
+                {isLoading ? "Saving..." : "Save"}
+              </CustomButton>
+            </div>
+          </div>
+
+          {selectedNotification ? (
+            <div className="p-5 overflow-y-auto">
+              {/* Message Editor */}
+              <div className="mb-6">
+                <label
+                  htmlFor="message"
+                  className="block text-sm font-bold text-gray-700 mb-2"
+                >
+                  Message:
+                </label>
+                {/* Assuming simple textarea replacement for Rich Text Editor */}
+                <textarea
+                  id="message"
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  className="w-full p-3 border border-gray-300 rounded-lg h-40 resize-y focus:ring-indigo-500 focus:border-indigo-500 transition duration-150"
+                  placeholder="Add the notification message here..."
+                />
               </div>
-              <Button title="Save" onClick={formik.handleSubmit} />
+
+              {/* Action Checkboxes */}
+              <div>
+                <label className="block text-sm font-bold text-gray-700 mb-2">
+                  Actions:
+                </label>
+                <div className="flex flex-wrap gap-4 p-3 border border-gray-200 rounded-lg bg-gray-50">
+                  {actionOptions.length > 0 ? (
+                    actionOptions.map((action: any) => (
+                      <div key={action.id} className="flex items-center">
+                        <input
+                          type="checkbox"
+                          id={action.id}
+                          name={action.id}
+                          value={action.id} // Use ID for value in refactored logic
+                          onChange={(e) => OnActionChange(e, action.id)}
+                          checked={selectedActionIds.includes(action.id)}
+                          className="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                        />
+                        <label
+                          htmlFor={action.id}
+                          className="ml-2 text-sm text-gray-700"
+                        >
+                          {action.action}
+                        </label>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-sm text-gray-500 italic">
+                      No actions available.
+                    </p>
+                  )}
+                </div>
+              </div>
             </div>
-          </div>
-          <div className="p-5">
-            <label className="py-2">
-              <b>Message:</b>
-            </label>
-            {/* <ReactQuill
-              className="w-full bg-gray-100 rounded-md h-[30vh] mb-11"
-              theme="snow"
-              defaultValue={
-                notification?.message || "Add the notification here"
-              }
-              value={formik.values.message}
-              onChange={(e) => formik.setFieldValue("message", e)}
-            /> */}
-            <label className="py-2">
-              <b>Action:</b>
-            </label>
-            <div className="flex flex-wrap justify-content-center gap-3 p-3">
-              {actionOptions.length > 0 ? (
-                actionOptions.map((action: any) => (
-                  <div key={action.action} className="flex align-items-center">
-                    <input
-                      type="checkbox"
-                      name={action.id}
-                      value={action.action}
-                      onChange={OnActionChange}
-                      checked={actions && actions.includes(action.action)}
-                    />
-                    <label htmlFor={action.id} className="ml-2">
-                      {action.action}
-                    </label>
-                  </div>
-                ))
-              ) : (
-                <p>No actions at the moment</p>
-              )}
+          ) : (
+            <div className="flex items-center justify-center flex-grow p-10 text-gray-500 italic">
+              Select a notification type from the list to begin editing its
+              content and actions.
             </div>
-          </div>
-          {/* )} */}
+          )}
         </div>
       </div>
     </div>

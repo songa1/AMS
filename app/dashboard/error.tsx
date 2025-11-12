@@ -1,8 +1,6 @@
 "use client";
 
-import React from "react";
 import { useRouter } from "next/navigation";
-import { Box, Typography, Button } from "@mui/material";
 
 function ServerError() {
   const router = useRouter();
@@ -12,36 +10,26 @@ function ServerError() {
   };
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        height: "100vh",
-        textAlign: "center",
-        backgroundColor: "#f5f5f5",
-        padding: "20px",
-      }}
-    >
-      <Typography variant="h1" color="error" gutterBottom>
+    <div className="flex flex-col items-center justify-center min-h-screen text-center bg-gray-50 p-5">
+      <h1 className="text-9xl font-extrabold text-red-600 mb-4 animate-pulse">
         500
-      </Typography>
-      <Typography variant="h5" color="text.secondary" gutterBottom>
+      </h1>
+
+      <h2 className="text-3xl font-semibold text-gray-800 mb-2">
         Oops! Something went wrong on our end.
-      </Typography>
-      <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
+      </h2>
+
+      <p className="text-lg text-gray-600 mb-8">
         Please try again later or return to the homepage.
-      </Typography>
-      <Button
-        variant="contained"
-        color="primary"
+      </p>
+
+      <button
         onClick={handleGoBack}
-        size="large"
+        className="px-6 py-3 text-lg font-medium text-white bg-indigo-600 rounded-lg shadow-xl hover:bg-indigo-700 transition duration-300 focus:outline-none focus:ring-4 focus:ring-indigo-300"
       >
         Go to Homepage
-      </Button>
-    </Box>
+      </button>
+    </div>
   );
 }
 

@@ -1,8 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import React from "react";
-import { BsEye } from "react-icons/bs";
 
 function OneStat({
   title,
