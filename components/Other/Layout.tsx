@@ -24,8 +24,7 @@ import { DashboardLayout } from "@toolpad/core/DashboardLayout";
 import { PageContainer } from "@toolpad/core/PageContainer";
 import SidebarFooterAccount, { ToolbarAccountOverride } from "./SidebarFooter";
 import { NAVIGATION } from "./Sidebar";
-import { AppProvider, Router } from "@toolpad/core";
-import { extendTheme } from "@mui/material";
+import { AppProvider } from "@toolpad/core";
 import Copyright from "./Copyright";
 
 function Layout(props: any) {
