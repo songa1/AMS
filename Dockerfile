@@ -1,32 +1,18 @@
-FROM node:alpine
-
-# Set working directory
+# ---- Build Stage ----
+FROM node:20-alpine AS builder
 WORKDIR /usr/src/app
-
-# Copy package files first for better layer caching
 COPY package*.json ./
-
-# Install dependencies (without dev packages for production)
-RUN npm ci --legacy-peer-deps
-
-# Copy the rest of the app
+RUN npm install --legacy-peer-deps
 COPY . .
-
 RUN npm run build
 
-# Install PM2 globally
-RUN npm install --global pm2
+# ---- Production Stage ----
+FROM node:20-alpine
+WORKDIR /usr/src/app
+COPY --from=builder /usr/src/app/.next ./.next
+COPY --from=builder /usr/src/app/public ./public
+COPY --from=builder /usr/src/app/package*.json ./
+RUN npm install --production --legacy-peer-deps
 
-# Ensure cache and .next have correct permissions
-RUN mkdir -p .next/cache && \
-    chown -R node:node .next && \
-    chmod -R 755 .next
-
-# Expose port
 EXPOSE 3000
-
-# Switch to non-root user
-USER node
-
-# Start the app with PM2 (using npm start)
-CMD ["pm2-runtime", "start", "npm", "--", "start"]
+CMD ["npm", "start"]
