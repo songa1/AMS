@@ -1,5 +1,5 @@
 import { OnlyAdmin } from "@/components/Other/AccessDashboard";
-import NewProfile from "@/components/Dashboard/AddNewUserPage";
+import NewProfile from "@/components/DashboardPages/AddNewUserPage";
 
 function page() {
   return (

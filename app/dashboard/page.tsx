@@ -1,5 +1,4 @@
-import DashboardHome from "@/components/Dashboard/DashboardHome";
-import TopTitle from "@/components/Other/TopTitle";
+import DashboardHome from "@/components/DashboardPages/DashboardHome";
 import { OnlyAdmin } from "@/components/Other/AccessDashboard";
 
 function page() {

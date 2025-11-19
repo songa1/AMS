@@ -25,7 +25,7 @@ function ServerError() {
 
       <button
         onClick={handleGoBack}
-        className="px-6 py-3 text-lg font-medium text-white bg-indigo-600 rounded-lg shadow-xl hover:bg-indigo-700 transition duration-300 focus:outline-none focus:ring-4 focus:ring-indigo-300"
+        className="px-6 py-3 text-lg font-medium text-white bg-primary rounded-lg shadow-xl hover:bg-primary/80 transition duration-300 focus:outline-none focus:ring-4 focus:ring-indigo-300"
       >
         Go to Homepage
       </button>

@@ -1,7 +1,7 @@
-import { User } from "@/types/user";
-import DisplayField from "../Other/DisplayField";
+import { Member } from "@/types/user";
+import DisplayField from "../ui/DisplayField";
 
-export const Employment = ({ user }: { user: User | null }) => (
+export const Employment = ({ user }: { user: Member | null }) => (
   <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
     <div className="flex flex-col">
       <label className="text-sm font-semibold text-gray-500 mb-1">

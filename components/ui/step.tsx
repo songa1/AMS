@@ -1,4 +1,4 @@
-import { steps } from "../Dashboard/AddNewUserPage";
+import { steps } from "../DashboardPages/AddNewUserPage";
 
 // Custom Step Component (Tailwind version of Step + StepLabel)
 interface CustomStepProps {
@@ -50,7 +50,9 @@ const CustomStep: React.FC<CustomStepProps> = ({
     <div className="flex-1 relative">
       {index < steps.length - 1 && (
         <div
-          className={`${lineStyle} ${isAfter ? completedLineStyle : ""} ${isActive ? activeLineStyle : ""}`}
+          className={`${lineStyle} ${isAfter ? completedLineStyle : ""} ${
+            isActive ? activeLineStyle : ""
+          }`}
         ></div>
       )}
 
@@ -66,10 +68,10 @@ const CustomStep: React.FC<CustomStepProps> = ({
   );
 };
 
-export const CustomStepper: React.FC<{ activeStep: number; skipped: Set<number> }> = ({
-  activeStep,
-  skipped,
-}) => {
+export const CustomStepper: React.FC<{
+  activeStep: number;
+  skipped: Set<number>;
+}> = ({ activeStep, skipped }) => {
   const isStepOptional = (step: number) => step === 1;
 
   return (

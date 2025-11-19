@@ -2,10 +2,10 @@
 
 import { useLoginMutation } from "@/lib/features/authSlice";
 import { useEffect, useState } from "react";
-import Cookies from "js-cookie";
 import { CustomInputError } from "../ui/input-error";
 import Header from "./Header";
-
+import { ErrorType } from "@/types/feedback";
+import { setCookie } from "cookies-next";
 
 const AUTH_STORED_DATA = {
   USER: "auth_user_data",
@@ -71,10 +71,8 @@ const LoginPage = () => {
         AUTH_STORED_DATA?.USER,
         JSON.stringify(result?.user)
       );
-      Cookies.set(AUTH_STORED_DATA?.TOKEN, result?.token, { expires: 7 });
-      Cookies.set(AUTH_STORED_DATA?.USER, JSON.stringify(result?.user), {
-        expires: 7,
-      });
+      setCookie(AUTH_STORED_DATA?.TOKEN, result?.token);
+      setCookie(AUTH_STORED_DATA?.USER, JSON.stringify(result?.user));
 
       if (result?.status === 200) {
         if (result?.user?.role?.name === "ADMIN") {
@@ -84,13 +82,15 @@ const LoginPage = () => {
         }
       }
     } catch (err) {
-      // const errorData = err?.data || {};
-      // if (err?.status === 401 && errorData.error) {
-      //   setGeneralError(errorData.error);
-      // } else {
-      //   setGeneralError("An unexpected error occurred. Please try again.");
-      // }
-      console.error("Login error:", err);
+      const e = err as unknown as ErrorType;
+      const errorData = e?.data || {};
+      if (errorData) {
+        if (e?.status === 401 && errorData.error) {
+          setGeneralError(errorData.error);
+        } else {
+          setGeneralError("An unexpected error occurred. Please try again.");
+        }
+      }
     } finally {
       setIsLoading(false);
     }
@@ -107,15 +107,10 @@ const LoginPage = () => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-4">
-      <div className="w-full max-w-md bg-white p-8 sm:p-10 rounded-3xl shadow-2xl border border-gray-100 transition duration-500 ease-in-out hover:shadow-xl">
+      <div className="w-full max-w-md bg-white p-8 sm:p-10 rounded-3xl shadow-2xl border border-blue-200 transition duration-500 ease-in-out hover:shadow-xl">
         <Header />
 
-        <h2 className="text-3xl font-extrabold text-gray-900 text-center mb-8">
-          Sign in to your account
-        </h2>
-
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* General Error Alert */}
           {generalError && (
             <div
               className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-xl relative transition-all duration-300 shadow-md"
@@ -125,7 +120,6 @@ const LoginPage = () => {
             </div>
           )}
 
-          {/* Email Input */}
           <div>
             <label
               htmlFor="email"
@@ -140,13 +134,12 @@ const LoginPage = () => {
               value={credentials.email}
               onChange={handleInputChange}
               disabled={isLoading}
-              className="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition"
+              className="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm transition"
               placeholder="you@example.com"
             />
             <CustomInputError error={errors.email} />
           </div>
 
-          {/* Password Input */}
           <div>
             <div className="flex justify-between items-center">
               <label
@@ -156,8 +149,8 @@ const LoginPage = () => {
                 Password
               </label>
               <a
-                href="/forgotpassword" // Using standard anchor for Link replacement
-                className="text-sm font-medium text-indigo-600 hover:text-indigo-500 transition"
+                href="/forgot-password"
+                className="text-sm font-medium text-primary hover:text-primary transition"
               >
                 Forgot password?
               </a>
@@ -169,7 +162,7 @@ const LoginPage = () => {
               value={credentials.password}
               onChange={handleInputChange}
               disabled={isLoading}
-              className="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition"
+              className="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm transition"
               placeholder="••••••••"
             />
             <CustomInputError error={errors.password} />
@@ -180,8 +173,8 @@ const LoginPage = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-lg text-lg font-bold text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 transform active:scale-95 ${
-                isLoading ? "opacity-70 cursor-not-allowed bg-indigo-500" : ""
+              className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-lg text-lg font-bold text-white bg-primary hover:bg-primary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition duration-150 transform active:scale-95 ${
+                isLoading ? "opacity-70 cursor-not-allowed bg-primary" : ""
               }`}
             >
               {isLoading ? (
@@ -215,16 +208,6 @@ const LoginPage = () => {
           </div>
         </form>
       </div>
-
-      <p className="mt-8 text-center text-sm text-gray-600">
-        Don't have an account?{" "}
-        <a
-          href="/register"
-          className="font-medium text-indigo-600 hover:text-indigo-500 transition"
-        >
-          Sign up
-        </a>
-      </p>
     </div>
   );
 };

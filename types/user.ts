@@ -1,4 +1,7 @@
-export interface User {
+import { Cohort } from "./cohort";
+import { Track } from "./track";
+
+export interface Member {
   id: string;
   firstName: string;
   middleName: string;
@@ -14,21 +17,21 @@ export interface User {
   nearestLandmark: string | null;
   residentDistrictId: string | null;
   residentCountryId: string | null;
-  residentDistrict: residentDistrict;
+  residentDistrict: ResidentDistrict;
   residentSectorId: string | null;
   state: State;
   residentCountry: Country;
-  residentSector: residentSector;
+  residentSector: ResidentSector;
   cohortId: number | null;
-  cohort: cohort;
+  cohort: Cohort;
   bio: string;
-  gender: gender;
+  gender: Gender;
   track: Track | null;
   organizationFoundedId: number | null;
-  organizationFounded: organization;
+  organizationFounded: Organization;
   positionInFounded: string | null;
   organizationEmployedId: number | null;
-  organizationEmployed: organization;
+  organizationEmployed: Organization;
   positionInEmployed: string | null;
   password: string | null;
   role: Role;
@@ -37,22 +40,17 @@ export interface User {
   updatedAt: Date;
 }
 
-export interface organization {
+export interface Organization {
   id: string;
   name: string;
   workingSector: WorkingSector;
   districtId: string;
-  district: residentDistrict;
+  district: ResidentDistrict;
   country: Country;
   sectorId: string;
   state: State;
-  sector: residentSector;
+  sector: ResidentSector;
   website: string;
-}
-
-export interface cohort {
-  id: string;
-  name: string;
 }
 
 export interface Role {
@@ -60,12 +58,12 @@ export interface Role {
   name: string;
 }
 
-export interface gender {
+export interface Gender {
   id: string;
   name: string;
 }
 
-export interface residentDistrict {
+export interface ResidentDistrict {
   id: string;
   name: string;
 }
@@ -81,7 +79,7 @@ export interface State {
   countryCode: string;
 }
 
-export interface residentSector {
+export interface ResidentSector {
   id: string;
   name: string;
 }
@@ -89,11 +87,6 @@ export interface residentSector {
 export interface ProfileImage {
   id: string;
   link: string;
-  name: string;
-}
-
-export interface Track {
-  id: string;
   name: string;
 }
 

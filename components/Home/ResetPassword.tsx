@@ -6,6 +6,7 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { CustomInputError } from "../ui/input-error";
 import Header from "./Header";
+import { ErrorType } from "@/types/feedback";
 
 const ResetPassword = () => {
   const { token } = useParams();
@@ -76,21 +77,20 @@ const ResetPassword = () => {
       setCredentials({ password: "", cPassword: "" });
       setSuccessMessage(result.message);
     } catch (err) {
-      console.error("Failed to reset:", err);
-      // const errorData = err.data || {};
-      // if (err.status === 401 && errorData.error) {
-      //   setGeneralError(errorData.error);
-      // } else {
-      //   setGeneralError(
-      //     "Reset Failed! Try again, or contact the administrator!"
-      //   );
-      // }
+      const e = err as unknown as ErrorType;
+      const errorData = e.data || {};
+      if (e?.status === 401 && errorData.error) {
+        setGeneralError(errorData.error);
+      } else {
+        setGeneralError(
+          "Reset Failed! Try again, or contact the administrator!"
+        );
+      }
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Error timeout effect
   useEffect(() => {
     if (generalError) {
       const timer = setTimeout(() => {
@@ -102,15 +102,14 @@ const ResetPassword = () => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-4">
-      <div className="w-full max-w-md bg-white p-8 sm:p-10 rounded-3xl shadow-2xl border border-gray-100 transition duration-500 ease-in-out hover:shadow-xl">
+      <div className="w-full max-w-md bg-white p-8 sm:p-10 rounded-3xl shadow-2xl border border-blue-200 transition duration-500 ease-in-out hover:shadow-xl">
         <Header />
 
-        <h2 className="text-3xl font-extrabold text-gray-900 text-center mb-8">
+        <h2 className="text-xl font-semibold text-center text-gray-700 mb-6">
           Set a New Password
         </h2>
 
         {successMessage ? (
-          /* Success State UI */
           <div className="text-center p-6 bg-green-50 rounded-xl border border-green-200 shadow-md">
             <svg
               className="w-12 h-12 text-green-500 mx-auto mb-4"
@@ -131,7 +130,7 @@ const ResetPassword = () => {
             </p>
             <Link
               href="/"
-              className="inline-flex items-center justify-center px-6 py-2 border border-transparent text-sm font-medium rounded-xl shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 transition"
+              className="inline-flex items-center justify-center px-6 py-2 border border-transparent text-sm font-medium rounded-xl shadow-sm text-white bg-primary hover:bg-primary transition"
             >
               Go to Login
             </Link>
@@ -161,7 +160,7 @@ const ResetPassword = () => {
                 value={credentials.password}
                 onChange={handleInputChange}
                 disabled={isLoading}
-                className="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition"
+                className="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm transition"
                 placeholder="Enter your new password"
               />
               <CustomInputError error={errors.password} />
@@ -181,7 +180,7 @@ const ResetPassword = () => {
                 value={credentials.cPassword}
                 onChange={handleInputChange}
                 disabled={isLoading}
-                className="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition"
+                className="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm transition"
                 placeholder="Repeat the new password"
               />
               <CustomInputError error={errors.cPassword} />
@@ -191,8 +190,8 @@ const ResetPassword = () => {
               <button
                 type="submit"
                 disabled={isLoading}
-                className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-lg text-lg font-bold text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 transform active:scale-95 ${
-                  isLoading ? "opacity-70 cursor-not-allowed bg-indigo-500" : ""
+                className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-lg text-lg font-bold text-white bg-primary hover:bg-primary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition duration-150 transform active:scale-95 ${
+                  isLoading ? "opacity-70 cursor-not-allowed bg-primary" : ""
                 }`}
               >
                 {isLoading ? (

@@ -1,7 +1,7 @@
 import {
   TailwindInput,
   TailwindSelect,
-} from "../Dashboard/AddMember/AddPersonalInfo";
+} from "../DashboardPages/AddMember/AddPersonalInfo";
 
 export const Employment = ({
   values,
@@ -13,7 +13,6 @@ export const Employment = ({
   sectors,
   workingSectors,
   countries,
-  usr,
   auth,
   states,
   setCountry,

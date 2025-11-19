@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import TopTitle from "../Other/TopTitle";
 import AddPersonalInfo from "./AddMember/AddPersonalInfo";
 import AddFoundedInfo from "./AddMember/AddFoundedInfo";
 import AddEmployedInfo from "./AddMember/AddEmployedInfo";
@@ -186,7 +185,6 @@ function NewProfile() {
 
   return (
     <div className="p-4 sm:p-8 max-w-5xl mx-auto">
-      <TopTitle title="Add New Member" />
 
       {/* Stepper Display */}
       <div className="w-full bg-white p-4 sm:p-6 rounded-xl shadow-lg border border-gray-100 mb-8">

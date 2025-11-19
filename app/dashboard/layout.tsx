@@ -7,13 +7,8 @@ export default async function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html>
-      <head>
-        <title>AMS Dashboard</title>
-      </head>
-      <body>
-        <Layout>{children}</Layout>
-      </body>
-    </html>
+    <div>
+      <Layout>{children}</Layout>
+    </div>
   );
 }

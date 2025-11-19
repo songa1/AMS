@@ -10,9 +10,9 @@ import {
 import React, { useEffect, useState, ChangeEvent } from "react";
 import {
   Country,
-  organization,
-  residentDistrict,
-  residentSector,
+  Organization,
+  ResidentDistrict,
+  ResidentSector,
   State,
   WorkingSector,
 } from "@/types/user";
@@ -32,33 +32,26 @@ const initialFoundedInfoState: FoundedInfoState = {
   foundedSectorId: null,
 };
 
-
-
-
 function AddFoundedInfo({ canMove }: { canMove: (value: boolean) => void }) {
   // 1. Local state for form values
   const [formData, setFormData] = useState<FoundedInfoState>(
     initialFoundedInfoState
   );
-  // State for the initial organization selection (new or existing ID)
   const [newOrg, setNewOrg] = useState<string | number>("");
 
-  // 2. Local state for API dependencies/results
   const [foundedCountryId, setFoundedCountryId] = useState("");
   const [selectedDistrictFoundedName, setSelectedDistrictFoundedName] =
     useState("");
 
-  // API Data States
   const [foundedStates, setFoundedStates] = useState<State[]>([]);
   const [countriesFounded, setCountriesFounded] = useState<Country[]>([]);
-  const [sectorsFounded, setSectorsFounded] = useState<residentSector[]>([]);
-  const [districtsFounded, setDistrictsFounded] = useState<residentDistrict[]>(
+  const [sectorsFounded, setSectorsFounded] = useState<ResidentSector[]>([]);
+  const [districtsFounded, setDistrictsFounded] = useState<ResidentDistrict[]>(
     []
   );
-  const [organizations, setOrganizations] = useState<organization[]>([]);
+  const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [workingSectors, setWorkingSectors] = useState<WorkingSector[]>([]);
 
-  // 3. RTK Query Hooks
   const { data: CountryData } = useCountriesQuery("");
   const { data: FoundedStatesData } = useStatesByCountryQuery(
     foundedCountryId,
@@ -175,20 +168,16 @@ function AddFoundedInfo({ canMove }: { canMove: (value: boolean) => void }) {
     }));
   };
 
-  // 8. Handle initial organization select
   const handleNewOrgSelect = (e: ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value;
     setNewOrg(value);
 
-    // If a pre-existing org is selected, you might want to load its details into formData here
     if (value !== "new") {
       const existingOrg = organizations.find((org) => org.id === value);
       console.log("Existing organization selected:", existingOrg);
-      // Logic to populate formData from existingOrg (if needed)
     }
   };
 
-  // 9. Placeholder Submit Handler
   const handleSubmit = async () => {
     console.log(
       "Submitting Founded Info. Selected Organization Option:",
@@ -199,20 +188,17 @@ function AddFoundedInfo({ canMove }: { canMove: (value: boolean) => void }) {
     } else {
       console.log("Existing Organization ID:", newOrg);
     }
-    // ... logic to call your API function using 'formData' or 'newOrg' ID ...
   };
 
-  // Extract variables for cleaner JSX
   const isRwanda = formData.foundedCountry?.id === "RW";
   const isNewOrg = newOrg === "new";
 
   return (
     <div className="bg-white p-6 md:p-8 rounded-xl shadow-2xl space-y-6">
       <h2 className="text-2xl font-bold text-gray-800 border-b pb-3 mb-4">
-        🚀 Founded Initiative Details
+        Founded Initiative Details
       </h2>
 
-      {/* Organization Selection Dropdown */}
       <SelectField
         label="Choose your organization:"
         name="organizationSelect"
@@ -220,14 +206,13 @@ function AddFoundedInfo({ canMove }: { canMove: (value: boolean) => void }) {
         onChange={handleNewOrgSelect}
       >
         <option value="new">Add a new company/initiative</option>
-        {organizations.map((item: organization) => (
+        {organizations.map((item: Organization) => (
           <option key={item?.id} value={item.id}>
             {item?.name}
           </option>
         ))}
       </SelectField>
 
-      {/* Conditional Form Fields for New Organization */}
       {isNewOrg && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4 border border-purple-200 rounded-lg bg-purple-50">
           <p className="md:col-span-2 text-md font-semibold text-purple-700">
@@ -305,7 +290,6 @@ function AddFoundedInfo({ canMove }: { canMove: (value: boolean) => void }) {
             </SelectField>
           )}
 
-          {/* District (Conditional for Rwanda) */}
           {formData.foundedCountry && isRwanda && (
             <SelectField
               label="District (Rwanda)"
@@ -313,7 +297,7 @@ function AddFoundedInfo({ canMove }: { canMove: (value: boolean) => void }) {
               value={formData.foundedDistrictName?.id || null}
               onChange={handleDistrictChange}
             >
-              {districtsFounded.map((district: residentDistrict) => (
+              {districtsFounded.map((district: ResidentDistrict) => (
                 <option key={district?.id} value={district?.id}>
                   {district?.name}
                 </option>
@@ -321,7 +305,6 @@ function AddFoundedInfo({ canMove }: { canMove: (value: boolean) => void }) {
             </SelectField>
           )}
 
-          {/* Sector (Conditional for Rwanda) - Only visible if a District is selected */}
           {formData.foundedCountry &&
             isRwanda &&
             formData.foundedDistrictName && (
@@ -331,7 +314,7 @@ function AddFoundedInfo({ canMove }: { canMove: (value: boolean) => void }) {
                 value={formData.foundedSectorId?.id || null}
                 onChange={handleSectorChange}
               >
-                {sectorsFounded.map((sector: residentSector) => (
+                {sectorsFounded.map((sector: ResidentSector) => (
                   <option key={sector?.id} value={sector?.id}>
                     {sector?.name}
                   </option>
@@ -347,7 +330,11 @@ function AddFoundedInfo({ canMove }: { canMove: (value: boolean) => void }) {
           onClick={handleSubmit}
           disabled={!newOrg} // Disable if no selection has been made
           className={`w-full md:w-auto px-6 py-3 font-semibold rounded-lg shadow-md transition duration-200 focus:outline-none focus:ring-2 focus:ring-opacity-50
-            ${!newOrg ? "bg-gray-400 text-gray-700 cursor-not-allowed" : "bg-purple-600 text-white hover:bg-purple-700 focus:ring-purple-500"}
+            ${
+              !newOrg
+                ? "bg-gray-400 text-gray-700 cursor-not-allowed"
+                : "bg-purple-600 text-white hover:bg-purple-700 focus:ring-purple-500"
+            }
           `}
         >
           {isNewOrg ? "Validate & Save Initiative" : "Use Selected Initiative"}

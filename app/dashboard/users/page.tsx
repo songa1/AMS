@@ -1,9 +1,9 @@
-import UsersPage from "@/components/Dashboard/userspage";
+import MembersPage from "@/components/DashboardPages/MembersPage";
 
 function page() {
   return (
     <div>
-      <UsersPage />
+      <MembersPage />
     </div>
   );
 }

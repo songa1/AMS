@@ -10,7 +10,7 @@ const Copyright = () => {
       {"Copyright © "}
       <Link
         href="#"
-        className="text-indigo-600 hover:text-indigo-800 transition-colors duration-150 font-medium"
+        className="text-primary hover:text-primary/80 transition-colors duration-150 font-medium"
       >
         Alumni Management System
       </Link>{" "}

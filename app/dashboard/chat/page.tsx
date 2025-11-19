@@ -1,10 +1,8 @@
-import IndividualChatPage from "@/components/Dashboard/IndividualChatPage";
-import TopTitle from "@/components/Other/TopTitle";
+import IndividualChatPage from "@/components/DashboardPages/IndividualChatPage";
 
 function page() {
   return (
     <div>
-      <TopTitle title="AMS Community Chat" />
       <IndividualChatPage username="all" />
     </div>
   );

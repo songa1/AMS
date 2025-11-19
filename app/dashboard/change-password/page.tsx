@@ -1,4 +1,4 @@
-import ChangePasswordPage from "@/components/Dashboard/ResetPassword";
+import ChangePasswordPage from "@/components/DashboardPages/ResetPassword";
 
 function page() {
   return (

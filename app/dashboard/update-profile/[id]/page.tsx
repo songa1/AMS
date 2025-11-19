@@ -1,5 +1,4 @@
-import TopTitle from "@/components/Other/TopTitle";
-import UpdateProfile from "@/components/Dashboard/UpdateProfilepage";
+import UpdateProfile from "@/components/DashboardPages/UpdateProfilepage";
 import { OnlyAdmin } from "@/components/Other/AccessDashboard";
 
 async function page({ params }: { params: Promise<{ id: string }> }) {
@@ -7,7 +6,6 @@ async function page({ params }: { params: Promise<{ id: string }> }) {
   console.log(id);
   return (
     <div>
-      <TopTitle title=" UpdateUser" />
       <OnlyAdmin>
         <UpdateProfile />
       </OnlyAdmin>

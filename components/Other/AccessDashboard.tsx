@@ -5,9 +5,9 @@ import { useEffect } from "react";
 
 export const AccessDashboard = ({ children }: { children: any }) => {
   useEffect(() => {
-    // if (!isAuthenticated()) {
-    //   globalThis.location.href = "/";
-    // }
+    if (!isAuthenticated()) {
+      globalThis.location.href = "/";
+    }
   }, []);
 
   return <>{children}</>;
@@ -19,10 +19,10 @@ export const OnlyAdmin = ({ children }: { children: any }) => {
   const isAdmin = user?.role?.name == "ADMIN";
 
   useEffect(() => {
-    // if (!isAdmin) {
-    //   globalThis.location.href = "/dashboard/profile";
-    // }
+    if (!isAdmin) {
+      globalThis.location.href = "/dashboard/profile";
+    }
   }, [isAdmin]);
 
-  return <>{children}</>;
+  return <div>{children}</div>;
 };

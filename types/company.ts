@@ -1,4 +1,4 @@
-import { Country, residentDistrict, residentSector, State } from "./user";
+import { Country, ResidentDistrict, ResidentSector, State } from "./user";
 
 export interface EmployedInfoState {
   companyName: string;
@@ -7,8 +7,8 @@ export interface EmployedInfoState {
   companyWebsite: string;
   companyCountry: Country | null;
   companyState: State | null;
-  companyDistrictName: residentDistrict | null;
-  companySectorId: residentSector | null;
+  companyDistrictName: ResidentDistrict | null;
+  companySectorId: ResidentSector | null;
 }
 
 export interface FoundedInfoState {
@@ -18,6 +18,6 @@ export interface FoundedInfoState {
   foundedWebsite: string;
   foundedCountry: Country | null; // Store the full Country object
   foundedState: State | null; // Store the full State object
-  foundedDistrictName: residentDistrict | null; // Store the full District object
-  foundedSectorId: residentSector | null; // Store the full Sector object
+  foundedDistrictName: ResidentDistrict | null; // Store the full District object
+  foundedSectorId: ResidentSector | null; // Store the full Sector object
 }

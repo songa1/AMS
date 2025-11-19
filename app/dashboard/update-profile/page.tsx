@@ -1,10 +1,8 @@
-import TopTitle from "@/components/Other/TopTitle";
-import UpdateProfilepage from "@/components/Dashboard/UpdateProfilepage";
+import UpdateProfilepage from "@/components/DashboardPages/UpdateProfilepage";
 
 function page() {
   return (
     <div>
-      <TopTitle title="Update Profile" />
       <UpdateProfilepage />
     </div>
   );

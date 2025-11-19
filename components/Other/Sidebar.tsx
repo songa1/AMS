@@ -60,23 +60,6 @@ export const NAVIGATION: NavItemType[] = [
     segment: "/dashboard/update-profile",
     title: "Edit Profile",
     icon: <MdEdit className="w-5 h-5" />,
-    children: [
-      {
-        segment: "/dashboard/update-profile#personal",
-        title: "Personal Info",
-        icon: <MdSettingsAccessibility className="w-5 h-5" />,
-      },
-      {
-        segment: "/dashboard/update-profile#organization",
-        title: "Organization Info",
-        icon: <MdFoundation className="w-5 h-5" />,
-      },
-      {
-        segment: "/dashboard/update-profile#employment",
-        title: "Employment Info",
-        icon: <MdCorporateFare className="w-5 h-5" />,
-      },
-    ],
   },
   {
     kind: "divider",

@@ -1,10 +1,8 @@
-import ProfilePage from "@/components/Dashboard/ProfilePage";
-import TopTitle from "@/components/Other/TopTitle";
+import ProfilePage from "@/components/DashboardPages/ProfilePage";
 
 function page() {
   return (
     <div>
-      <TopTitle title="My Profile" />
       <ProfilePage />
     </div>
   );

@@ -5,6 +5,7 @@ export const usersSlices = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.NEXT_PUBLIC_API_URL,
   }),
+  tagTypes: ["Users"],
   endpoints: (builder) => ({
     users: builder.query({
       query: (code) => `users`,
@@ -41,6 +42,14 @@ export const usersSlices = createApi({
         method: "POST",
         body: credentials,
       }),
+    }),
+    inviteUser: builder.mutation({
+      query: (body) => ({
+        url: "users/invite",
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: ["Users"],
     }),
     createUserProfile: builder.mutation({
       query: (credentials) => ({
@@ -91,4 +100,5 @@ export const {
   useImportUsersMutation,
   useExportUsersMutation,
   useCreateUserProfileMutation,
+  useInviteUserMutation,
 } = usersSlices;

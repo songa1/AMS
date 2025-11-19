@@ -2,7 +2,7 @@ import React from "react";
 import {
   TailwindInput,
   TailwindSelect,
-} from "../Dashboard/AddMember/AddPersonalInfo";
+} from "../DashboardPages/AddMember/AddPersonalInfo";
 
 export const Founded = ({
   values,

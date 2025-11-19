@@ -1,20 +1,15 @@
-import Cookies from "js-cookie";
+import { getCookie } from "cookies-next";
 
 export enum AUTH_STORED_DATA {
-  TOKEN = "token",
-  USER = "user",
+  TOKEN = "auth_token",
+  USER = "auth_user_data",
 }
 
 export const isAuthenticated = () => {
   return (
-    Cookies.get(AUTH_STORED_DATA?.TOKEN) && Cookies.get(AUTH_STORED_DATA?.USER)
+    getCookie(AUTH_STORED_DATA?.TOKEN) && getCookie(AUTH_STORED_DATA?.USER)
   );
 };
-
-// export const getUser = () => {
-//   const user: any = Cookies.get(AUTH_STORED_DATA?.USER);
-//   return user ? JSON.parse(user) : null;
-// };
 
 export const getUser = () => {
   const user =
@@ -24,4 +19,9 @@ export const getUser = () => {
   return user ? JSON.parse(user) : null;
 };
 
-export const token = () => Cookies.get(AUTH_STORED_DATA?.TOKEN);
+export const getCookieUser = () => {
+  const user: any = getCookie(AUTH_STORED_DATA?.USER);
+  return user ? JSON.parse(user) : null;
+};
+
+export const token = () => getCookie(AUTH_STORED_DATA?.TOKEN);

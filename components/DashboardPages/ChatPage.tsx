@@ -22,7 +22,7 @@ function ChatPage() {
   dayjs.extend(relativeTime);
   const [messages, setMessages] = useState<Message[]>([]);
   const [messageInput, setMessageInput] = useState(""); // New state for input field
-  const { username } = useParams(); // username is the receiver's ID in private chat
+  const { username } = useParams();
 
   // RTK Queries
   const { data: chatsData } = useChatsQuery("", {
