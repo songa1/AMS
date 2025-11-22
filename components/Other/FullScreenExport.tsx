@@ -1,9 +1,9 @@
-import { User } from "@/types/user";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { CustomButton } from "../ui/button1";
+import { Member } from "@/types/user";
 
 const FullScreenExport = ({
   isOpen,
@@ -12,7 +12,7 @@ const FullScreenExport = ({
 }: {
   isOpen: boolean;
   setIsOpen: (e: boolean) => void;
-  users: User[];
+  users: Member[];
 }) => {
   const [notification, setNotification] = useState<{
     message: string;

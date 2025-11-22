@@ -1,16 +1,11 @@
-import {
-  cohort,
-  Country,
-  residentDistrict,
-  residentSector,
-  Track,
-  User,
-} from "@/types/user";
+import { Country, Member, ResidentDistrict, ResidentSector } from "@/types/user";
 import {
   PhoneInputTailwind,
   TailwindInput,
   TailwindSelect,
 } from "../DashboardPages/AddMember/AddPersonalInfo";
+import { Cohort } from "@/types/cohort";
+import { Track } from "@/types/track";
 
 export const Personal = ({
   values,
@@ -35,14 +30,14 @@ export const Personal = ({
   handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleSelectChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   errors: any;
-  sectors: residentSector[];
-  cohorts: cohort[];
-  districts: residentDistrict[];
+  sectors: ResidentSector[];
+  cohorts: Cohort[];
+  districts: ResidentDistrict[];
   genders: any;
   setSelectedDistrict: (districtName: string) => void;
   tracks: Track[];
   countries: Country[];
-  usr: User;
+  usr: Member;
   auth: boolean;
   states: any;
   setCountry: (country: string) => void;

@@ -10,11 +10,11 @@ import {
 import { Message } from "@/types/message";
 import { getUser } from "@/helpers/auth";
 import { useUsersQuery } from "@/lib/features/userSlice";
-import { User } from "@/types/user";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { useParams } from "next/navigation";
 import { ChatInput, CustomAvatar } from "../parts/ChatInput";
+import { Member } from "@/types/user";
 
 
 function ChatPage() {
@@ -90,7 +90,7 @@ function ChatPage() {
 
   // Get the recipient's name for private chat header
   const recipient = username
-    ? usersQuery?.data.find((u: User) => u?.id === username)
+    ? usersQuery?.data.find((u: Member) => u?.id === username)
     : null;
 
   // Get chat header display info
@@ -98,11 +98,10 @@ function ChatPage() {
     ? `${recipient?.firstName || "Unknown"} ${recipient?.lastName || ""}`
     : "Community Chat";
 
-  // Get chat subtitle/participants for community chat
   const chatParticipants = usersQuery?.data
     ? usersQuery.data
         .slice(0, 2)
-        .map((u: User) => u.firstName)
+        .map((u: Member) => u.firstName)
         .join(", ")
     : "";
   const remainingCount = usersQuery?.data ? usersQuery.data.length - 2 : 0;
@@ -142,7 +141,7 @@ function ChatPage() {
             .map((message) => {
               const isSent = message?.senderId === user?.id;
               const senderUser = usersQuery?.data.find(
-                (u: User) => u.id === message.senderId
+                (u: Member) => u.id === message.senderId
               );
               const senderName = `${senderUser?.firstName || "Unknown"} ${
                 senderUser?.middleName || ""

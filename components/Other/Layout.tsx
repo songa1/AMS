@@ -1,7 +1,7 @@
 // Layout.tsx
 "use client";
 import React, { useState } from "react";
-import Copyright from "./Copyright";
+import Copyright from "../parts/Copyright";
 import { MdMenu } from "react-icons/md";
 import Sidebar from "../parts/DashboardSidebar";
 import { getUser } from "@/helpers/auth";

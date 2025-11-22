@@ -1,5 +1,5 @@
 import Notifications from "@/components/DashboardPages/Notifications";
-import Button from "@/components/Other/Button";
+import Button from "@/components/ui/Button";
 import Link from "next/link";
 
 function page() {

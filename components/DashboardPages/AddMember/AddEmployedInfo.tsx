@@ -10,8 +10,8 @@ import {
 import React, { useEffect, useState, ChangeEvent } from "react";
 import {
   Country,
-  residentDistrict,
-  residentSector,
+  ResidentDistrict,
+  ResidentSector,
   State,
   WorkingSector,
 } from "@/types/user";
@@ -30,7 +30,6 @@ const initialEmployedInfoState: EmployedInfoState = {
   companySectorId: null,
 };
 
-
 function AddEmployedInfo({ canMove }: { canMove: any }) {
   const [formData, setFormData] = useState<EmployedInfoState>(
     initialEmployedInfoState
@@ -42,9 +41,9 @@ function AddEmployedInfo({ canMove }: { canMove: any }) {
 
   const [employedStates, setEmployedStates] = useState<State[]>([]);
   const [countriesEmployed, setCountriesEmployed] = useState<Country[]>([]);
-  const [sectorsEmployed, setSectorsEmployed] = useState<residentSector[]>([]);
+  const [sectorsEmployed, setSectorsEmployed] = useState<ResidentSector[]>([]);
   const [districtsEmployed, setDistrictsEmployed] = useState<
-    residentDistrict[]
+    ResidentDistrict[]
   >([]);
   const [workingSectorsEmployed, setWorkingSectorsEmployed] = useState<
     WorkingSector[]
@@ -114,7 +113,7 @@ function AddEmployedInfo({ canMove }: { canMove: any }) {
     setFormData((prev) => ({
       ...prev,
       companyCountry: selectedCountry || null,
-      companyState: null, 
+      companyState: null,
       companyDistrictName: null,
       companySectorId: null,
     }));
@@ -247,7 +246,7 @@ function AddEmployedInfo({ canMove }: { canMove: any }) {
             value={formData.companyDistrictName?.id || null}
             onChange={handleDistrictChange}
           >
-            {districtsEmployed.map((district: residentDistrict) => (
+            {districtsEmployed.map((district: ResidentDistrict) => (
               <option key={district?.id} value={district?.id}>
                 {district?.name}
               </option>
@@ -264,7 +263,7 @@ function AddEmployedInfo({ canMove }: { canMove: any }) {
               value={formData.companySectorId?.id || null}
               onChange={handleSectorChange}
             >
-              {sectorsEmployed.map((sector: residentSector) => (
+              {sectorsEmployed.map((sector: ResidentSector) => (
                 <option key={sector?.id} value={sector?.id}>
                   {sector?.name}
                 </option>

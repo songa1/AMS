@@ -26,7 +26,7 @@ import { getUser } from "@/helpers/auth";
 import { MdCloudUpload, MdClose, MdEdit } from "react-icons/md";
 import { Member } from "@/types/user";
 import { PageHeader } from "../parts/PageHeader";
-import { Loader2, Save } from "lucide-react";
+import { Save } from "lucide-react";
 import { TextAreaField } from "../ui/textarea";
 
 const getInitialValues = (usr: Member | undefined) => ({

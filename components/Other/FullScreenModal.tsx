@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
-import Button from "./Button";
 import { useImportUsersMutation } from "@/lib/features/userSlice";
 
 const acceptedCSVTypes = [
@@ -279,7 +278,11 @@ const FullScreenModal = ({
               title={isLoading ? "Processing..." : "Import Users"}
               onClick={handleFileUpload}
               disabled={isLoading}
-              className={`mt-4 md:mt-0 py-2 px-6 rounded-lg font-semibold ${isLoading ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700 text-white"}`}
+              className={`mt-4 md:mt-0 py-2 px-6 rounded-lg font-semibold ${
+                isLoading
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-blue-600 hover:bg-blue-700 text-white"
+              }`}
             />
           </div>
 

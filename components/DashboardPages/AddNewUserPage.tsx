@@ -169,7 +169,6 @@ function NewProfile() {
     setCanMove(false);
   };
 
-  // Helper function to render the current step content
   const getStepContent = (step: number) => {
     switch (step) {
       case 0:
@@ -186,13 +185,11 @@ function NewProfile() {
   return (
     <div className="p-4 sm:p-8 max-w-5xl mx-auto">
 
-      {/* Stepper Display */}
       <div className="w-full bg-white p-4 sm:p-6 rounded-xl shadow-lg border border-gray-100 mb-8">
         <CustomStepper activeStep={activeStep} skipped={skipped} />
       </div>
 
       {activeStep === steps.length ? (
-        /* Final Step Completed View */
         <div className="mt-8 p-6 bg-green-50 rounded-lg shadow-inner">
           <p className="text-lg font-semibold text-green-700 mb-4">
             All steps completed - a new member has been added.

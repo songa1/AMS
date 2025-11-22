@@ -2,13 +2,11 @@
 
 import React, { useEffect, useState } from "react";
 import {
-  cohort,
   Country,
-  gender,
-  residentDistrict,
-  residentSector,
+  Gender,
+  ResidentDistrict,
+  ResidentSector,
   State,
-  Track,
 } from "@/types/user";
 import {
   useCohortsQuery,
@@ -24,6 +22,8 @@ import {
   useUploadPictureMutation,
 } from "@/lib/features/userSlice";
 import { getUser } from "@/helpers/auth";
+import { Track } from "@/types/track";
+import { Cohort } from "@/types/cohort";
 
 
 export const TailwindButton = ({
@@ -335,11 +335,11 @@ function AddPersonalInfo({ canMove }: { canMove: any }) {
   // API Data States (existing)
   const [countries, setCountries] = useState<Country[]>([]);
   const [states, setStates] = useState<State[]>([]);
-  const [districts, setDistricts] = useState<residentDistrict[]>([]);
-  const [sectors, setSectors] = useState<residentSector[]>([]);
+  const [districts, setDistricts] = useState<ResidentDistrict[]>([]);
+  const [sectors, setSectors] = useState<ResidentSector[]>([]);
   const [tracks, setTracks] = useState<Track[]>([]);
-  const [genders, setGenders] = useState<gender[]>([]);
-  const [cohorts, setCohorts] = useState<cohort[]>([]);
+  const [genders, setGenders] = useState<Gender[]>([]);
+  const [cohorts, setCohorts] = useState<Cohort[]>([]);
 
   // UI/Form Flow States (existing)
   const [error, setError] = useState("");
