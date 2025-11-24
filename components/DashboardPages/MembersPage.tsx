@@ -108,6 +108,7 @@ const MembersPage = () => {
 
       <PageHeader
         title="Member Directory"
+        description="View and manage all members in the AMS community, or invite new members."
         actionTitle="Invite New Member"
         Icon={MdAdd}
         onAction={() => setIsModalOpen(true)}
@@ -221,7 +222,7 @@ const MembersPage = () => {
                   </span>
                 </td> */}
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <Link href={`/dashboard/users/${member.id}`} passHref>
+                  <Link href={`/dashboard/members/${member.id}`} passHref>
                     <Link2 className="text-primary hover:text-primary/80">
                       View
                     </Link2>

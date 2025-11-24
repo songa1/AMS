@@ -1,6 +1,7 @@
 // NAVIGATION.tsx
 "use client";
 
+import { Database, Settings } from "lucide-react";
 import {
   MdDashboard,
   MdAccountBox,
@@ -36,7 +37,7 @@ export type NavDivider = {
 export type NavItemType = NavItem | NavHeader | NavDivider;
 
 const TailwindChip = ({ label }: { label: number }) => (
-  <span className="ml-auto inline-flex items-center justify-center px-2 py-0.5 text-xs font-medium leading-none text-blue-100 bg-blue-600 rounded-full">
+  <span className="ml-auto inline-flex items-center justify-center px-2 py-0.5 text-xs font-medium leading-none text-blue-100 bg-primary rounded-full">
     {label}
   </span>
 );
@@ -72,13 +73,11 @@ export const NAVIGATION: NavItemType[] = [
     segment: "/dashboard/notifications",
     title: "Notifications",
     icon: <MdNotifications className="w-5 h-5" />,
-    action: <TailwindChip label={4} />,
   },
   {
     segment: "/dashboard/chat",
     title: "Chat",
     icon: <MdChat className="w-5 h-5" />,
-    action: <TailwindChip label={4} />,
   },
   {
     kind: "divider",
@@ -88,12 +87,12 @@ export const NAVIGATION: NavItemType[] = [
     title: "Users",
   },
   {
-    segment: "/dashboard/users",
+    segment: "/dashboard/members",
     title: "Members",
     icon: <MdPeople className="w-5 h-5" />,
   },
   {
-    segment: "/dashboard/add-new-user",
+    segment: "/dashboard/members/new",
     title: "Add New User",
     icon: <MdPersonAdd className="w-5 h-5" />,
   },
@@ -108,5 +107,19 @@ export const NAVIGATION: NavItemType[] = [
     segment: "/dashboard/change-password",
     title: "Change Password",
     icon: <MdVpnKey className="w-5 h-5" />,
+  },
+  {
+    segment: "/dashboard/settings",
+    title: "Settings",
+    icon: <Settings className="w-5 h-5" />,
+  },
+  {
+    kind: "header",
+    title: "Admin",
+  },
+  {
+    segment: "/dashboard/data",
+    title: "Data Management",
+    icon: <Database className="w-5 h-5" />,
   },
 ];

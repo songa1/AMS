@@ -1,3 +1,5 @@
+"use client"
+
 import { Member } from "@/types/user";
 import DisplayField from "../ui/DisplayField";
 

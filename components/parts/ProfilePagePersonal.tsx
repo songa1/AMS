@@ -1,14 +1,16 @@
+"use client";
+
 import { Member } from "@/types/user";
 import DisplayField from "../ui/DisplayField";
 
-export const Personal = ({ user }: { user: Member | null }) => {
+export const Personal = ({ user }: { user: Member }) => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
       <div className="flex flex-col">
         <label className="text-sm font-semibold text-gray-500 mb-1">
           Email:
         </label>
-        <DisplayField text={user?.email} />
+        <DisplayField text={user?.email ?? ""} />
       </div>
       <div className="flex flex-col">
         <label className="text-sm font-semibold text-gray-500 mb-1">

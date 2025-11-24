@@ -8,8 +8,8 @@ import {
 import React, { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import { FiDelete } from "react-icons/fi";
-import { ToastNotification } from "../ui/toast";
 import { CustomInputError } from "../ui/input-error";
+import { toastError, toastSuccess } from "@/lib/toast";
 
 interface CohortType {
   id: number;
@@ -19,15 +19,9 @@ interface CohortType {
 }
 
 function Cohorts() {
-  const [toast, setToast] = useState<{
-    type: "success" | "error" | "info";
-    message: string;
-  } | null>(null);
-
   const [cohortName, setCohortName] = useState("");
   const [cohortDescription, setCohortDescription] = useState("");
 
-  // Validation error state replacement for Formik.errors
   const [formErrors, setFormErrors] = useState<{
     name?: string;
     description?: string;
@@ -40,11 +34,8 @@ function Cohorts() {
   const [addCohort] = useAddCohortMutation();
   const [deleteCohort] = useDeleteCohortMutation();
 
-  const handleCloseToast = () => setToast(null);
-
   useEffect(() => {
     if (CohortsData && CohortsData.data) {
-      // Mapping logic remains similar, but directly uses the API data structure
       const processedData = CohortsData.data
         .map((c: CohortType) => {
           return {
@@ -52,7 +43,7 @@ function Cohorts() {
             Name: c?.name,
             Description: c?.description,
             CreatedAt: dayjs(c.createdAt).format("DD-MM-YYYY"),
-            isDefault: c?.name === "Not Specified", // Use a flag for easy check
+            isDefault: c?.name === "Not Specified",
           };
         })
         .sort(
@@ -69,24 +60,15 @@ function Cohorts() {
       await deleteCohort(id).unwrap();
 
       refetch();
-      setToast({
-        type: "info",
-        message: "Cohort deleted successfully!",
-      });
+      toastSuccess("Cohort deleted successfully!");
     } catch (error: any) {
       console.error("Delete error:", error);
-      setToast({
-        type: "error",
-        message:
-          error?.data?.message ||
-          "Failed to delete cohort. Please check permissions.",
-      });
+      toastError("Failed to delete cohort. Please check permissions.");
     } finally {
       setLoading(false);
     }
   };
 
-  // Custom Validation Logic (Replacing Yup)
   const validateForm = () => {
     const errors: { name?: string; description?: string } = {};
     if (!cohortName.trim()) {
@@ -99,14 +81,10 @@ function Cohorts() {
     return Object.keys(errors).length === 0;
   };
 
-  // Custom Submission Logic (Replacing Formik.handleSubmit)
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) {
-      setToast({
-        type: "error",
-        message: "Please fix the errors in the form.",
-      });
+      toastError("Please fix the errors in the form.");
       return;
     }
 
@@ -117,31 +95,19 @@ function Cohorts() {
         name: cohortName,
         description: cohortDescription,
       }).unwrap();
-
-      // Check for specific API error response structure
       if (res && res.status === 400) {
-        setToast({
-          type: "error",
-          message: res?.data?.message || "Error adding cohort.",
-        });
+        toastError(res?.data?.message || "Error adding cohort.");
         return;
       }
 
-      // Success case
       setCohortName("");
       setCohortDescription("");
       setFormErrors({});
       refetch();
-      setToast({
-        type: "success",
-        message: "Cohort added successfully!",
-      });
+      toastSuccess("Cohort added successfully!");
     } catch (error: any) {
       console.error("Add cohort error:", error);
-      setToast({
-        type: "error",
-        message: error?.data?.message || "Failed to add cohort.",
-      });
+      toastError(error?.data?.message || "Failed to add cohort.");
     } finally {
       setLoading(false);
     }
@@ -155,21 +121,13 @@ function Cohorts() {
       : ["Name", "Description", "CreatedAt", "Action"];
 
   return (
-    <div className="p-4 sm:p-6 bg-gray-50 min-h-screen">
-      <ToastNotification
-        type={toast?.type || "info"}
-        message={toast?.message || ""}
-        onClose={handleCloseToast}
-      />
-
+    <div className="p-4 sm:p-6 bg-gray-50 max-h-screen overflow-scroll">
       <div className="flex flex-col lg:flex-row gap-6">
-        {/* Left Section: Add Cohort Form */}
         <div className="lg:w-1/3 bg-white p-6 rounded-xl shadow-lg border border-gray-100 h-fit">
           <h1 className="text-xl font-bold text-gray-800 mb-4 border-b pb-2">
             Add Cohort
           </h1>
           <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Cohort Name Input */}
             <div>
               <label
                 htmlFor="name"
@@ -182,13 +140,12 @@ function Cohorts() {
                 id="name"
                 value={cohortName}
                 onChange={(e) => setCohortName(e.target.value)}
-                className="w-full p-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150"
+                className="w-full p-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary transition duration-150"
                 required
               />
               <CustomInputError error={formErrors.name} />
             </div>
 
-            {/* Description Textarea */}
             <div>
               <label
                 htmlFor="description"
@@ -201,7 +158,7 @@ function Cohorts() {
                 id="description"
                 value={cohortDescription}
                 onChange={(e) => setCohortDescription(e.target.value)}
-                className="w-full p-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 resize-none"
+                className="w-full p-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary transition duration-150 resize-none"
                 required
               />
               <CustomInputError error={formErrors.description} />
@@ -212,8 +169,8 @@ function Cohorts() {
               type="submit"
               className={`w-full px-4 py-2 mt-4 font-bold text-white rounded-lg transition duration-150 shadow-md ${
                 loading
-                  ? "bg-indigo-300 cursor-not-allowed"
-                  : "bg-indigo-600 hover:bg-indigo-700"
+                  ? "bg-blue-300 cursor-not-allowed"
+                  : "bg-primary hover:bg-primary"
               }`}
               disabled={loading}
             >
@@ -222,7 +179,6 @@ function Cohorts() {
           </form>
         </div>
 
-        {/* Right Section: Cohorts Table */}
         <div className="lg:w-2/3 bg-white p-6 rounded-xl shadow-lg border border-gray-100 overflow-x-auto">
           <h1 className="text-xl font-bold text-gray-800 mb-4 border-b pb-2">
             Cohorts List

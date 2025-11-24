@@ -9,25 +9,12 @@ import React, { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import { FiDelete } from "react-icons/fi";
 import { CustomInputError } from "../ui/input-error";
-import { ToastNotification } from "../ui/toast";
-
-interface TrackType {
-  id: number;
-  name: string;
-  createdAt: string;
-}
+import { toastError, toastSuccess } from "@/lib/toast";
+import { Track } from "@/types/track";
 
 function Tracks() {
-  // Toast state replacement
-  const [toast, setToast] = useState<{
-    type: "success" | "error" | "info";
-    message: string;
-  } | null>(null);
-
-  // Form state replacement for Formik.values
   const [trackName, setTrackName] = useState("");
 
-  // Validation error state replacement for Formik.errors
   const [formErrors, setFormErrors] = useState<{
     name?: string;
   }>({});
@@ -39,18 +26,15 @@ function Tracks() {
   const [addTrack] = useAddTrackMutation();
   const [deleteTrack] = useDeleteTrackMutation();
 
-  const handleCloseToast = () => setToast(null);
-
   useEffect(() => {
     if (TracksData && TracksData.data) {
-      // Mapping logic remains similar
       const processedData = TracksData.data
-        .map((c: TrackType) => {
+        .map((c: Track) => {
           return {
             id: c.id,
             Name: c?.name,
-            CreatedAt: dayjs(c.createdAt).format("DD-MM-YYYY"),
-            isDefault: c?.name === "Not Specified", // Use a flag for easy check
+            CreatedAt: dayjs(new Date()).format("DD-MM-YYYY"),
+            isDefault: c?.name === "Not Specified", 
           };
         })
         .sort(
@@ -67,24 +51,15 @@ function Tracks() {
       await deleteTrack(id).unwrap();
 
       refetch();
-      setToast({
-        type: "info",
-        message: "Track deleted successfully!",
-      });
+      toastSuccess("Track deleted successfully!");
     } catch (error: any) {
       console.error("Delete error:", error);
-      setToast({
-        type: "error",
-        message:
-          error?.data?.message ||
-          "Failed to delete track. Please check permissions.",
-      });
+      toastError("Failed to delete track. Please check permissions.");
     } finally {
       setLoading(false);
     }
   };
 
-  // Custom Validation Logic (Replacing Yup)
   const validateForm = () => {
     const errors: { name?: string } = {};
     if (!trackName.trim()) {
@@ -94,11 +69,10 @@ function Tracks() {
     return Object.keys(errors).length === 0;
   };
 
-  // Custom Submission Logic (Replacing Formik.handleSubmit)
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) {
-      setToast({ type: "error", message: "Please provide a track name." });
+      toastError("Please provide a track name.");
       return;
     }
 
@@ -110,28 +84,19 @@ function Tracks() {
       }).unwrap();
 
       if (res) {
-        setTrackName(""); // Reset input
+        setTrackName("");
         setFormErrors({});
         refetch();
-        setToast({
-          type: "success",
-          message: "Track added successfully!",
-        });
+        toastSuccess("Track added successfully!");
       }
     } catch (error: any) {
       console.error("Add track error:", error);
-      setToast({
-        type: "error",
-        message:
-          error?.data?.message ||
-          "Failed to add track. It might already exist.",
-      });
+      toastError("Failed to add track. It might already exist.");
     } finally {
       setLoading(false);
     }
   };
 
-  // Determine table headers dynamically
   const tableHeaders =
     data.length > 0
       ? Object.keys(data[0]).filter(
@@ -141,12 +106,6 @@ function Tracks() {
 
   return (
     <div className="p-4 sm:p-6 bg-gray-50 min-h-screen">
-      <ToastNotification
-        type={toast?.type || "info"}
-        message={toast?.message || ""}
-        onClose={handleCloseToast}
-      />
-
       <div className="flex flex-col lg:flex-row gap-6">
         {/* Left Section: Add Track Form */}
         <div className="lg:w-1/3 bg-white p-6 rounded-xl shadow-lg border border-gray-100 h-fit">
@@ -167,7 +126,7 @@ function Tracks() {
                 id="name"
                 value={trackName}
                 onChange={(e) => setTrackName(e.target.value)}
-                className="w-full p-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150"
+                className="w-full p-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary transition duration-150"
                 required
               />
               <CustomInputError error={formErrors.name} />
@@ -178,8 +137,8 @@ function Tracks() {
               type="submit"
               className={`w-full px-4 py-2 mt-4 font-bold text-white rounded-lg transition duration-150 shadow-md ${
                 loading
-                  ? "bg-indigo-300 cursor-not-allowed"
-                  : "bg-indigo-600 hover:bg-indigo-700"
+                  ? "bg-blue-300 cursor-not-allowed"
+                  : "bg-primary hover:bg-primary"
               }`}
               disabled={loading || !trackName.trim()}
             >
