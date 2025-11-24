@@ -25,7 +25,7 @@ export const SelectField: React.FC<SelectFieldProps> = ({
         name={name}
         value={value ?? ""}
         onChange={onChange}
-        className="p-3 pr-10 border border-gray-300 rounded-lg appearance-none focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out bg-white/70 shadow-sm w-full"
+        className="p-3 pr-10 border border-gray-300 rounded-lg appearance-none focus:ring-primary focus:border-primary transition duration-150 ease-in-out bg-white/70 shadow-sm w-full"
       >
         <option value="" disabled>
           Select {label}

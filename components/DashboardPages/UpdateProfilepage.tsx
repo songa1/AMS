@@ -415,7 +415,7 @@ function UpdateProfilepage() {
         refetch();
 
         // Redirect logic
-        // globalThis.location.href = id ? `/dashboard/users/${id}` : "/dashboard/profile";
+        // globalThis.location.href = id ? `/dashboard/members/${id}` : "/dashboard/profile";
         // NOTE: Commenting out direct navigation to keep the component renderable and testable.
       }
     } catch (apiError: any) {
@@ -550,6 +550,7 @@ function UpdateProfilepage() {
     <div className="container mx-auto p-4 md:p-8">
       <PageHeader
         title="Update Profile"
+        description="Make changes to your profile information below and save to update."
         actionTitle="Save Changes"
         Icon={Save}
         onAction={handleSubmit}

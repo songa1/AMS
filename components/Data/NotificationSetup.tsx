@@ -7,8 +7,8 @@ import {
   useNotSetupsQuery,
   useUpdateSetupMutation,
 } from "@/lib/features/notificationSlice";
-import { ToastNotification } from "../ui/toast";
 import { CustomButton } from "../ui/button1";
+import { toastError, toastSuccess, toastWarning } from "@/lib/toast";
 
 export const notificationTypes = {
   SIGNUP: "signup",
@@ -26,11 +26,6 @@ export const actionOptions = [
 ];
 
 function NotificationSetup() {
-  const [toast, setToast] = useState<{
-    type: "success" | "error" | "info";
-    message: string;
-  } | null>(null);
-
   dayjs.extend(relativeTime);
   const [notifications, setNotifications] = useState<any>([]);
   const [currentNotificationId, setCurrentNotificationId] = useState<
@@ -38,21 +33,16 @@ function NotificationSetup() {
   >();
   const [selectedNotification, setSelectedNotification] = useState<any>();
 
-  // Form states replacing Formik.values
   const [message, setMessage] = useState("");
-  const [usage, setUsage] = useState(""); // This value seems derived from the selected notification
+  const [usage, setUsage] = useState("");
   const [selectedActionIds, setSelectedActionIds] = useState<string[]>([]);
 
   const { data: SetupData, refetch: AllRefetch } = useNotSetupsQuery("");
   const [updateSetup, { isLoading }] = useUpdateSetupMutation();
 
-  const handleCloseToast = () => setToast(null);
-
-  // 1. Initial Data and Notification Setup
   useEffect(() => {
     if (SetupData && SetupData.data && SetupData.data.length > 0) {
       setNotifications(SetupData.data);
-      // Select the first notification on initial load
       const firstNotiId = SetupData.data[0].id;
       setCurrentNotificationId(firstNotiId);
       setSelectedNotification(
@@ -61,13 +51,11 @@ function NotificationSetup() {
     }
   }, [SetupData]);
 
-  // 2. Update form fields when selected notification changes
   useEffect(() => {
     if (selectedNotification) {
       setMessage(selectedNotification.message || "Add the notification here");
       setUsage(selectedNotification.usage || "");
 
-      // Parse link string into action IDs
       const linkIds = selectedNotification.link
         ? selectedNotification.link.split("+")
         : [];
@@ -75,7 +63,6 @@ function NotificationSetup() {
     }
   }, [selectedNotification]);
 
-  // 3. Update selected notification when ID changes
   useEffect(() => {
     if (currentNotificationId && notifications.length > 0) {
       const noti = notifications.find(
@@ -108,57 +95,39 @@ function NotificationSetup() {
     });
   };
 
-  // Custom Submission Logic (Replacing Formik.handleSubmit)
   const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     if (!currentNotificationId) {
-      setToast({
-        type: "error",
-        message: "Please select a notification to update.",
-      });
+      toastWarning("Please select a notification to update.");
       return;
     }
 
     try {
       const res = await updateSetup({
-        id: currentNotificationId, // Send the ID of the notification being updated
+        id: currentNotificationId,
         message: message,
-        usage: usage, // usage might not need to be sent if it's not editable, but keeping for safety
+        usage: usage,
         link: selectedActionIds.join("+"),
       }).unwrap();
 
       if (res) {
         AllRefetch();
-        setToast({
-          type: "success",
-          message: "Notification updated successfully!",
-        });
+        toastSuccess("Notification updated successfully!");
       }
     } catch (error: any) {
       console.error("Update error:", error);
-      setToast({
-        type: "error",
-        message: error?.data?.message || "An error occurred while updating.",
-      });
+      toastError(error?.data?.message || "An error occurred while updating.");
     }
   };
 
-  // Find the currently selected notification for the header display
   const currentNotiHeader = selectedNotification
     ? selectedNotification.usage
     : "No notification selected!";
 
   return (
-    <div className="p-4 sm:p-6 bg-gray-50 min-h-screen">
-      <ToastNotification
-        type={toast?.type || "info"}
-        message={toast?.message || ""}
-        onClose={handleCloseToast}
-      />
-
+    <div className="p-4 sm:p-6 bg-gray-50 h-screen overflow-scroll">
       <div className="flex flex-col lg:flex-row gap-6 h-[85vh]">
-        {/* Left Section: Notification List */}
-        <div className="lg:w-1/3 bg-white rounded-xl shadow-lg border border-gray-100 overflow-y-auto flex-shrink-0">
+        <div className="lg:w-1/3 bg-white rounded-xl shadow-lg border border-gray-100 overflow-y-auto shrink-0">
           <h1 className="sticky top-0 bg-white p-4 text-xl font-bold text-gray-800 border-b z-10">
             Notification Type
           </h1>
@@ -169,13 +138,13 @@ function NotificationSetup() {
                   key={noti.id || index}
                   className={`border-b border-gray-100 p-3 px-4 cursor-pointer transition duration-150 ${
                     currentNotificationId === noti.id
-                      ? "bg-indigo-100 border-l-4 border-indigo-600 font-semibold"
+                      ? "bg-blue-100 border-l-4 border-primary font-semibold"
                       : "hover:bg-gray-50"
                   }`}
                   onClick={() => handleOpenNotification(noti.id)}
                 >
                   <div>
-                    <p className="text-xs text-indigo-600 mb-1">
+                    <p className="text-xs text-primary mb-1">
                       {dayjs(noti?.updatedAt).fromNow()}
                     </p>
                     <p className="text-sm text-gray-700">{noti.usage}</p>
@@ -221,7 +190,7 @@ function NotificationSetup() {
                   id="message"
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
-                  className="w-full p-3 border border-gray-300 rounded-lg h-40 resize-y focus:ring-indigo-500 focus:border-indigo-500 transition duration-150"
+                  className="w-full p-3 border border-gray-300 rounded-lg h-40 resize-y focus:ring-primary focus:border-primary transition duration-150"
                   placeholder="Add the notification message here..."
                 />
               </div>
@@ -242,7 +211,7 @@ function NotificationSetup() {
                           value={action.id} // Use ID for value in refactored logic
                           onChange={(e) => OnActionChange(e, action.id)}
                           checked={selectedActionIds.includes(action.id)}
-                          className="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                          className="h-4 w-4 text-primary border-gray-300 rounded focus:ring-primary"
                         />
                         <label
                           htmlFor={action.id}

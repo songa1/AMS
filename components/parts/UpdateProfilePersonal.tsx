@@ -1,11 +1,14 @@
-import { Country, Member, ResidentDistrict, ResidentSector } from "@/types/user";
 import {
-  PhoneInputTailwind,
-  TailwindInput,
-  TailwindSelect,
-} from "../DashboardPages/AddMember/AddPersonalInfo";
+  Country,
+  Member,
+  ResidentDistrict,
+  ResidentSector,
+} from "@/types/user";
+import { TailwindInput } from "../ui/tail-input";
+import { TailwindSelect } from "../ui/tail-select";
 import { Cohort } from "@/types/cohort";
 import { Track } from "@/types/track";
+import { PhoneInputTailwind } from "../ui/tail-phone";
 
 export const Personal = ({
   values,
@@ -82,7 +85,7 @@ export const Personal = ({
         disabled={!changeEmail}
         error={errors.email}
         note={
-          <p className="text-blue-600 text-xs italic mt-1">
+          <p className="text-primary text-xs italic mt-1">
             <b>Note:</b> Updating the email will change your login credentials!
             Proceed with caution.{" "}
             <span

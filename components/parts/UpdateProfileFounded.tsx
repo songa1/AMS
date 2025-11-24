@@ -1,8 +1,6 @@
 import React from "react";
-import {
-  TailwindInput,
-  TailwindSelect,
-} from "../DashboardPages/AddMember/AddPersonalInfo";
+import { TailwindInput } from "../ui/tail-input";
+import { TailwindSelect } from "../ui/tail-select";
 
 export const Founded = ({
   values,

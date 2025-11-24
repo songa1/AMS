@@ -10,7 +10,7 @@ const acceptedCSVTypes = [
 
 export const TailwindSpinner = () => (
   <div className="flex justify-center items-center">
-    <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent border-solid rounded-full animate-spin"></div>
+    <div className="w-12 h-12 border-4 border-primary border-t-transparent border-solid rounded-full animate-spin"></div>
   </div>
 );
 
@@ -69,17 +69,15 @@ const FullScreenModal = ({
     setNotifications((prev) => [...prev, { id, message, type }]);
     setTimeout(() => {
       removeNotification(id);
-    }, 10000); // Notifications disappear after 10 seconds
+    }, 10000);
   };
 
-  // Function to remove a notification
   const removeNotification = (id: number) => {
     setNotifications((prev) => prev.filter((n) => n.id !== id));
   };
 
   const toggleModal = () => {
     setIsOpen(!isOpen);
-    // Clear notifications when closing the modal
     setNotifications([]);
   };
 
@@ -257,7 +255,7 @@ const FullScreenModal = ({
 
           {/* Modal Header */}
           <div className="pb-4 border-b border-gray-200 mb-6">
-            <h2 className="text-3xl font-extrabold text-blue-600">
+            <h2 className="text-3xl font-extrabold text-primary">
               Upload Users
             </h2>
             <p className="text-sm text-gray-500 mt-1">
@@ -270,7 +268,7 @@ const FullScreenModal = ({
             <input
               id="user-upload-file"
               type="file"
-              className="w-full md:w-auto p-2 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 transition-colors"
+              className="w-full md:w-auto p-2 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-primary hover:file:bg-blue-100 transition-colors"
               onChange={handleFileSelect}
               accept={acceptedCSVTypes.join(",")}
             />
@@ -281,7 +279,7 @@ const FullScreenModal = ({
               className={`mt-4 md:mt-0 py-2 px-6 rounded-lg font-semibold ${
                 isLoading
                   ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-blue-600 hover:bg-blue-700 text-white"
+                  : "bg-primary hover:bg-primary text-white"
               }`}
             />
           </div>

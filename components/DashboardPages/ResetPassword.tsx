@@ -173,6 +173,7 @@ const ChangePasswordPage = () => {
     <div className="container mx-auto p-4 md:p-8">
       <PageHeader
         title={"Change Password"}
+        description="Update your account password to keep your profile secure."
         actionTitle="Save Password"
         Icon={Save}
         onAction={handleSubmit}

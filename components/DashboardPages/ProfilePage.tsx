@@ -1,5 +1,5 @@
-// ProfilePage.tsx - Modernized Version
 "use client";
+
 import { useEffect, useState } from "react";
 import relativeTime from "dayjs/plugin/relativeTime";
 import dayjs from "dayjs";
@@ -53,33 +53,24 @@ const RoleChip = ({
   );
 };
 
-function ProfilePage({ id }: { id?: string }) {
+function ProfilePage() {
   dayjs.extend(relativeTime);
   const authUser: Member = getUser();
   const router = useRouter();
 
   const [activeTab, setActiveTab] = useState(0);
   const [roleModal, setRoleModal] = useState(false);
-  const [userData, setUserData] = useState<Member | null>(authUser);
   const [loading, setLoading] = useState(false);
 
-  const targetId = (id as string) || userData?.id;
-  const userProfile = useGetOneUserQuery(targetId as string, {
+  const targetId = authUser?.id;
+  const userProfile = useGetOneUserQuery(targetId, {
     skip: !targetId,
   });
-
-  useEffect(() => {
-    if (userProfile.isLoading || !userProfile.data) {
-      setLoading(true);
-    } else {
-      setUserData(userProfile?.data || authUser);
-    }
-  }, [userProfile.isLoading, userProfile.data]);
 
   const [change] = useChangeMutation();
   const user: Member = userProfile?.data;
 
-  const isAdmin = userData?.role?.name === "ADMIN";
+  const isAdmin = authUser?.role?.name === "ADMIN";
 
   const handleTabClick = (index: number) => {
     setActiveTab(index);
@@ -100,7 +91,7 @@ function ProfilePage({ id }: { id?: string }) {
     },
   ];
 
-  if (loading || userProfile.isLoading || !user) {
+  if (loading || !authUser) {
     return <Loading />;
   }
 
@@ -148,7 +139,8 @@ function ProfilePage({ id }: { id?: string }) {
       )}
 
       <PageHeader
-        title={fullName ?? "User Profile"}
+        title={"My Profile"}
+        description="View and manage your profile information."
         actionTitle="Update Profile"
         Icon={EditIcon}
         onAction={() => router.push(`/dashboard/update-profile`)}
