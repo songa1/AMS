@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { Member } from "@/types/user";
 import DisplayField from "../ui/DisplayField";
@@ -38,7 +38,7 @@ export const Founded = ({ user }: { user: Member | null }) => (
       <DisplayField text={user?.organizationFounded?.country?.name} />
     </div>
     {user?.organizationFounded &&
-      user?.organizationFounded?.country?.name === "rwanda" && (
+      user?.organizationFounded?.country?.name === "RW" && (
         <div className="flex flex-col">
           <label className="text-sm font-semibold text-gray-500 mb-1">
             District:
@@ -47,12 +47,21 @@ export const Founded = ({ user }: { user: Member | null }) => (
         </div>
       )}
     {user?.organizationFounded &&
-      user?.organizationFounded?.country?.name === "rwanda" && (
+      user?.organizationFounded?.country?.name === "RW" && (
         <div className="flex flex-col">
           <label className="text-sm font-semibold text-gray-500 mb-1">
             Sector:
           </label>
           <DisplayField text={user?.organizationFounded?.sector?.name} />
+        </div>
+      )}
+    {user?.organizationFounded &&
+      user?.organizationFounded?.country?.name !== "RW" && (
+        <div className="flex flex-col">
+          <label className="text-sm font-semibold text-gray-500 mb-1">
+            State:
+          </label>
+          <DisplayField text={user?.organizationFounded?.state?.name} />
         </div>
       )}
   </div>

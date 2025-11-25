@@ -39,8 +39,8 @@ export const NAVIGATION: NavItemType[] = [
     onlyAdmin: false,
   },
   {
-    segment: "/dashboard/update-profile",
-    title: "Edit Profile",
+    segment: "/dashboard/profile/update",
+    title: "Update Profile",
     icon: <MdEdit className="w-5 h-5" />,
     onlyAdmin: false,
   },

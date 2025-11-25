@@ -113,7 +113,7 @@ function ProfilePage() {
         description="View and manage your profile information."
         actionTitle="Update Profile"
         Icon={EditIcon}
-        onAction={() => router.push(`/dashboard/update-profile`)}
+        onAction={() => router.push(`/dashboard/profile/update`)}
         loading={false}
         disabled={userId ? true : false}
       />
@@ -158,7 +158,7 @@ function ProfilePage() {
           <div className="border-b border-gray-200">
             <ul className="flex flex-wrap -mb-px text-sm font-medium text-center text-gray-500">
               {tabs.map((tab, index) => (
-                <li key={index} className="mr-2">
+                <li key={index+1} className="mr-2">
                   <button
                     type="button"
                     onClick={() => handleTabClick(index)}

@@ -76,6 +76,7 @@ function NewProfile() {
     [key: number]: "idle" | "success" | "error" | "skipped";
   }>({});
   const [workingSectors, setWorkingSectors] = useState<WorkingSector[]>([]);
+  const [userId, setUserId] = useState<string>("");
 
   const newUserId = `AMS-MEM-${Date.now()}`;
 
@@ -201,6 +202,7 @@ function NewProfile() {
                 onSuccess={() => handleSectionSuccess(1)}
                 onError={() => handleSectionError(1)}
                 newId={newUserId}
+                setUserId={setUserId}
               />
             )}
             {section.id === 2 && (
@@ -212,7 +214,7 @@ function NewProfile() {
                 onSuccess={() => handleSectionSuccess(2)}
                 onError={() => handleSectionError(2)}
                 onSkip={() => handleSectionSkip(2)}
-                newId={newUserId}
+                newId={userId}
               />
             )}
             {section.id === 3 && (
@@ -224,7 +226,7 @@ function NewProfile() {
                 onSuccess={() => handleSectionSuccess(3)}
                 onError={() => handleSectionError(3)}
                 onSkip={() => handleSectionSkip(3)}
-                newId={newUserId}
+                newId={userId}
               />
             )}
           </SectionWrapper>

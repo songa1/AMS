@@ -36,7 +36,7 @@ export const Personal = ({ user }: { user: Member }) => {
         </label>
         <DisplayField text={user?.residentCountry?.name} />
       </div>
-      {user?.residentCountry && user?.residentCountry?.id === "rwanda" && (
+      {user?.residentCountry && user?.residentCountry?.id === "RW" && (
         <div className="flex flex-col">
           <label className="text-sm font-semibold text-gray-500 mb-1">
             Resident District:
@@ -44,12 +44,20 @@ export const Personal = ({ user }: { user: Member }) => {
           <DisplayField text={user?.residentDistrict?.name} />
         </div>
       )}
-      {user?.residentCountry && user?.residentCountry?.id === "rwanda" && (
+      {user?.residentCountry && user?.residentCountry?.id === "RW" && (
         <div className="flex flex-col">
           <label className="text-sm font-semibold text-gray-500 mb-1">
             Resident Sector:
           </label>
           <DisplayField text={user?.residentSector?.name} />
+        </div>
+      )}
+      {user?.residentCountry && user?.residentCountry?.id !== "RW" && (
+        <div className="flex flex-col">
+          <label className="text-sm font-semibold text-gray-500 mb-1">
+            State:
+          </label>
+          <DisplayField text={user?.state?.name} />
         </div>
       )}
       <div className="flex flex-col">
