@@ -21,7 +21,6 @@ export const RoleChip = ({
         ${isAdmin && "cursor-pointer"}
       `}
       title={isAdmin ? "Click to change role" : "Only ADMIN can change roles"}
-      disabled={!isAdmin}
     >
       {isAdmin ? (
         <MdSecurity className="w-3 h-3 mr-1" />
