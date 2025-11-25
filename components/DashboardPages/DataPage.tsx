@@ -17,6 +17,7 @@ function DataPage() {
         actionTitle="More Settings"
         onAction={() => {}}
         loading={false}
+        disabled={false}
       />
       <div>
         <h2 className="font-bold text-2xl">Setup Notifications</h2>

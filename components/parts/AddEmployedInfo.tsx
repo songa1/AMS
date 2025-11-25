@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, ChangeEvent } from "react";
+import React, { useState, ChangeEvent, useEffect } from "react";
 import {
   Country,
   Organization,
@@ -12,72 +12,12 @@ import {
 import { EmployedInfoState } from "@/types/company";
 import { InputField } from "@/components/ui/input";
 import { SelectField } from "@/components/ui/select";
-
-const ImageUploadField = ({
-  label,
-  onChange,
-}: {
-  label: string;
-  onChange: (file: File | null) => void;
-}) => {
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files ? e.target.files[0] : null;
-    onChange(file);
-
-    if (file) {
-      setPreviewUrl(URL.createObjectURL(file));
-    } else {
-      setPreviewUrl(null);
-    }
-  };
-
-  return (
-    <div className="flex flex-col space-y-2 col-span-1 md:col-span-2">
-      <label className="text-sm font-medium text-gray-700">{label}</label>
-      <div className="flex items-center space-x-4">
-        <div
-          className="w-24 h-24 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center overflow-hidden bg-gray-50"
-          style={{ minWidth: "6rem" }}
-        >
-          {previewUrl ? (
-            <img
-              src={previewUrl}
-              alt="Company Logo Preview"
-              className="w-full h-full object-cover"
-            />
-          ) : (
-            <span className="text-gray-400 text-xs text-center p-1">
-              Upload Logo (PNG/JPG)
-            </span>
-          )}
-        </div>
-        <label className="cursor-pointer bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary transition duration-150">
-          Choose File
-          <input
-            type="file"
-            accept="image/png, image/jpeg"
-            onChange={handleFileChange}
-            className="hidden"
-          />
-        </label>
-        {previewUrl && (
-          <button
-            type="button"
-            onClick={() => {
-              setPreviewUrl(null);
-              onChange(null);
-            }}
-            className="text-red-500 hover:text-red-700 text-sm"
-          >
-            Remove
-          </button>
-        )}
-      </div>
-    </div>
-  );
-};
+import { useAssociateOrganizationMutation } from "@/lib/features/userSlice";
+import {
+  useSectorsByDistrictQuery,
+  useStatesByCountryQuery,
+} from "@/lib/features/otherSlice";
+import { Loader2 } from "lucide-react";
 
 const initialEmployedInfoState: EmployedInfoState = {
   companyName: "",
@@ -92,6 +32,7 @@ const initialEmployedInfoState: EmployedInfoState = {
 
 function AddEmployedInfo({
   organizations,
+  workingSectors,
   countries,
   districts,
   onSuccess,
@@ -100,6 +41,7 @@ function AddEmployedInfo({
   newId,
 }: {
   organizations: Organization[];
+  workingSectors: WorkingSector[];
   districts: ResidentDistrict[];
   countries: Country[];
   onSuccess: () => void;
@@ -110,7 +52,6 @@ function AddEmployedInfo({
   const [formData, setFormData] = useState<EmployedInfoState>(
     initialEmployedInfoState
   );
-  const [companyLogo, setCompanyLogo] = useState<File | null>(null);
   const [newOrg, setNewOrg] = useState<string | number>("");
 
   const [employedCountryId, setEmployedCountryId] = useState("");
@@ -120,9 +61,19 @@ function AddEmployedInfo({
   const [employedStates, setEmployedStates] = useState<State[]>([]);
   const [sectorsEmployed, setSectorsEmployed] = useState<ResidentSector[]>([]);
 
-  const [workingSectorsEmployed, setWorkingSectorsEmployed] = useState<
-    WorkingSector[]
-  >([]);
+  const [associateOrganization, { isLoading }] =
+    useAssociateOrganizationMutation();
+
+  const { data: StatesData } = useStatesByCountryQuery(employedCountryId, {
+    skip: !employedCountryId,
+  });
+
+  const { data: SectorsData } = useSectorsByDistrictQuery(
+    selectedDistrictEmployedName,
+    {
+      skip: !selectedDistrictEmployedName,
+    }
+  );
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -134,6 +85,14 @@ function AddEmployedInfo({
       [name]: value,
     }));
   };
+
+  useEffect(() => {
+    if (StatesData?.data) setEmployedStates(StatesData.data);
+  }, [StatesData]);
+
+  useEffect(() => {
+    if (SectorsData?.data) setSectorsEmployed(SectorsData.data);
+  }, [SectorsData]);
 
   const handleCountryChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const countryId = e.target.value;
@@ -194,17 +153,51 @@ function AddEmployedInfo({
     }));
   };
 
-  const handleLogoUpload = (file: File | null) => {
-    setCompanyLogo(file);
-  };
-
   const handleSubmit = async () => {
-    console.log(
-      "Submitting Employed Info:",
-      formData,
-      "Company Logo:",
-      companyLogo
-    );
+    try {
+      if (!newOrg) {
+        onError();
+        return;
+      }
+
+      if (newOrg !== "new") {
+        const payload = {
+          userId: newId,
+          mode: "existing",
+          existingOrganizationId: Number(newOrg),
+          associationType: "founded",
+        };
+
+        const response = await associateOrganization(payload).unwrap();
+        console.log("Existing organization associated:", response);
+
+        onSuccess();
+        return;
+      }
+
+      const payload = {
+        userId: newId,
+        mode: "new",
+        associationType: "founded",
+        newOrganizationData: {
+          name: formData?.companyName,
+          workingSectorId: formData?.companySector || null,
+          website: formData?.companyWebsite || null,
+          countryId: formData.companyCountry?.id || null,
+          stateId: formData.companyState?.id || null,
+          districtId: formData.companyDistrictName?.id || null,
+          sectorId: formData.companySectorId?.id || null,
+        },
+      };
+
+      const response = await associateOrganization(payload).unwrap();
+      console.log("New organization created & associated:", response);
+
+      onSuccess();
+    } catch (error) {
+      console.error("Error submitting founded info:", error);
+      onError();
+    }
   };
 
   const isRwanda = formData.companyCountry?.id === "RW";
@@ -235,11 +228,6 @@ function AddEmployedInfo({
             Enter Employment Info
           </h3>
 
-          <ImageUploadField
-            label="Company Logo/Picture"
-            onChange={handleLogoUpload}
-          />
-
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <InputField
               label="Company Name"
@@ -266,7 +254,7 @@ function AddEmployedInfo({
               <option value="" disabled>
                 Select a sector
               </option>
-              {workingSectorsEmployed.map((sector: WorkingSector) => (
+              {workingSectors.map((sector: WorkingSector) => (
                 <option key={sector?.id} value={sector?.id}>
                   {sector?.name}
                 </option>
@@ -367,6 +355,7 @@ function AddEmployedInfo({
             }
           `}
         >
+          {isLoading && <Loader2 className="animate-spin mr-2 inline-block" />}
           {isNewOrg
             ? "Validate & Save Initiative Details"
             : "Use Selected Initiative"}

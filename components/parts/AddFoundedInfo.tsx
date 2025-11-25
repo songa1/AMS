@@ -3,7 +3,6 @@
 import {
   useSectorsByDistrictQuery,
   useStatesByCountryQuery,
-  useWorkingSectorQuery,
 } from "@/lib/features/otherSlice";
 import React, { useEffect, useState, ChangeEvent } from "react";
 import {
@@ -14,76 +13,11 @@ import {
   State,
   WorkingSector,
 } from "@/types/user";
-import { useOrganizationsQuery } from "@/lib/features/orgSlice";
 import { FoundedInfoState } from "@/types/company";
 import { SelectField } from "@/components/ui/select";
 import { InputField } from "@/components/ui/input";
-
-const ImageUploadField = ({
-  label,
-  onChange,
-}: {
-  label: string;
-  onChange: (file: File | null) => void;
-}) => {
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files ? e.target.files[0] : null;
-    onChange(file);
-
-    if (file) {
-      setPreviewUrl(URL.createObjectURL(file));
-    } else {
-      setPreviewUrl(null);
-    }
-  };
-
-  return (
-    <div className="flex flex-col space-y-2 col-span-1 md:col-span-2">
-      <label className="text-sm font-medium text-gray-700">{label}</label>
-      <div className="flex items-center space-x-4">
-        <div
-          className="w-24 h-24 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center overflow-hidden bg-gray-50"
-          style={{ minWidth: "6rem" }}
-        >
-          {previewUrl ? (
-            <img
-              src={previewUrl}
-              alt="Company Logo Preview"
-              className="w-full h-full object-cover"
-            />
-          ) : (
-            <span className="text-gray-400 text-xs text-center p-1">
-              Upload Logo (PNG/JPG)
-            </span>
-          )}
-        </div>
-        <label className="cursor-pointer bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/80 transition duration-150">
-          Choose File
-          <input
-            type="file"
-            accept="image/png, image/jpeg"
-            onChange={handleFileChange}
-            className="hidden"
-          />
-        </label>
-        {previewUrl && (
-          <button
-            type="button"
-            onClick={() => {
-              setPreviewUrl(null);
-              onChange(null);
-            }}
-            className="text-red-500 hover:text-red-700 text-sm"
-          >
-            Remove
-          </button>
-        )}
-      </div>
-    </div>
-  );
-};
+import { useAssociateOrganizationMutation } from "@/lib/features/userSlice";
+import { Loader2 } from "lucide-react";
 
 const initialFoundedInfoState: FoundedInfoState = {
   initiativeName: "",
@@ -100,14 +34,16 @@ function AddFoundedInfo({
   districts,
   countries,
   organizations,
+  workingSectors,
   onSuccess,
   onError,
   onSkip,
-  newId
+  newId,
 }: {
   districts: ResidentDistrict[];
   countries: Country[];
   organizations: Organization[];
+  workingSectors: WorkingSector[];
   onSuccess: () => void;
   onError: () => void;
   onSkip: () => void;
@@ -117,7 +53,6 @@ function AddFoundedInfo({
     initialFoundedInfoState
   );
   const [newOrg, setNewOrg] = useState<string | number>("");
-  const [organizationLogo, setOrganizationLogo] = useState<File | null>(null);
 
   const [foundedCountryId, setFoundedCountryId] = useState("");
   const [selectedDistrictFoundedName, setSelectedDistrictFoundedName] =
@@ -126,7 +61,8 @@ function AddFoundedInfo({
   const [foundedStates, setFoundedStates] = useState<State[]>([]);
   const [sectorsFounded, setSectorsFounded] = useState<ResidentSector[]>([]);
 
-  const [workingSectors, setWorkingSectors] = useState<WorkingSector[]>([]);
+  const [associateOrganization, { isLoading }] =
+    useAssociateOrganizationMutation();
 
   const { data: FoundedStatesData } = useStatesByCountryQuery(
     foundedCountryId,
@@ -141,11 +77,6 @@ function AddFoundedInfo({
       skip: !selectedDistrictFoundedName,
     }
   );
-  const { data: WorkingSectorsData } = useWorkingSectorQuery("");
-
-  useEffect(() => {
-    if (WorkingSectorsData?.data) setWorkingSectors(WorkingSectorsData.data);
-  }, [WorkingSectorsData]);
 
   useEffect(() => {
     if (FoundedStatesData?.data) setFoundedStates(FoundedStatesData.data);
@@ -221,25 +152,57 @@ function AddFoundedInfo({
 
     if (value !== "new") {
       const existingOrg = organizations.find((org) => org.id === value);
-      console.log("Existing organization selected:", existingOrg);
+      setFormData((prev) => ({
+        ...prev,
+        initiativeName: existingOrg ? existingOrg.name : "",
+      }));
     }
   };
 
-  const handleLogoUpload = (file: File | null) => {
-    setOrganizationLogo(file);
-  };
-
   const handleSubmit = async () => {
-    console.log(
-      "Submitting Founded Info. Selected Organization Option:",
-      newOrg,
-      "Organization Logo:",
-      organizationLogo
-    );
-    if (newOrg === "new") {
-      console.log("New Organization Details:", formData);
-    } else {
-      console.log("Existing Organization ID:", newOrg);
+    try {
+      if (!newOrg) {
+        onError();
+        return;
+      }
+
+      if (newOrg !== "new") {
+        const payload = {
+          userId: newId,
+          mode: "existing",
+          existingOrganizationId: Number(newOrg),
+          associationType: "founded",
+        };
+
+        const response = await associateOrganization(payload).unwrap();
+        console.log("Existing organization associated:", response);
+
+        onSuccess();
+        return;
+      }
+
+      const payload = {
+        userId: newId,
+        mode: "new",
+        associationType: "founded",
+        newOrganizationData: {
+          name: formData.initiativeName,
+          workingSectorId: formData.mainSector || null,
+          website: formData.foundedWebsite || null,
+          countryId: formData.foundedCountry?.id || null,
+          stateId: formData.foundedState?.id || null,
+          districtId: formData.foundedDistrictName?.id || null,
+          sectorId: formData.foundedSectorId?.id || null,
+        },
+      };
+
+      const response = await associateOrganization(payload).unwrap();
+      console.log("New organization created & associated:", response);
+
+      onSuccess();
+    } catch (error) {
+      console.error("Error submitting founded info:", error);
+      onError();
     }
   };
 
@@ -270,11 +233,6 @@ function AddFoundedInfo({
           <h3 className="text-xl font-bold text-primary border-b border-blue-200 pb-3">
             Enter New Initiative Details
           </h3>
-
-          <ImageUploadField
-            label="Initiative Logo/Picture"
-            onChange={handleLogoUpload}
-          />
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <InputField
@@ -404,6 +362,7 @@ function AddFoundedInfo({
             }
           `}
         >
+          {isLoading && <Loader2 className="animate-spin mr-2 inline-block" />}
           {isNewOrg
             ? "Validate & Save Initiative Details"
             : "Use Selected Initiative"}

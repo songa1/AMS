@@ -178,6 +178,7 @@ const ChangePasswordPage = () => {
         Icon={Save}
         onAction={handleSubmit}
         loading={loading}
+        disabled={false}
       />
       <div className="w-full max-w-lg flex justify-center items-center mx-auto my-3">
         <form onSubmit={handleSubmit} className="w-full flex flex-col gap-6">

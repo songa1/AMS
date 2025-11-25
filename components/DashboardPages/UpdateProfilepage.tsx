@@ -555,6 +555,7 @@ function UpdateProfilepage() {
         Icon={Save}
         onAction={handleSubmit}
         loading={isLoading}
+        disabled={false}
       />
       {(error || success) && (
         <div

@@ -79,6 +79,13 @@ export const usersSlices = createApi({
         body: data,
       }),
     }),
+    associateOrganization: builder.mutation({
+      query: (data) => ({
+        url: "users/org",
+        method: "POST",
+        body: data,
+      }),
+    }),
     exportUsers: builder.mutation({
       query: () => ({
         url: "users/export",
@@ -101,4 +108,5 @@ export const {
   useExportUsersMutation,
   useCreateUserProfileMutation,
   useInviteUserMutation,
+  useAssociateOrganizationMutation
 } = usersSlices;

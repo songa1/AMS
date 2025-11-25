@@ -8,10 +8,16 @@ import { MdCheck } from "react-icons/md";
 import ImportUsersModal from "../parts/models/ImportMembersModal";
 import { PageHeader } from "../parts/PageHeader";
 import { Upload } from "lucide-react";
-import { Country, Organization, ResidentDistrict } from "@/types/user";
+import {
+  Country,
+  Organization,
+  ResidentDistrict,
+  WorkingSector,
+} from "@/types/user";
 import {
   useCountriesQuery,
   useDistrictsQuery,
+  useWorkingSectorQuery,
 } from "@/lib/features/otherSlice";
 import { useOrganizationsQuery } from "@/lib/features/orgSlice";
 import SectionWrapper from "../parts/SessionWrapper";
@@ -69,11 +75,14 @@ function NewProfile() {
   const [sectionFeedback, setSectionFeedback] = useState<{
     [key: number]: "idle" | "success" | "error" | "skipped";
   }>({});
-  const newUserId = crypto.randomUUID();
+  const [workingSectors, setWorkingSectors] = useState<WorkingSector[]>([]);
+
+  const newUserId = `AMS-MEM-${Date.now()}`;
 
   const { data: CountryData } = useCountriesQuery("");
   const { data: DistrictData } = useDistrictsQuery("");
   const { data: OrganizationsData } = useOrganizationsQuery("");
+  const { data: WorkingSectorsData } = useWorkingSectorQuery("");
 
   useEffect(() => {
     if (DistrictData?.data) {
@@ -115,6 +124,10 @@ function NewProfile() {
     setSectionFeedback((prev) => ({ ...prev, [sectionId]: "error" }));
     setActiveSection(sectionId);
   }, []);
+
+  useEffect(() => {
+    if (WorkingSectorsData?.data) setWorkingSectors(WorkingSectorsData.data);
+  }, [WorkingSectorsData]);
 
   const handleReactivate = useCallback(
     (sectionId: number) => {
@@ -166,6 +179,7 @@ function NewProfile() {
         Icon={Upload}
         onAction={() => setIsImportModalOpen(true)}
         loading={false}
+        disabled={false}
       />
       <div className="space-y-8">
         {SECTIONS.map((section) => (
@@ -194,6 +208,7 @@ function NewProfile() {
                 countries={countries}
                 districts={districts}
                 organizations={organizations}
+                workingSectors={workingSectors}
                 onSuccess={() => handleSectionSuccess(2)}
                 onError={() => handleSectionError(2)}
                 onSkip={() => handleSectionSkip(2)}
@@ -205,6 +220,7 @@ function NewProfile() {
                 countries={countries}
                 districts={districts}
                 organizations={organizations}
+                workingSectors={workingSectors}
                 onSuccess={() => handleSectionSuccess(3)}
                 onError={() => handleSectionError(3)}
                 onSkip={() => handleSectionSkip(3)}
