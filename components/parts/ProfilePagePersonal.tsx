@@ -1,16 +1,14 @@
-"use client";
-
 import { Member } from "@/types/user";
 import DisplayField from "../ui/DisplayField";
 
-export const Personal = ({ user }: { user: Member }) => {
+export const Personal = ({ user }: { user: Member | null }) => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
       <div className="flex flex-col">
         <label className="text-sm font-semibold text-gray-500 mb-1">
           Email:
         </label>
-        <DisplayField text={user?.email ?? ""} />
+        <DisplayField text={user?.email} />
       </div>
       <div className="flex flex-col">
         <label className="text-sm font-semibold text-gray-500 mb-1">
@@ -36,7 +34,7 @@ export const Personal = ({ user }: { user: Member }) => {
         </label>
         <DisplayField text={user?.residentCountry?.name} />
       </div>
-      {user?.residentCountry && user?.residentCountry?.id === "RW" && (
+      {user?.residentCountry && user?.residentCountry?.id === "rwanda" && (
         <div className="flex flex-col">
           <label className="text-sm font-semibold text-gray-500 mb-1">
             Resident District:
@@ -44,20 +42,12 @@ export const Personal = ({ user }: { user: Member }) => {
           <DisplayField text={user?.residentDistrict?.name} />
         </div>
       )}
-      {user?.residentCountry && user?.residentCountry?.id === "RW" && (
+      {user?.residentCountry && user?.residentCountry?.id === "rwanda" && (
         <div className="flex flex-col">
           <label className="text-sm font-semibold text-gray-500 mb-1">
             Resident Sector:
           </label>
           <DisplayField text={user?.residentSector?.name} />
-        </div>
-      )}
-      {user?.residentCountry && user?.residentCountry?.id !== "RW" && (
-        <div className="flex flex-col">
-          <label className="text-sm font-semibold text-gray-500 mb-1">
-            State:
-          </label>
-          <DisplayField text={user?.state?.name} />
         </div>
       )}
       <div className="flex flex-col">

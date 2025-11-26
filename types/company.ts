@@ -13,7 +13,7 @@ export interface EmployedInfoState {
 
 export interface FoundedInfoState {
   initiativeName: string;
-  mainSector: string;
+  mainSector: string; // ID of the working sector
   foundedPosition: string;
   foundedWebsite: string;
   foundedCountry: Country | null; // Store the full Country object

@@ -9,9 +9,6 @@ export const chatSlices = createApi({
     chats: builder.query({
       query: () => `chat`,
     }),
-    topMembers: builder.query({
-      query: () => `chat/top`,
-    }),
     addMessage: builder.mutation({
       query: (credentials) => ({
         url: "chat",
@@ -33,5 +30,4 @@ export const {
   useChatsQuery,
   usePrivateChatsQuery,
   usePrivateMessagesQuery,
-  useTopMembersQuery,
 } = chatSlices;

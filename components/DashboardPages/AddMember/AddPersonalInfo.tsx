@@ -2,14 +2,18 @@
 
 import React, { useEffect, useState } from "react";
 import {
+  cohort,
   Country,
-  Gender,
-  ResidentDistrict,
-  ResidentSector,
+  gender,
+  residentDistrict,
+  residentSector,
   State,
+  Track,
 } from "@/types/user";
 import {
   useCohortsQuery,
+  useCountriesQuery,
+  useDistrictsQuery,
   useGenderQuery,
   useSectorsByDistrictQuery,
   useStatesByCountryQuery,
@@ -20,13 +24,128 @@ import {
   useUploadPictureMutation,
 } from "@/lib/features/userSlice";
 import { getUser } from "@/helpers/auth";
-import { Track } from "@/types/track";
-import { Cohort } from "@/types/cohort";
-import { TailwindInput } from "@/components/ui/tail-input";
-import { PhoneInputTailwind } from "@/components/ui/tail-phone";
-import { TailwindSelect } from "@/components/ui/tail-select";
-import { TailwindButton } from "../ui/tail-btn";
-import { TailwindAlert } from "../ui/tail0alert";
+
+
+export const TailwindButton = ({
+  onClick,
+  children,
+  className = "",
+  disabled = false,
+  icon: IconComponent = null,
+}: any) => (
+  <button
+    onClick={onClick}
+    disabled={disabled}
+    className={`flex items-center justify-center px-4 py-2 font-semibold text-white rounded-md transition duration-150 ease-in-out 
+      ${disabled ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"} 
+      ${className}`}
+  >
+    {IconComponent && <IconComponent className="w-5 h-5 mr-2" />}
+    {children}
+  </button>
+);
+
+export const TailwindInput = ({
+  id,
+  label,
+  type = "text",
+  value,
+  onChange,
+  placeholder,
+  required = false,
+  error,
+  helperText,
+  multiline = false,
+  rows = 1,
+}: any) => (
+  <div className="flex flex-col w-full">
+    <label htmlFor={id} className="text-sm font-medium text-gray-700 mb-1">
+      {label} {required && <span className="text-red-500">*</span>}
+    </label>
+    {multiline ? (
+      <textarea
+        id={id}
+        rows={rows}
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        required={required}
+        className={`w-full p-2 border ${error ? "border-red-500" : "border-gray-300"} rounded-md focus:ring-blue-500 focus:border-blue-500`}
+      />
+    ) : (
+      <input
+        id={id}
+        type={type}
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        required={required}
+        className={`w-full p-2 border ${error ? "border-red-500" : "border-gray-300"} rounded-md focus:ring-blue-500 focus:border-blue-500`}
+      />
+    )}
+    {helperText && (
+      <p className={`text-xs mt-1 ${error ? "text-red-500" : "text-gray-500"}`}>
+        {helperText}
+      </p>
+    )}
+  </div>
+);
+
+export const TailwindSelect = ({
+  id,
+  label,
+  value,
+  onChange,
+  options,
+  placeholder,
+  required = false,
+  error,
+  helperText,
+  disabled = false,
+}: any) => (
+  <div className="flex flex-col w-full">
+    <label htmlFor={id} className="text-sm font-medium text-gray-700 mb-1">
+      {label} {required && <span className="text-red-500">*</span>}
+    </label>
+    <select
+      id={id}
+      value={value}
+      onChange={onChange}
+      required={required}
+      disabled={disabled}
+      className={`w-full p-2 border ${error ? "border-red-500" : "border-gray-300"} bg-white rounded-md focus:ring-blue-500 focus:border-blue-500 ${disabled ? "bg-gray-100 cursor-not-allowed" : ""}`}
+    >
+      <option value="" disabled>
+        {placeholder || `Select ${label}`}
+      </option>
+      {options.map((option: any) => (
+        <option key={option.id || option.name} value={option.id || option.name}>
+          {option.name}
+        </option>
+      ))}
+    </select>
+    {helperText && (
+      <p className={`text-xs mt-1 ${error ? "text-red-500" : "text-gray-500"}`}>
+        {helperText}
+      </p>
+    )}
+  </div>
+);
+
+export const TailwindAlert = ({
+  severity,
+  children,
+}: {
+  severity: "success" | "error";
+  children: React.ReactNode;
+}) => {
+  const baseClasses = "p-4 rounded-md text-sm mb-4";
+  const colorClasses =
+    severity === "success"
+      ? "bg-green-100 text-green-700 border border-green-400"
+      : "bg-red-100 text-red-700 border border-red-400";
+  return <div className={`${baseClasses} ${colorClasses}`}>{children}</div>;
+};
 
 const CloudUploadIcon = (props: any) => (
   <svg
@@ -45,6 +164,43 @@ const CloudUploadIcon = (props: any) => (
   </svg>
 );
 
+export const PhoneInputTailwind = ({
+  id,
+  label,
+  value,
+  onChange,
+  error,
+  helperText,
+  placeholder,
+  required = false,
+}: any) => (
+  <div className="flex flex-col w-full">
+    <label htmlFor={id} className="text-sm font-medium text-gray-700 mb-1">
+      {label} {required && <span className="text-red-500">*</span>}
+    </label>
+    <div className="relative">
+      <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+        <span className="text-gray-500">+</span>
+      </div>
+      <input
+        id={id}
+        type="tel"
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        required={required}
+        className={`w-full p-2 pl-6 border ${error ? "border-red-500" : "border-gray-300"} rounded-md focus:ring-blue-500 focus:border-blue-500`}
+      />
+    </div>
+    {helperText && (
+      <p className={`text-xs mt-1 ${error ? "text-red-500" : "text-gray-500"}`}>
+        {helperText}
+      </p>
+    )}
+  </div>
+);
+
+
 interface FormValues {
   bio: string;
   firstName: string;
@@ -55,16 +211,18 @@ interface FormValues {
   instagram: string;
   twitter: string;
   facebook: string;
-  genderId: string;
+  gender: string; // Will store the ID/Name
   phoneNumber: string;
-  districtId: string;
-  sectorId: string;
-  countryId: string;
+  districtName: string; // Will store the Name/ID
+  sectorId: string; // Will store the ID
+  residentCountryId: string; // Will store the ID (e.g., "RW")
   whatsAppNumber: string;
   nearlestLandmark: string;
-  trackId: string;
-  cohortId: string;
-  stateId: string;
+  track: string; // Will store the ID
+  cohortId: string; // Will store the ID
+  state: string; // Will store the ID
+  foundedPosition: string;
+  foundedDistrictName: string;
   profileImageId: string;
 }
 
@@ -72,6 +230,7 @@ interface FormErrors {
   [key: string]: string;
 }
 
+// Initial form state
 const initialValues: FormValues = {
   bio: "",
   firstName: "",
@@ -82,19 +241,22 @@ const initialValues: FormValues = {
   instagram: "",
   twitter: "",
   facebook: "",
-  genderId: "",
+  gender: "",
   phoneNumber: "",
-  districtId: "",
+  districtName: "",
   sectorId: "",
-  countryId: "",
+  residentCountryId: "",
   whatsAppNumber: "",
   nearlestLandmark: "",
-  trackId: "",
+  track: "",
   cohortId: "",
-  stateId: "",
+  state: "",
+  foundedPosition: "",
+  foundedDistrictName: "",
   profileImageId: "",
 };
 
+// Simple manual validation function
 const validate = (values: FormValues) => {
   const errors: FormErrors = {};
 
@@ -143,75 +305,76 @@ const validate = (values: FormValues) => {
   if (values.whatsAppNumber && !/^\+?[0-9]+$/i.test(values.whatsAppNumber)) {
     errors.whatsAppNumber = "WhatsApp number must be digits only";
   }
-  if (!values.genderId) {
+  if (!values.gender) {
     errors.gender = "Gender is required";
   }
-  if (!values.trackId) {
+  if (!values.track) {
     errors.track = "Track is required";
   }
-  if (!values.countryId) {
-    errors.countryId = "Resident Country is required";
+  if (!values.residentCountryId) {
+    errors.residentCountryId = "Resident Country is required";
   }
 
-  if (values.countryId === "RW") {
-    if (!values.districtId) errors.districtId = "District is required";
+  // Rwanda specific fields conditional validation
+  if (values.residentCountryId === "RW") {
+    if (!values.districtName) errors.districtName = "District is required";
     if (!values.sectorId) errors.sectorId = "Sector is required";
-  } else if (values.countryId && !values.stateId) {
+  } else if (values.residentCountryId && !values.state) {
+    // Other countries need a state/province
     errors.state = "State/Province is required";
   }
 
   return errors;
 };
 
-function AddPersonalInfo({
-  districts,
-  countries,
-  onSuccess,
-  onError,
-  newId,
-  setUserId,
-}: {
-  districts: ResidentDistrict[];
-  countries: Country[];
-  onSuccess: () => void;
-  onError: () => void;
-  newId: string;
-  setUserId: (v: string) => void;
-}) {
-  const user = getUser();
-  const [tracks, setTracks] = useState<Track[]>([]);
-  const [genders, setGenders] = useState<Gender[]>([]);
-  const [cohorts, setCohorts] = useState<Cohort[]>([]);
-  const [states, setStates] = useState<State[]>([]);
-  const [sectors, setSectors] = useState<ResidentSector[]>([]);
+// --- Main Component ---
 
+function AddPersonalInfo({ canMove }: { canMove: any }) {
+  const user = getUser();
+
+  // API Data States (existing)
+  const [countries, setCountries] = useState<Country[]>([]);
+  const [states, setStates] = useState<State[]>([]);
+  const [districts, setDistricts] = useState<residentDistrict[]>([]);
+  const [sectors, setSectors] = useState<residentSector[]>([]);
+  const [tracks, setTracks] = useState<Track[]>([]);
+  const [genders, setGenders] = useState<gender[]>([]);
+  const [cohorts, setCohorts] = useState<cohort[]>([]);
+
+  // UI/Form Flow States (existing)
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [imageData, setImageData] = useState<any>(null);
   const [uploadSuccess, setUploadSuccess] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false); // New loading state for submit
 
+  // Form States (replacing Formik)
   const [formValues, setFormValues] = useState<FormValues>(initialValues);
   const [formErrors, setFormErrors] = useState<FormErrors>({});
   const [touched, setTouched] = useState<{ [key: string]: boolean }>({});
 
-  const countryId = formValues.countryId;
-  const districtId = formValues.districtId;
+  // Memoize state variables for RTK Query skipping logic
+  const residentCountryId = formValues.residentCountryId;
+  const districtName = formValues.districtName;
 
+  // RTK Query Hooks (existing logic preserved)
   const { data: GenderData } = useGenderQuery("");
-  const { data: StatesData } = useStatesByCountryQuery(countryId, {
-    skip: !countryId,
+  const { data: CountryData } = useCountriesQuery("");
+  const { data: StatesData } = useStatesByCountryQuery(residentCountryId, {
+    skip: !residentCountryId,
   });
+  const { data: DistrictData } = useDistrictsQuery("");
   const { data: CohortsData } = useCohortsQuery("");
-  const { data: SectorsData } = useSectorsByDistrictQuery(districtId, {
-    skip: !districtId || countryId !== "RW",
+  const { data: SectorsData } = useSectorsByDistrictQuery(districtName, {
+    skip: !districtName || residentCountryId !== "RW",
   });
   const { data: TracksData } = useTracksQuery("");
 
   const [createUserProfile] = useCreateUserProfileMutation();
   const [uploadPicture] = useUploadPictureMutation();
 
+  // Data fetching effects (existing logic preserved)
   useEffect(() => {
     if (TracksData) setTracks(TracksData?.data || []);
   }, [TracksData]);
@@ -225,13 +388,23 @@ function AddPersonalInfo({
   }, [CohortsData]);
 
   useEffect(() => {
+    // When district changes, reset sector and states if country is changing
+    if (SectorsData) setSectors(SectorsData?.data || []);
+  }, [SectorsData]);
+
+  useEffect(() => {
     if (StatesData) setStates(StatesData?.data || []);
   }, [StatesData]);
 
   useEffect(() => {
-    if (SectorsData) setSectors(SectorsData?.data || []);
-  }, [SectorsData]);
+    if (DistrictData) setDistricts(DistrictData?.data || []);
+  }, [DistrictData]);
 
+  useEffect(() => {
+    if (CountryData) setCountries(CountryData?.data || []);
+  }, [CountryData]);
+
+  // Error/Success clearing effect (existing logic preserved)
   useEffect(() => {
     if (success || error) {
       const timer = setTimeout(() => {
@@ -242,7 +415,7 @@ function AddPersonalInfo({
     }
   }, [success, error]);
 
-  console.log("formValues", formValues);
+  // --- New Manual Form Handlers ---
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -252,28 +425,30 @@ function AddPersonalInfo({
     const { id, value } = e.target;
     setFormValues((prev) => ({ ...prev, [id]: value }));
 
+    // Real-time validation after touch/initial change
     if (touched[id]) {
       const newValues = { ...formValues, [id]: value };
       const newErrors = validate(newValues);
       setFormErrors((prev) => ({ ...prev, [id]: newErrors[id] || "" }));
     }
 
-    if (id === "countryId") {
+    // Special logic for cascading selects
+    if (id === "residentCountryId") {
       setFormValues((prev) => ({
         ...prev,
-        districtId: "",
+        districtName: "",
         sectorId: "",
         state: "",
-      }));
+      })); // Clear dependent fields
       setFormErrors((prev) => ({
         ...prev,
-        districtId: "",
+        districtName: "",
         sectorId: "",
         state: "",
       }));
     }
-    if (id === "districtId") {
-      setFormValues((prev) => ({ ...prev, sectorId: "" }));
+    if (id === "districtName") {
+      setFormValues((prev) => ({ ...prev, sectorId: "" })); // Clear dependent field
       setFormErrors((prev) => ({ ...prev, sectorId: "" }));
     }
   };
@@ -286,6 +461,7 @@ function AddPersonalInfo({
     const { id } = e.target;
     setTouched((prev) => ({ ...prev, [id]: true }));
 
+    // Validate on blur
     const newErrors = validate(formValues);
     setFormErrors((prev) => ({ ...prev, [id]: newErrors[id] || "" }));
   };
@@ -317,6 +493,7 @@ function AddPersonalInfo({
 
         if (data?.image) {
           setSuccess("Image uploaded successfully!");
+          // Manually update the form value for profileImageId
           setFormValues((prev) => ({ ...prev, profileImageId: data.image.id }));
           setUploadSuccess(true);
         }
@@ -328,16 +505,20 @@ function AddPersonalInfo({
     }
   };
 
+  // Main Submit Handler (replaces formik.handleSubmit and your original handleSubmit logic)
   const handleSubmit = async () => {
+    // 1. Run full validation
     const errors = validate(formValues);
     setFormErrors(errors);
 
+    // Set all fields as touched for visibility
     const newTouched: { [key: string]: boolean } = {};
     Object.keys(formValues).forEach((key) => {
       newTouched[key] = true;
     });
     setTouched(newTouched);
 
+    // 2. Check for errors
     if (Object.keys(errors).length > 0) {
       setError("Please fix the validation errors before submitting.");
       return;
@@ -350,11 +531,11 @@ function AddPersonalInfo({
     const values = formValues;
 
     try {
-      const selectedGender = genders.find((g) => g.id === values.genderId);
+      // Find the gender name to pass to the API (since gender state stores ID)
+      const selectedGender = genders.find((g) => g.id === values.gender);
 
       const res = await createUserProfile({
         user: {
-          id: newId,
           firstName: values.firstName,
           middleName: values.middleName,
           lastName: values.lastName,
@@ -364,35 +545,41 @@ function AddPersonalInfo({
           twitter: values.twitter,
           facebook: values.facebook,
           bio: values.bio,
+          // Removed react-phone-number-input dependency
           phoneNumber: values.phoneNumber,
           whatsappNumber: values.whatsAppNumber,
-          genderName: selectedGender?.name,
+          genderName: selectedGender?.name, // Use the actual name
           nearestLandmark: values.nearlestLandmark,
           cohortId: values.cohortId,
-          trackId: values.trackId,
-          residentCountryId: values?.countryId,
+          trackId: values.track,
+          // Conditional fields based on residentCountryId
           residentDistrictId:
-            values.countryId === "RW" ? values.districtId : undefined,
+            values.residentCountryId === "RW" ? values.districtName : undefined,
           residentSectorId:
-            values.countryId === "RW" ? values.sectorId : undefined,
-          stateId: values.countryId === "RW" ? undefined : values.stateId,
-          countryId: values.countryId,
+            values.residentCountryId === "RW" ? values.sectorId : undefined,
+          state: values.residentCountryId !== "RW" ? values.state : undefined,
+          residentCountryId: values.residentCountryId,
           profileImageId: values.profileImageId,
         },
       }).unwrap();
 
-      setUserId(res?.user?.id);
-
       if (res.message) {
-        setSuccess("Member profile updated successfully!");
-        onSuccess();
+        // Reset form state on success
+        setFormValues(initialValues);
+        setFormErrors({});
+        setTouched({});
+        setImagePreview(null);
+        setImageData(null);
+        setUploadSuccess(false);
+        setSuccess("User added successfully!");
+        canMove(true);
       }
     } catch (error: any) {
       if (error?.status === 409) {
         setError(error?.data?.error);
       } else {
         setError(
-          "Updating profile failed! Try again, or contact the administrator!"
+          "Adding user Failed! Try again, or contact the administrator!"
         );
       }
     } finally {
@@ -400,24 +587,28 @@ function AddPersonalInfo({
     }
   };
 
+  // Use a generic handler for select components, since they use ID/Name as value
   const handleSelectChange =
     (id: keyof FormValues) => (e: React.ChangeEvent<HTMLSelectElement>) => {
       const value = e.target.value;
+      // Update state
       setFormValues((prev) => ({ ...prev, [id]: value }));
       setTouched((prev) => ({ ...prev, [id]: true }));
 
-      if (id === "countryId") {
+      // Logic for dependent fields
+      if (id === "residentCountryId") {
         setFormValues((prev) => ({
           ...prev,
-          districtId: "",
+          districtName: "",
           sectorId: "",
           state: "",
-        }));
+        })); // Clear dependent fields
       }
-      if (id === "districtId") {
-        setFormValues((prev) => ({ ...prev, sectorId: "" }));
+      if (id === "districtName") {
+        setFormValues((prev) => ({ ...prev, sectorId: "" })); // Clear dependent field
       }
 
+      // Validate
       const newValues = { ...formValues, [id]: value };
       const newErrors = validate(newValues);
       setFormErrors((prev) => ({ ...prev, [id]: newErrors[id] || "" }));
@@ -425,25 +616,29 @@ function AddPersonalInfo({
 
   return (
     <div className="p-4">
+      {/* Alert Replacements */}
       {success && <TailwindAlert severity="success">{success}</TailwindAlert>}
       {error && <TailwindAlert severity="error">{error}</TailwindAlert>}
+
       <div className="relative border-b pb-4 mb-4">
         <div className="flex items-start justify-between p-2">
+          {/* File Upload Button Replacement */}
           <div className="flex flex-col items-start">
             <label
               htmlFor="profileImage"
               className="flex items-center px-4 py-2 font-semibold text-white bg-green-600 hover:bg-green-700 rounded-md cursor-pointer transition duration-150 ease-in-out"
             >
-              <CloudUploadIcon className="w-5 h-5 mr-2" /> Upload Profile
-              Picture
+              <CloudUploadIcon className="w-5 h-5 mr-2" />
+              Upload Profile Picture
               <input
                 id="profileImage"
                 type="file"
-                className="sr-only"
+                className="sr-only" // Visually hidden input using Tailwind
                 onChange={handleFileChange}
                 accept="image/*"
               />
             </label>
+
             {imagePreview && (
               <>
                 <img
@@ -479,8 +674,17 @@ function AddPersonalInfo({
               </>
             )}
           </div>
+
+          <TailwindButton
+            onClick={handleSubmit}
+            className="bg-blue-600 hover:bg-blue-700"
+            disabled={loading}
+          >
+            {loading ? "Submitting..." : "Submit"}
+          </TailwindButton>
         </div>
       </div>
+
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -500,6 +704,7 @@ function AddPersonalInfo({
           error={!!formErrors.bio}
           helperText={formErrors.bio}
         />
+
         <div className="grid sm:grid-cols-1 md:grid-cols-2 gap-4">
           <TailwindInput
             id="firstName"
@@ -545,6 +750,8 @@ function AddPersonalInfo({
             error={!!formErrors.email}
             helperText={formErrors.email}
           />
+
+          {/* Phone Input Replacement */}
           <PhoneInputTailwind
             id="phoneNumber"
             label="Phone Number:"
@@ -555,6 +762,7 @@ function AddPersonalInfo({
             error={!!formErrors.phoneNumber}
             helperText={formErrors.phoneNumber}
           />
+          {/* WhatsApp Input Replacement */}
           <PhoneInputTailwind
             id="whatsAppNumber"
             label="WhatsApp Number:"
@@ -565,11 +773,12 @@ function AddPersonalInfo({
             error={!!formErrors.whatsAppNumber}
             helperText={formErrors.whatsAppNumber}
           />
+
           <TailwindSelect
             id="gender"
             label="Gender"
-            value={formValues.genderId}
-            onChange={handleSelectChange("genderId")}
+            value={formValues.gender}
+            onChange={handleSelectChange("gender")}
             onBlur={handleBlur}
             options={genders}
             required
@@ -577,49 +786,54 @@ function AddPersonalInfo({
             error={!!formErrors.gender}
             helperText={formErrors.gender}
           />
+
           <TailwindSelect
-            id="countryId"
+            id="residentCountryId"
             label="Resident Country"
-            value={formValues.countryId}
-            onChange={handleSelectChange("countryId")}
+            value={formValues.residentCountryId}
+            onChange={handleSelectChange("residentCountryId")}
             onBlur={handleBlur}
             options={countries}
             required
             placeholder="Select Country"
-            error={!!formErrors.countryId}
-            helperText={formErrors.countryId}
+            error={!!formErrors.residentCountryId}
+            helperText={formErrors.residentCountryId}
           />
-          {formValues.countryId && formValues.countryId !== "RW" && (
+
+          {formValues.residentCountryId &&
+            formValues.residentCountryId !== "RW" && (
+              <TailwindSelect
+                id="state"
+                label="State / Province"
+                value={formValues.state}
+                onChange={handleSelectChange("state")}
+                onBlur={handleBlur}
+                options={states}
+                required
+                placeholder="Select State/Province"
+                error={!!formErrors.state}
+                helperText={formErrors.state}
+                disabled={states.length === 0}
+              />
+            )}
+
+          {formValues.residentCountryId === "RW" && (
             <TailwindSelect
-              id="state"
-              label="State / Province"
-              value={formValues.stateId}
-              onChange={handleSelectChange("stateId")}
-              onBlur={handleBlur}
-              options={states}
-              required
-              placeholder="Select State/Province"
-              error={!!formErrors.state}
-              helperText={formErrors.state}
-              disabled={states.length === 0}
-            />
-          )}
-          {formValues.countryId === "RW" && (
-            <TailwindSelect
-              id="districtId"
+              id="districtName"
               label="District"
-              value={formValues.districtId}
-              onChange={handleSelectChange("districtId")}
+              value={formValues.districtName}
+              onChange={handleSelectChange("districtName")}
               onBlur={handleBlur}
               options={districts}
               required
               placeholder="Select District"
-              error={!!formErrors.districtId}
-              helperText={formErrors.districtId}
+              error={!!formErrors.districtName}
+              helperText={formErrors.districtName}
               disabled={districts.length === 0}
             />
           )}
-          {formValues.countryId === "RW" && (
+
+          {formValues.residentCountryId === "RW" && (
             <TailwindSelect
               id="sectorId"
               label="Sector"
@@ -627,12 +841,14 @@ function AddPersonalInfo({
               onChange={handleSelectChange("sectorId")}
               onBlur={handleBlur}
               options={sectors}
+              required
               placeholder="Select Sector"
               error={!!formErrors.sectorId}
               helperText={formErrors.sectorId}
               disabled={sectors.length === 0}
             />
           )}
+
           <TailwindSelect
             id="cohortId"
             label="Cohort"
@@ -644,11 +860,12 @@ function AddPersonalInfo({
             error={!!formErrors.cohortId}
             helperText={formErrors.cohortId}
           />
+
           <TailwindSelect
             id="track"
             label="Track"
-            value={formValues.trackId}
-            onChange={handleSelectChange("trackId")}
+            value={formValues.track}
+            onChange={handleSelectChange("track")}
             onBlur={handleBlur}
             options={tracks}
             required
@@ -656,6 +873,7 @@ function AddPersonalInfo({
             error={!!formErrors.track}
             helperText={formErrors.track}
           />
+
           <TailwindInput
             id="nearlestLandmark"
             label="Nearest Landmark:"
@@ -666,6 +884,8 @@ function AddPersonalInfo({
             error={!!formErrors.nearlestLandmark}
             helperText={formErrors.nearlestLandmark}
           />
+
+          {/* Social Media Links */}
           <TailwindInput
             id="linkedin"
             label="LinkedIn Account (URL):"
@@ -708,13 +928,14 @@ function AddPersonalInfo({
           />
         </div>
       </form>
+
       <div className="flex justify-end pt-4 mt-4 border-t">
         <TailwindButton
           onClick={handleSubmit}
-          className="bg-primary hover:bg-primary/80"
+          className="bg-blue-600 hover:bg-blue-700"
           disabled={loading}
         >
-          {loading ? "Submitting..." : "Submit Personal Data"}
+          {loading ? "Submitting..." : "Submit All Data"}
         </TailwindButton>
       </div>
     </div>

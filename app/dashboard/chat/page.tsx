@@ -1,9 +1,9 @@
-import ChatInterface from "@/components/DashboardPages/IndividualChatPage";
+import IndividualChatPage from "@/components/DashboardPages/IndividualChatPage";
 
 function page() {
   return (
     <div>
-      <ChatInterface username="all" />
+      <IndividualChatPage username="all" />
     </div>
   );
 }

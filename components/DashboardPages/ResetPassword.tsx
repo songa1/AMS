@@ -173,12 +173,10 @@ const ChangePasswordPage = () => {
     <div className="container mx-auto p-4 md:p-8">
       <PageHeader
         title={"Change Password"}
-        description="Update your account password to keep your profile secure."
         actionTitle="Save Password"
         Icon={Save}
         onAction={handleSubmit}
         loading={loading}
-        disabled={false}
       />
       <div className="w-full max-w-lg flex justify-center items-center mx-auto my-3">
         <form onSubmit={handleSubmit} className="w-full flex flex-col gap-6">

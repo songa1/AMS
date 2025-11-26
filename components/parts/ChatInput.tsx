@@ -5,10 +5,7 @@ interface CustomAvatarProps {
   senderName?: string;
 }
 
-export const CustomAvatar: React.FC<CustomAvatarProps> = ({
-  image,
-  senderName,
-}) => {
+export const CustomAvatar: React.FC<CustomAvatarProps> = ({ image, senderName }) => {
   return (
     <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-300 flex items-center justify-center flex-shrink-0">
       {image ? (
@@ -44,14 +41,14 @@ export const ChatInput: React.FC<ChatInputProps> = ({
       value={value}
       onChange={setValue}
       placeholder="Type a message..."
-      className="flex-1 p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary transition duration-150"
+      className="flex-1 p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-150"
     />
     <button
       type="submit"
       disabled={!value.trim()}
       className={`p-3 rounded-full text-white transition duration-150 ${
         value.trim()
-          ? "bg-primary hover:bg-primary"
+          ? "bg-indigo-600 hover:bg-indigo-700"
           : "bg-gray-400 cursor-not-allowed"
       }`}
     >

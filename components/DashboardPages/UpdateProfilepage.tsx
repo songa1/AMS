@@ -26,7 +26,7 @@ import { getUser } from "@/helpers/auth";
 import { MdCloudUpload, MdClose, MdEdit } from "react-icons/md";
 import { Member } from "@/types/user";
 import { PageHeader } from "../parts/PageHeader";
-import { Save } from "lucide-react";
+import { Loader2, Save } from "lucide-react";
 import { TextAreaField } from "../ui/textarea";
 
 const getInitialValues = (usr: Member | undefined) => ({
@@ -68,7 +68,7 @@ const getInitialValues = (usr: Member | undefined) => ({
   profileImageId: usr?.profileImage || "",
 });
 
-function UpdateProfilePage() {
+function UpdateProfilepage() {
   const { id } = useParams();
   const user = getUser();
 
@@ -415,7 +415,7 @@ function UpdateProfilePage() {
         refetch();
 
         // Redirect logic
-        // globalThis.location.href = id ? `/dashboard/members/${id}` : "/dashboard/profile";
+        // globalThis.location.href = id ? `/dashboard/users/${id}` : "/dashboard/profile";
         // NOTE: Commenting out direct navigation to keep the component renderable and testable.
       }
     } catch (apiError: any) {
@@ -550,12 +550,10 @@ function UpdateProfilePage() {
     <div className="container mx-auto p-4 md:p-8">
       <PageHeader
         title="Update Profile"
-        description="Make changes to your profile information below and save to update."
         actionTitle="Save Changes"
         Icon={Save}
         onAction={handleSubmit}
         loading={isLoading}
-        disabled={false}
       />
       {(error || success) && (
         <div
@@ -671,4 +669,4 @@ function UpdateProfilePage() {
   );
 }
 
-export default UpdateProfilePage;
+export default UpdateProfilepage;

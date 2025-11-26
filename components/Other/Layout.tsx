@@ -1,12 +1,11 @@
 // Layout.tsx
 "use client";
 import React, { useState } from "react";
-import Copyright from "../parts/Copyright";
+import Copyright from "./Copyright";
 import { MdMenu } from "react-icons/md";
 import Sidebar from "../parts/DashboardSidebar";
 import { getUser } from "@/helpers/auth";
 import { Member } from "@/types/user";
-import Loading from "@/app/loading";
 
 const AccessDashboard = ({ children }: { children: React.ReactNode }) => (
   <div className="h-full w-full">{children}</div>
@@ -14,24 +13,14 @@ const AccessDashboard = ({ children }: { children: React.ReactNode }) => (
 
 function Layout({ children }: { children: React.ReactNode }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [loading, setLoading] = React.useState(true);
-  const [member, setMember] = React.useState<Member>();
 
-  React.useEffect(() => {
-    setLoading(true)
-    setMember(getUser());
-    setLoading(false);
-  }, []);
+  const member: Member = getUser();
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
   const contentMargin = isSidebarOpen ? "ml-60" : "ml-20";
-
-  if(loading){
-    return <Loading/>
-  }
 
   return (
     <div className="min-h-screen flex bg-gray-100">
@@ -53,9 +42,7 @@ function Layout({ children }: { children: React.ReactNode }) {
           </button>
 
           <div className="flex items-center space-x-4">
-            <span className="text-gray-500">
-              Welcome{` ${member?.firstName}`}!
-            </span>
+            <span className="text-gray-500">Welcome {member?.firstName}!</span>
           </div>
         </header>
 

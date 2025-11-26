@@ -1,14 +1,16 @@
 import {
+  cohort,
   Country,
-  Member,
-  ResidentDistrict,
-  ResidentSector,
+  residentDistrict,
+  residentSector,
+  Track,
+  User,
 } from "@/types/user";
-import { TailwindInput } from "../ui/tail-input";
-import { TailwindSelect } from "../ui/tail-select";
-import { Cohort } from "@/types/cohort";
-import { Track } from "@/types/track";
-import { PhoneInputTailwind } from "../ui/tail-phone";
+import {
+  PhoneInputTailwind,
+  TailwindInput,
+  TailwindSelect,
+} from "../DashboardPages/AddMember/AddPersonalInfo";
 
 export const Personal = ({
   values,
@@ -33,14 +35,14 @@ export const Personal = ({
   handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleSelectChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   errors: any;
-  sectors: ResidentSector[];
-  cohorts: Cohort[];
-  districts: ResidentDistrict[];
+  sectors: residentSector[];
+  cohorts: cohort[];
+  districts: residentDistrict[];
   genders: any;
   setSelectedDistrict: (districtName: string) => void;
   tracks: Track[];
   countries: Country[];
-  usr: Member;
+  usr: User;
   auth: boolean;
   states: any;
   setCountry: (country: string) => void;
@@ -85,7 +87,7 @@ export const Personal = ({
         disabled={!changeEmail}
         error={errors.email}
         note={
-          <p className="text-primary text-xs italic mt-1">
+          <p className="text-blue-600 text-xs italic mt-1">
             <b>Note:</b> Updating the email will change your login credentials!
             Proceed with caution.{" "}
             <span
