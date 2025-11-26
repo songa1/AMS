@@ -1,4 +1,4 @@
-import UpdateProfilePage from "@/components/DashboardPages/UpdateProfilePage";
+import UpdateProfilePage from "@/components/DashboardPages/UpdateProfilepage";
 
 function page() {
   return (
