@@ -1,9 +1,9 @@
-import { User } from "@/types/user";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { CustomButton } from "../ui/button1";
+import { Member } from "@/types/user";
 
 const FullScreenExport = ({
   isOpen,
@@ -12,7 +12,7 @@ const FullScreenExport = ({
 }: {
   isOpen: boolean;
   setIsOpen: (e: boolean) => void;
-  users: User[];
+  users: Member[];
 }) => {
   const [notification, setNotification] = useState<{
     message: string;
@@ -134,7 +134,7 @@ const FullScreenExport = ({
           <div className="modal-container fixed inset-0 flex flex-col max-w-7xl mx-auto my-4 bg-white rounded-xl shadow-2xl transform transition-all duration-300 overflow-hidden">
             <div className="p-4 sm:p-6 flex justify-between items-center border-b border-gray-200 bg-gray-50 flex-shrink-0">
               <div className="space-y-1">
-                <h2 className="text-2xl font-extrabold text-indigo-700">
+                <h2 className="text-2xl font-extrabold text-primary">
                   Export Users
                 </h2>
                 <p className="text-sm text-gray-500">
@@ -181,8 +181,8 @@ const FullScreenExport = ({
                 style={{ minHeight: "297mm", width: "210mm" }} // Enforce A4 dimensions for preview accuracy
               >
                 {/* PDF Header Content */}
-                <div className="text-center mb-8 border-b-2 border-indigo-200 pb-4">
-                  <div className="text-2xl font-extrabold text-indigo-800">
+                <div className="text-center mb-8 border-b-2 border-blue-200 pb-4">
+                  <div className="text-2xl font-extrabold text-blue-800">
                     ALUMNI MANAGEMENT SYSTEM
                   </div>
                   <div className="text-sm text-gray-600 mt-1">
@@ -198,23 +198,23 @@ const FullScreenExport = ({
                 {/* User Table */}
                 <table className="w-full table-fixed text-sm border-collapse">
                   <thead>
-                    <tr className="bg-indigo-50 border-b border-indigo-200 text-indigo-700 uppercase font-bold tracking-wider">
-                      <th className="w-1/12 py-3 px-2 text-left border-r border-indigo-200">
+                    <tr className="bg-blue-50 border-b border-blue-200 text-primary uppercase font-bold tracking-wider">
+                      <th className="w-1/12 py-3 px-2 text-left border-r border-blue-200">
                         ID
                       </th>
-                      <th className="w-2/12 py-3 px-2 text-left border-r border-indigo-200">
+                      <th className="w-2/12 py-3 px-2 text-left border-r border-blue-200">
                         Name
                       </th>
-                      <th className="w-2/12 py-3 px-2 text-left border-r border-indigo-200">
+                      <th className="w-2/12 py-3 px-2 text-left border-r border-blue-200">
                         Email
                       </th>
-                      <th className="w-2/12 py-3 px-2 text-left border-r border-indigo-200">
+                      <th className="w-2/12 py-3 px-2 text-left border-r border-blue-200">
                         Phone
                       </th>
-                      <th className="w-1/12 py-3 px-2 text-left border-r border-indigo-200">
+                      <th className="w-1/12 py-3 px-2 text-left border-r border-blue-200">
                         Role
                       </th>
-                      <th className="w-1/12 py-3 px-2 text-left border-r border-indigo-200">
+                      <th className="w-1/12 py-3 px-2 text-left border-r border-blue-200">
                         Gender
                       </th>
                       <th className="w-3/12 py-3 px-2 text-left">
@@ -227,12 +227,16 @@ const FullScreenExport = ({
                       users.map((user, index) => (
                         <tr
                           key={user.id || index}
-                          className={`hover:bg-gray-50 transition-colors ${index % 2 === 0 ? "bg-white" : "bg-gray-50"}`}
+                          className={`hover:bg-gray-50 transition-colors ${
+                            index % 2 === 0 ? "bg-white" : "bg-gray-50"
+                          }`}
                         >
                           <td className="py-2 px-2 text-left text-gray-700">
                             {user.id}
                           </td>
-                          <td className="py-2 px-2 text-left text-gray-700 truncate">{`${user.firstName} ${user.middleName || ""} ${user.lastName}`}</td>
+                          <td className="py-2 px-2 text-left text-gray-700 truncate">{`${
+                            user.firstName
+                          } ${user.middleName || ""} ${user.lastName}`}</td>
                           <td className="py-2 px-2 text-left text-gray-700 truncate">
                             {user.email}
                           </td>

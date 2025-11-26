@@ -1,11 +1,13 @@
-// Sidebar.tsx
 "use client";
 
 import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { NavDivider, NavHeader, NAVIGATION, NavItem, NavItemType } from "../Other/Sidebar";
-import SidebarFooterAccount from "../Other/SidebarFooter";
+import SidebarFooterAccount from "./SidebarFooter";
+import { MdKeyboardArrowRight } from "react-icons/md";
+import { NavDivider, NavHeader, NavItem, NavItemType } from "@/types/sidebar";
+import { NAVIGATION } from "../Other/Sidebar";
+import { getUser } from "@/helpers/auth";
 
 type SidebarProps = {
   isSidebarOpen: boolean;
@@ -20,6 +22,8 @@ const NavItemComponent = ({
   isSidebarOpen: boolean;
 }) => {
   const pathname = usePathname();
+  const isCurrentPathExact = pathname === item.segment.split("#")[0];
+
   const [isExpanded, setIsExpanded] = React.useState(
     item.children
       ? item.children.some((child) =>
@@ -28,23 +32,21 @@ const NavItemComponent = ({
       : false
   );
 
-  const isActive =
-    pathname.startsWith(item.segment.split("#")[0]) && !item.children;
+  const isActive = isCurrentPathExact;
+  const hasChildrenActive = item.children?.some((child) =>
+    pathname.startsWith(child.segment.split("#")[0])
+  );
+
   const linkClasses = `flex items-center py-2 px-3 rounded-lg transition-colors ${
     isActive
-      ? "bg-blue-600 text-white font-semibold"
-      : "text-gray-300 hover:bg-gray-700"
+      ? "bg-primary text-white font-semibold shadow-md"
+      : "text-gray-700 hover:bg-gray-100"
   }`;
 
-  const hasChildrenActive =
-    item.children &&
-    item.children.some((child) =>
-      pathname.startsWith(child.segment.split("#")[0])
-    );
   const parentClasses = `flex items-center py-2 px-3 rounded-lg transition-colors cursor-pointer ${
-    hasChildrenActive && !isExpanded
-      ? "bg-gray-700 text-white"
-      : "text-gray-300 hover:bg-gray-700"
+    hasChildrenActive || isExpanded
+      ? "bg-gray-100 text-primary font-medium"
+      : "text-gray-700 hover:bg-gray-100"
   }`;
 
   if (!isSidebarOpen) {
@@ -52,11 +54,12 @@ const NavItemComponent = ({
       <div className="relative group">
         <Link
           href={item.segment}
-          className="flex justify-center items-center h-10 w-10 mx-auto my-1 rounded-lg text-gray-300 hover:bg-gray-700 transition-colors"
+          className={`flex justify-center items-center h-10 w-10 mx-auto my-1 rounded-lg transition-colors 
+${isActive ? "bg-primary text-white" : "text-gray-500 hover:bg-gray-100"}`}
         >
           {item.icon}
         </Link>
-        <span className="absolute left-full ml-3 top-1/2 -translate-y-1/2 z-20 whitespace-nowrap px-3 py-1 text-sm font-medium text-white bg-gray-800 rounded-md opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+        <span className="absolute left-full ml-4 top-1/2 -translate-y-1/2 z-20 whitespace-nowrap px-3 py-1 text-sm font-medium text-white bg-gray-700 rounded-md opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-lg">
           {item.title}
         </span>
       </div>
@@ -67,37 +70,30 @@ const NavItemComponent = ({
     <div className="mb-1">
       {item.children ? (
         <div>
-          <div
+          <button
+            type="button"
             className={parentClasses}
-            onClick={() => setIsExpanded(!isExpanded)}
+            aria-expanded={isExpanded}
+            onClick={() => setIsExpanded((prev) => !prev)}
           >
             {item.icon}
             <span className="ml-3 flex-1">{item.title}</span>
-            <svg
-              className={`w-4 h-4 transition-transform ${isExpanded ? "rotate-90" : "rotate-0"}`}
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M9 5l7 7-7 7"
-              ></path>
-            </svg>
-          </div>
+            <MdKeyboardArrowRight
+              className={`w-5 h-5 transition-transform ${
+                isExpanded ? "rotate-90" : "rotate-0"
+              }`}
+            />
+          </button>
           {isExpanded && (
-            <div className="ml-5 mt-1 border-l border-gray-700 pl-3">
+            <div className="ml-4 mt-1 border-l border-gray-300 pl-3">
               {item.children.map((child, index) => (
                 <Link
                   key={index + 1}
                   href={child.segment}
-                  className={`flex items-center py-1.5 px-3 text-sm rounded-lg transition-colors ${
+                  className={`flex items-center py-1.5 px-2 text-sm rounded-lg transition-colors ${
                     pathname.startsWith(child.segment.split("#")[0])
-                      ? "bg-blue-500 text-white font-medium"
-                      : "text-gray-400 hover:bg-gray-700"
+                      ? "bg-blue-100 text-primary font-medium"
+                      : "text-gray-600 hover:bg-gray-100"
                   }`}
                 >
                   {child.title}
@@ -117,11 +113,8 @@ const NavItemComponent = ({
   );
 };
 
-const isNavItem = (item: NavItemType): item is NavItem => {
-  return !('kind' in item);
-};
-
 const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }: SidebarProps) => {
+  const user = getUser();
   const renderItem = (item: NavItemType, index: number) => {
     switch ((item as NavHeader | NavDivider).kind) {
       case "header":
@@ -134,7 +127,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }: SidebarProps) => {
           </h3>
         );
       case "divider":
-        return <hr key={index} className="border-gray-700 my-4" />;
+        return <hr key={index} className="border-gray-200 my-4" />;
       default:
         return (
           <NavItemComponent
@@ -146,28 +139,37 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }: SidebarProps) => {
     }
   };
 
+  const filteredItems = NAVIGATION.filter((item) => {
+    if (item.onlyAdmin) {
+      return user?.role?.name === "ADMIN";
+    }
+
+    return true;
+  });
+
   return (
     <div
-      className={`
-      h-full bg-gray-800 text-white flex flex-col transition-all duration-300 ease-in-out fixed left-0 top-0 z-30
-      ${isSidebarOpen ? "w-60" : "w-20"}
-    `}
+      className={`h-full bg-white text-gray-800 flex flex-col transition-all duration-300 ease-in-out fixed left-0 top-0 z-30 shadow-xl ${
+        isSidebarOpen ? "w-64" : "w-20"
+      }`}
     >
       <div
-        className={`flex items-center p-4 border-b border-gray-700 h-16 ${!isSidebarOpen && "justify-center"}`}
+        className={`flex items-center p-4 border-b border-gray-200 h-16 ${
+          !isSidebarOpen && "justify-center"
+        }`}
       >
         <img
           src="/yali.png"
           alt="YALI AMS logo"
           className={isSidebarOpen ? "h-8 mr-2" : "h-8"}
         />
-        {isSidebarOpen && <span className="text-xl font-bold">YALI AMS</span>}
+        {isSidebarOpen && (
+          <span className="text-xl font-bold text-primary">YALI AMS</span>
+        )}
       </div>
-
       <nav className="flex-1 overflow-y-auto p-3 space-y-1">
-        {NAVIGATION.map(renderItem)}
+        {filteredItems.map(renderItem)}
       </nav>
-
       <div className="p-0">
         <SidebarFooterAccount mini={!isSidebarOpen} />
       </div>

@@ -1,6 +1,5 @@
-// MembersPage.tsx
 "use client";
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import {
   MdSearch,
@@ -9,10 +8,10 @@ import {
   MdAdd,
 } from "react-icons/md";
 import { PageHeader } from "../parts/PageHeader";
-import { Link2 } from "lucide-react";
+import { Delete, Eye } from "lucide-react";
 import { EmptyState } from "../parts/EmptyState";
 import Loading from "@/app/loading";
-import { useUsersQuery } from "@/lib/features/userSlice";
+import { useDeleteUserMutation, useUsersQuery } from "@/lib/features/userSlice";
 import {
   useCohortsQuery,
   useCountriesQuery,
@@ -21,8 +20,12 @@ import {
 import { FilterDropdown } from "../ui/filter-dropdown";
 import { Member } from "@/types/user";
 import InviteUserModal from "../parts/models/InviteUser";
+import ConfirmModal from "../parts/models/confirmModal";
+import { toastError, toastSuccess } from "@/lib/toast";
+import { getUser } from "@/helpers/auth";
 
 const MembersPage = () => {
+  const authUser: Member = getUser();
   const [searchTerm, setSearchTerm] = useState("");
   const [filters, setFilters] = useState({
     country: "",
@@ -31,10 +34,18 @@ const MembersPage = () => {
   });
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState("");
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [members, setMembers] = useState<Member[]>([]);
   const MEMBERS_PER_PAGE = 10;
+  const isAdmin = authUser?.role?.name === "ADMIN";
+
+  const [deleteUser, { isLoading }] = useDeleteUserMutation();
 
   const {
-    data: members = [],
+    data: membersData = [],
+    refetch,
     isLoading: usersLoading,
     isSuccess: usersSuccess,
   } = useUsersQuery("");
@@ -57,13 +68,19 @@ const MembersPage = () => {
     isSuccess: tracksSuccess,
   } = useTracksQuery("");
 
+  useEffect(() => {
+    if (membersData?.data) {
+      setMembers(membersData?.data);
+    }
+  }, [membersData]);
+
   const isAnyLoading =
     usersLoading || countriesLoading || cohortsLoading || tracksLoading;
   const isReady =
     usersSuccess && countriesSuccess && cohortsSuccess && tracksSuccess;
 
   const filteredMembers = useMemo(() => {
-    return (members?.data ?? []).filter((member: Member) => {
+    return (membersData?.data ?? members ?? []).filter((member: Member) => {
       const matchesSearch =
         member?.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
         member?.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -99,6 +116,23 @@ const MembersPage = () => {
 
   if (isAnyLoading || !isReady) return <Loading />;
 
+  const handleDelete = async () => {
+    setDeleteLoading(true);
+    try {
+      const data = await deleteUser(itemToDelete).unwrap();
+      toastSuccess(data.message);
+      refetch();
+    } catch (error) {
+      console.log(error);
+      toastError(
+        `There was an error while deleting user, please try again or contact support!`
+      );
+    } finally {
+      setDeleteLoading(false);
+      setDeleteOpen(false);
+    }
+  };
+
   return (
     <div className="container mx-auto p-4 md:p-8">
       <InviteUserModal
@@ -106,12 +140,26 @@ const MembersPage = () => {
         onClose={() => setIsModalOpen(false)}
       />
 
+      {deleteOpen && (
+        <ConfirmModal
+          title="DELETE MEMBER"
+          description="Are you sure you want to delete this member, please not that this action is irreversible."
+          confirmText="Delete"
+          cancelText="Cancel"
+          isLoading={deleteLoading || isLoading}
+          action={handleDelete}
+          closeModal={() => setDeleteOpen(false)}
+        />
+      )}
+
       <PageHeader
         title="Member Directory"
+        description="View and manage all members in the AMS community, or invite new members."
         actionTitle="Invite New Member"
         Icon={MdAdd}
         onAction={() => setIsModalOpen(true)}
         loading={false}
+        disabled={!isAdmin}
       />
 
       <div className="bg-white p-5 rounded-xl shadow-lg mb-6">
@@ -185,7 +233,7 @@ const MembersPage = () => {
                 Cohort/Track
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Status
+                Action
               </th>
               <th className="px-6 py-3"></th>
             </tr>
@@ -220,12 +268,26 @@ const MembersPage = () => {
                     {member.status}
                   </span>
                 </td> */}
-                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <Link href={`/dashboard/users/${member.id}`} passHref>
-                    <Link2 className="text-primary hover:text-primary/80">
+                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium flex items-center space-x-4">
+                  <Link
+                    href={`/dashboard/profile?userId=${member.id}`}
+                    passHref
+                  >
+                    <Eye className="text-primary hover:text-primary/80">
                       View
-                    </Link2>
+                    </Eye>
                   </Link>
+                  {isAdmin && (
+                    <Delete
+                      onClick={() => {
+                        setDeleteOpen(true);
+                        setItemToDelete(`${member?.id}`);
+                      }}
+                      className="text-primary hover:text-primary/80"
+                    >
+                      Delete
+                    </Delete>
+                  )}
                 </td>
               </tr>
             ))}

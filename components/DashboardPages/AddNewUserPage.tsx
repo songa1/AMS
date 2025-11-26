@@ -1,267 +1,249 @@
 "use client";
 
-import React, { useState } from "react";
-import AddPersonalInfo from "./AddMember/AddPersonalInfo";
-import AddFoundedInfo from "./AddMember/AddFoundedInfo";
-import AddEmployedInfo from "./AddMember/AddEmployedInfo";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
+import AddPersonalInfo from "../parts/AddPersonalInfo";
+import AddFoundedInfo from "../parts/AddFoundedInfo";
+import AddEmployedInfo from "../parts/AddEmployedInfo";
+import { MdCheck } from "react-icons/md";
+import ImportUsersModal from "../parts/models/ImportMembersModal";
+import { PageHeader } from "../parts/PageHeader";
+import { Upload } from "lucide-react";
+import {
+  Country,
+  Organization,
+  ResidentDistrict,
+  WorkingSector,
+} from "@/types/user";
+import {
+  useCountriesQuery,
+  useDistrictsQuery,
+  useWorkingSectorQuery,
+} from "@/lib/features/otherSlice";
+import { useOrganizationsQuery } from "@/lib/features/orgSlice";
+import SectionWrapper from "../parts/SessionWrapper";
 
-export const steps = [
-  "Personal Information",
-  "Founded Initiative information",
-  "Employment information",
+const SECTIONS = [
+  {
+    id: 1,
+    title: "Personal & Contact Information",
+    component: AddPersonalInfo,
+    mandatory: true,
+    canRevisit: true,
+    skip: false,
+    props: (districts: ResidentDistrict[], countries: Country[]) => ({
+      districts,
+      countries,
+    }),
+  },
+  {
+    id: 2,
+    title: "Founded Initiative Information (Optional)",
+    component: AddFoundedInfo,
+    mandatory: false,
+    canRevisit: true,
+    skip: true,
+    props: (
+      districts: ResidentDistrict[],
+      countries: Country[],
+      organizations: Organization[]
+    ) => ({ districts, countries, organizations }),
+  },
+  {
+    id: 3,
+    title: "Current Employment Information (Optional)",
+    component: AddEmployedInfo,
+    mandatory: false,
+    canRevisit: true,
+    skip: true,
+    props: (
+      districts: ResidentDistrict[],
+      countries: Country[],
+      organizations: Organization[]
+    ) => ({ districts, countries, organizations }),
+  },
 ];
 
-interface CustomStepProps {
-  label: string;
-  index: number;
-  activeStep: number;
-  isSkipped: boolean;
-  isCompleted: boolean;
-  isOptional: boolean;
-}
-
-const CustomStep: React.FC<CustomStepProps> = ({
-  label,
-  index,
-  activeStep,
-  isSkipped,
-  isCompleted,
-  isOptional,
-}) => {
-  const isActive = index === activeStep;
-  const isAfter = index < activeStep;
-
-  // Determine circle style
-  let circleStyle =
-    "w-8 h-8 flex items-center justify-center rounded-full text-white font-bold transition duration-300";
-  if (isCompleted || isAfter) {
-    circleStyle += " bg-green-500"; // Completed/Passed
-  } else if (isActive) {
-    circleStyle += " bg-indigo-600 ring-4 ring-indigo-200"; // Active
-  } else {
-    circleStyle += " bg-gray-400"; // Pending
-  }
-
-  // Determine label style
-  let labelStyle = "text-sm mt-1 transition duration-300 text-center";
-  if (isActive) {
-    labelStyle += " text-indigo-700 font-semibold";
-  } else if (isCompleted || isAfter) {
-    labelStyle += " text-gray-700";
-  } else {
-    labelStyle += " text-gray-500";
-  }
-
-  // Determine line style (connecting line)
-  const lineStyle =
-    "absolute top-4 left-[calc(50%+16px)] right-[calc(-50%+16px)] h-1 bg-gray-300 transition-colors duration-300 z-0";
-  const completedLineStyle = "bg-green-500";
-  // The line segment for the currently active step should perhaps be half filled or transition color
-
-  return (
-    <div className="flex-1 relative">
-      {/* Line connecting steps (excluding the last one) */}
-      {index < steps.length - 1 && (
-        <div
-          className={`${lineStyle} ${isAfter ? completedLineStyle : ""}`}
-          // Custom style for the active step line segment transition
-          style={{
-            backgroundColor: isAfter
-              ? "#10B981"
-              : isActive
-                ? "#A5B4FC"
-                : "#D1D5DB",
-            // Optional: If you wanted a progressive fill:
-            // width: isActive ? '50%' : '100%',
-          }}
-        ></div>
-      )}
-
-      <div className="flex flex-col items-center relative z-10">
-        <div className={circleStyle}>
-          {isCompleted ? "✓" : isSkipped ? "..." : index + 1}
-        </div>
-        <div className={labelStyle}>
-          {label}
-          {isOptional && <p className="text-xs text-gray-500">(Optional)</p>}
-          {isSkipped && <p className="text-xs text-orange-500">Skipped</p>}
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// Custom Stepper Container
-const CustomStepper: React.FC<{ activeStep: number; skipped: Set<number> }> = ({
-  activeStep,
-  skipped,
-}) => {
-  const isStepOptional = (step: number) => step === 1;
-
-  return (
-    <div className="flex justify-between w-full px-4 sm:px-8">
-      {steps.map((label, index) => (
-        <CustomStep
-          key={label}
-          label={label}
-          index={index}
-          activeStep={activeStep}
-          isSkipped={skipped.has(index)}
-          isCompleted={index < activeStep && !skipped.has(index)}
-          isOptional={isStepOptional(index)}
-        />
-      ))}
-    </div>
-  );
-};
-
 function NewProfile() {
-  const [activeStep, setActiveStep] = useState(0);
-  const [skipped, setSkipped] = useState(new Set<number>());
-  // This state is managed by the child components (AddPersonalInfo, etc.)
-  // to ensure validation passes before moving to the next step.
-  const [canMove, setCanMove] = useState(false);
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+  const [submissionStatus, setSubmissionStatus] = useState<
+    "idle" | "success" | "error"
+  >("idle");
+  const [districts, setDistricts] = useState<ResidentDistrict[]>([]);
+  const [countries, setCountries] = useState<Country[]>([]);
+  const [organizations, setOrganizations] = useState<Organization[]>([]);
+  const [activeSection, setActiveSection] = useState<number>(1);
+  const [sectionFeedback, setSectionFeedback] = useState<{
+    [key: number]: "idle" | "success" | "error" | "skipped";
+  }>({});
+  const [workingSectors, setWorkingSectors] = useState<WorkingSector[]>([]);
+  const [userId, setUserId] = useState<string>("");
 
-  const isStepOptional = (step: number) => {
-    return step === 1; // Founded Initiative is optional
-  };
+  const newUserId = `AMS-MEM-${Date.now()}`;
 
-  const isStepSkipped = (step: number) => {
-    return skipped.has(step);
-  };
+  const { data: CountryData } = useCountriesQuery("");
+  const { data: DistrictData } = useDistrictsQuery("");
+  const { data: OrganizationsData } = useOrganizationsQuery("");
+  const { data: WorkingSectorsData } = useWorkingSectorQuery("");
 
-  const handleNext = () => {
-    let newSkipped = skipped;
-    if (isStepSkipped(activeStep)) {
-      newSkipped = new Set(newSkipped.values());
-      newSkipped.delete(activeStep);
+  useEffect(() => {
+    if (DistrictData?.data) {
+      setDistricts(DistrictData.data);
     }
-
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    setSkipped(newSkipped);
-    setCanMove(false); // Reset canMove for the new step
-  };
-
-  const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
-    setCanMove(true); // Allow moving back immediately
-  };
-
-  const handleSkip = () => {
-    if (!isStepOptional(activeStep)) {
-      // This should ideally never happen if the UI is correct
-      console.error("Attempted to skip a non-optional step.");
-      return;
+    if (CountryData?.data) {
+      setCountries(CountryData.data);
     }
+    if (OrganizationsData?.data) setOrganizations(OrganizationsData.data);
+  }, [DistrictData, CountryData, OrganizationsData]);
+  const isProfileComplete = useMemo(() => {
+    return SECTIONS.every((section) =>
+      ["success", "skipped"].includes(sectionFeedback[section.id])
+    );
+  }, [sectionFeedback]);
 
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    setSkipped((prevSkipped) => {
-      const newSkipped = new Set(prevSkipped.values());
-      newSkipped.add(activeStep);
-      return newSkipped;
-    });
-    setCanMove(false); // Reset canMove for the new step
-  };
+  const handleResetProfile = useCallback(() => {
+    setActiveSection(1);
+    setSectionFeedback({});
+    setSubmissionStatus("idle");
+  }, []);
 
-  const handleReset = () => {
-    setActiveStep(0);
-    setSkipped(new Set<number>());
-    setCanMove(false);
-  };
-
-  // Helper function to render the current step content
-  const getStepContent = (step: number) => {
-    switch (step) {
-      case 0:
-        return <AddPersonalInfo canMove={setCanMove} />;
-      case 1:
-        return <AddFoundedInfo canMove={setCanMove} />;
-      case 2:
-        return <AddEmployedInfo canMove={setCanMove} />;
-      default:
-        return <div>Unknown step</div>;
+  const handleSectionSuccess = useCallback((sectionId: number) => {
+    setSectionFeedback((prev) => ({ ...prev, [sectionId]: "success" }));
+    const nextSection = sectionId + 1;
+    if (nextSection <= SECTIONS.length) {
+      setActiveSection(nextSection);
+    } else {
+      setSubmissionStatus("success");
     }
-  };
+  }, []);
+
+  const handleSectionSkip = useCallback((sectionId: number) => {
+    setSectionFeedback((prev) => ({ ...prev, [sectionId]: "skipped" }));
+    setActiveSection(sectionId + 1);
+  }, []);
+
+  const handleSectionError = useCallback((sectionId: number) => {
+    setSectionFeedback((prev) => ({ ...prev, [sectionId]: "error" }));
+    setActiveSection(sectionId);
+  }, []);
+
+  useEffect(() => {
+    if (WorkingSectorsData?.data) setWorkingSectors(WorkingSectorsData.data);
+  }, [WorkingSectorsData]);
+
+  const handleReactivate = useCallback(
+    (sectionId: number) => {
+      const section = SECTIONS.find((s) => s.id === sectionId);
+      const status = sectionFeedback[sectionId];
+      if (section && section.canRevisit && status !== "success") {
+        setSectionFeedback((prev) => ({ ...prev, [sectionId]: "idle" }));
+        setActiveSection(sectionId);
+      }
+    },
+    [sectionFeedback]
+  );
+  const isSectionReady = useCallback(
+    (sectionId: number): boolean => {
+      if (sectionId === 1) return true;
+      const prevSectionId = sectionId - 1;
+      const prevStatus = sectionFeedback[prevSectionId];
+      return prevStatus === "success" || prevStatus === "skipped";
+    },
+    [sectionFeedback]
+  );
+
+  if (submissionStatus === "success") {
+    return (
+      <div className="mt-8 p-8 bg-green-50 rounded-xl shadow-lg border border-green-200 text-center max-w-lg mx-auto">
+        <MdCheck className="w-12 h-12 text-green-600 mx-auto mb-4" />
+        <p className="text-xl font-bold text-green-700 mb-2">
+          Success! Member Profile Saved.
+        </p>
+        <p className="text-gray-700 mb-6">
+          The new member has been successfully created.
+        </p>
+        <button
+          onClick={handleResetProfile}
+          className="px-6 py-3 text-white font-medium bg-primary rounded-xl hover:bg-primary/80 transition duration-150 shadow-md"
+        >
+          Start New Member Profile
+        </button>
+      </div>
+    );
+  }
 
   return (
-    <div className="p-4 sm:p-8 max-w-5xl mx-auto">
-
-      {/* Stepper Display */}
-      <div className="w-full bg-white p-4 sm:p-6 rounded-xl shadow-lg border border-gray-100 mb-8">
-        <CustomStepper activeStep={activeStep} skipped={skipped} />
+    <div className="p-4 sm:p-8 container mx-auto">
+      <PageHeader
+        title="Add New Member"
+        description="Create a new member profile by filling out the sections below."
+        actionTitle={"Import Members"}
+        Icon={Upload}
+        onAction={() => setIsImportModalOpen(true)}
+        loading={false}
+        disabled={false}
+      />
+      <div className="space-y-8">
+        {SECTIONS.map((section) => (
+          <SectionWrapper
+            key={section.id}
+            id={section.id}
+            title={section.title}
+            mandatory={section.mandatory}
+            isOptional={!section.mandatory && section.skip}
+            currentStatus={sectionFeedback[section.id] || "idle"}
+            isActive={activeSection === section.id}
+            isReady={isSectionReady(section.id)}
+            onReactivate={handleReactivate}
+          >
+            {section.id === 1 && (
+              <AddPersonalInfo
+                countries={countries}
+                districts={districts}
+                onSuccess={() => handleSectionSuccess(1)}
+                onError={() => handleSectionError(1)}
+                newId={newUserId}
+                setUserId={setUserId}
+              />
+            )}
+            {section.id === 2 && (
+              <AddFoundedInfo
+                countries={countries}
+                districts={districts}
+                organizations={organizations}
+                workingSectors={workingSectors}
+                onSuccess={() => handleSectionSuccess(2)}
+                onError={() => handleSectionError(2)}
+                onSkip={() => handleSectionSkip(2)}
+                newId={userId}
+              />
+            )}
+            {section.id === 3 && (
+              <AddEmployedInfo
+                countries={countries}
+                districts={districts}
+                organizations={organizations}
+                workingSectors={workingSectors}
+                onSuccess={() => handleSectionSuccess(3)}
+                onError={() => handleSectionError(3)}
+                onSkip={() => handleSectionSkip(3)}
+                newId={userId}
+              />
+            )}
+          </SectionWrapper>
+        ))}
+        {sectionFeedback[1] === "success" && isProfileComplete && (
+          <div className="text-center pt-4">
+            <button
+              onClick={handleResetProfile}
+              className="px-8 py-3 text-white font-semibold bg-green-600 rounded-xl hover:bg-green-700 transition duration-150 shadow-lg"
+            >
+              Finish User, Add New Member Profile
+            </button>
+          </div>
+        )}
       </div>
-
-      {activeStep === steps.length ? (
-        /* Final Step Completed View */
-        <div className="mt-8 p-6 bg-green-50 rounded-lg shadow-inner">
-          <p className="text-lg font-semibold text-green-700 mb-4">
-            All steps completed - a new member has been added.
-          </p>
-          <p className="text-gray-700 mb-6">
-            Please ask them to check their email to reset their password and
-            complete their setup.
-          </p>
-          <div className="flex flex-col sm:flex-row justify-end gap-3">
-            <button
-              onClick={handleReset}
-              className="px-6 py-2 text-white font-medium bg-indigo-600 rounded-lg hover:bg-indigo-700 transition duration-150"
-            >
-              Add Another Member
-            </button>
-            <button
-              onClick={() => {
-                /* Logic to view added member (e.g., redirect to their profile ID) */
-                handleReset(); // Optionally reset before navigating, or replace with actual navigation logic
-              }}
-              className="px-6 py-2 text-indigo-700 font-medium bg-indigo-100 rounded-lg hover:bg-indigo-200 transition duration-150"
-            >
-              View Added Member
-            </button>
-          </div>
-        </div>
-      ) : (
-        /* Current Step Content and Controls */
-        <div className="mt-4">
-          {/* Step Content Area */}
-          <div className="py-5">{getStepContent(activeStep)}</div>
-
-          {/* Navigation Controls */}
-          <div className="flex justify-between items-center pt-4 border-t border-gray-200 mt-6">
-            <button
-              onClick={handleBack}
-              disabled={activeStep === 0}
-              className={`px-4 py-2 font-medium rounded-lg transition duration-150 ${
-                activeStep === 0
-                  ? "text-gray-400 bg-gray-100 cursor-not-allowed"
-                  : "text-gray-700 bg-white border border-gray-300 hover:bg-gray-100"
-              }`}
-            >
-              Back
-            </button>
-
-            <div className="flex gap-3">
-              {isStepOptional(activeStep) && (
-                <button
-                  onClick={handleSkip}
-                  className="px-4 py-2 font-medium text-orange-600 border border-orange-400 rounded-lg hover:bg-orange-50 transition duration-150"
-                >
-                  Skip
-                </button>
-              )}
-              <button
-                disabled={!canMove}
-                onClick={handleNext}
-                className={`px-6 py-2 font-medium text-white rounded-lg transition duration-150 ${
-                  !canMove
-                    ? "bg-indigo-300 cursor-not-allowed"
-                    : "bg-indigo-600 hover:bg-indigo-700"
-                }`}
-              >
-                {activeStep === steps.length - 1 ? "Finish" : "Next"}
-              </button>
-            </div>
-          </div>
-        </div>
+      {isImportModalOpen && (
+        <ImportUsersModal closeModal={() => setIsImportModalOpen(false)} />
       )}
     </div>
   );

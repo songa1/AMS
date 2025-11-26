@@ -1,11 +1,11 @@
-import { User } from "./user";
+import { Member } from "./user";
 
 export interface Message {
   id: string;
   message: string;
-  sender: User;
+  sender: Member;
   receiverId: string;
-  receiver: User;
+  receiver: Member;
   senderId: string;
   createdAt: string;
 }
