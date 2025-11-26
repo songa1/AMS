@@ -8,25 +8,13 @@ import {
   Bell,
   BarChart,
   Trophy,
-  Loader2,
   Activity,
 } from "lucide-react";
 import { useStatsQuery } from "@/lib/features/statsSlice";
 import Link from "next/link";
 import { useTopMembersQuery } from "@/lib/features/chatSlice";
 import { Member } from "@/types/user";
-
-interface UserActivity {
-  id: string;
-  name: string;
-  messagesSent: number;
-}
-
-const MOCK_TOP_USERS: UserActivity[] = [
-  { id: "u1", name: "Alice M.", messagesSent: 450 },
-  { id: "u2", name: "Bob J.", messagesSent: 320 },
-  { id: "u3", name: "Charlie P.", messagesSent: 280 },
-];
+import Loading from "@/app/loading";
 
 const MOCK_RECENT_EVENTS = [
   {
@@ -48,12 +36,6 @@ const MOCK_RECENT_EVENTS = [
     time: "4 hours ago",
   },
 ];
-
-const Loading = () => (
-  <div className="flex justify-center items-center h-64">
-    <Loader2 className="animate-spin w-8 h-8 text-primary" />
-  </div>
-);
 
 interface StatCardProps {
   title: string;
