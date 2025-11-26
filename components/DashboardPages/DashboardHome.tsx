@@ -13,6 +13,8 @@ import {
 } from "lucide-react";
 import { useStatsQuery } from "@/lib/features/statsSlice";
 import Link from "next/link";
+import { useTopMembersQuery } from "@/lib/features/chatSlice";
+import { Member } from "@/types/user";
 
 interface UserActivity {
   id: string;
@@ -95,6 +97,7 @@ const StatCard: React.FC<StatCardProps> = ({
 
 const DashboardHome = () => {
   const { data: StatsData, isLoading } = useStatsQuery("");
+  const { data: TopMembersData } = useTopMembersQuery("");
 
   const stats = useMemo(
     () => [
@@ -159,28 +162,38 @@ const DashboardHome = () => {
         <Trophy className="w-5 h-5 mr-2 text-yellow-500" fill="currentColor" />
         Top 3 Active Members
       </h3>
-      <ul className="space-y-3">
-        {MOCK_TOP_USERS.map((user, index) => (
-          <li
-            key={user.id}
-            className="flex justify-between items-center p-3 rounded-xl bg-gray-50 hover:bg-gray-100 transition"
-          >
-            <div className="flex items-center space-x-3">
-              <span
-                className={`font-bold text-lg w-6 text-center ${
-                  index === 0 ? "text-yellow-500" : "text-gray-400"
-                }`}
+      {TopMembersData?.data.length > 0 ? (
+        <ul className="space-y-3">
+          {TopMembersData?.data.map(
+            (item: { user: Member; messageCount: number }, index: number) => (
+              <li
+                key={item?.user?.id}
+                className="flex justify-between items-center p-3 rounded-xl bg-gray-50 hover:bg-gray-100 transition"
               >
-                #{index + 1}
-              </span>
-              <span className="font-medium text-gray-700">{user.name}</span>
-            </div>
-            <span className="text-sm font-semibold text-primary">
-              {user.messagesSent.toLocaleString()} Messages
-            </span>
-          </li>
-        ))}
-      </ul>
+                <div className="flex items-center space-x-3">
+                  <span
+                    className={`font-bold text-lg w-6 text-center ${
+                      index === 0 ? "text-yellow-500" : "text-gray-400"
+                    }`}
+                  >
+                    #{index + 1}
+                  </span>
+                  <span className="font-medium text-gray-700">
+                    {item?.user?.firstName + " " + item?.user?.lastName}
+                  </span>
+                </div>
+                <span className="text-sm font-semibold text-primary">
+                  {item?.messageCount.toLocaleString()} Messages
+                </span>
+              </li>
+            )
+          )}
+        </ul>
+      ) : (
+        <div className="text-center m-2">
+          No to active members data available yet.
+        </div>
+      )}
 
       <div className="mt-auto pt-4 border-t border-gray-100">
         <a
