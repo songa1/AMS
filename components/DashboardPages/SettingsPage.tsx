@@ -267,6 +267,7 @@ const SettingsPage = () => {
         actionTitle="Password Settings"
         onAction={() => {}}
         loading={false}
+        disabled={false}
       />
       <div className="container mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden">
         <nav className="bg-white border-b border-gray-200 p-4 px-6 sm:px-10">

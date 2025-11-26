@@ -129,6 +129,7 @@ function Notifications() {
           onAction={() => console.log("setup")}
           Icon={Settings}
           loading={false}
+          disabled={false}
         />
 
         <div className="flex flex-col lg:flex-row bg-white rounded-xl shadow-2xl overflow-hidden min-h-[70vh]">

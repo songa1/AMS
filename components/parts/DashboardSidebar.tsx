@@ -3,15 +3,11 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  NavDivider,
-  NavHeader,
-  NAVIGATION,
-  NavItem,
-  NavItemType,
-} from "../Other/Sidebar";
 import SidebarFooterAccount from "./SidebarFooter";
 import { MdKeyboardArrowRight } from "react-icons/md";
+import { NavDivider, NavHeader, NavItem, NavItemType } from "@/types/sidebar";
+import { NAVIGATION } from "../Other/Sidebar";
+import { getUser } from "@/helpers/auth";
 
 type SidebarProps = {
   isSidebarOpen: boolean;
@@ -37,11 +33,9 @@ const NavItemComponent = ({
   );
 
   const isActive = isCurrentPathExact;
-  const hasChildrenActive =
-    item.children &&
-    item.children.some((child) =>
-      pathname.startsWith(child.segment.split("#")[0])
-    );
+  const hasChildrenActive = item.children?.some((child) =>
+    pathname.startsWith(child.segment.split("#")[0])
+  );
 
   const linkClasses = `flex items-center py-2 px-3 rounded-lg transition-colors ${
     isActive
@@ -119,11 +113,8 @@ ${isActive ? "bg-primary text-white" : "text-gray-500 hover:bg-gray-100"}`}
   );
 };
 
-const isNavItem = (item: NavItemType): item is NavItem => {
-  return !("kind" in item);
-};
-
 const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }: SidebarProps) => {
+  const user = getUser();
   const renderItem = (item: NavItemType, index: number) => {
     switch ((item as NavHeader | NavDivider).kind) {
       case "header":
@@ -148,6 +139,14 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }: SidebarProps) => {
     }
   };
 
+  const filteredItems = NAVIGATION.filter((item) => {
+    if (item.onlyAdmin) {
+      return user?.role?.name === "ADMIN";
+    }
+
+    return true;
+  });
+
   return (
     <div
       className={`h-full bg-white text-gray-800 flex flex-col transition-all duration-300 ease-in-out fixed left-0 top-0 z-30 shadow-xl ${
@@ -169,7 +168,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }: SidebarProps) => {
         )}
       </div>
       <nav className="flex-1 overflow-y-auto p-3 space-y-1">
-        {NAVIGATION.map(renderItem)}
+        {filteredItems.map(renderItem)}
       </nav>
       <div className="p-0">
         <SidebarFooterAccount mini={!isSidebarOpen} />

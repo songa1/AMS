@@ -169,12 +169,14 @@ function AddPersonalInfo({
   onSuccess,
   onError,
   newId,
+  setUserId,
 }: {
   districts: ResidentDistrict[];
   countries: Country[];
   onSuccess: () => void;
   onError: () => void;
   newId: string;
+  setUserId: (v: string) => void;
 }) {
   const user = getUser();
   const [tracks, setTracks] = useState<Track[]>([]);
@@ -368,18 +370,21 @@ function AddPersonalInfo({
           nearestLandmark: values.nearlestLandmark,
           cohortId: values.cohortId,
           trackId: values.trackId,
+          residentCountryId: values?.countryId,
           residentDistrictId:
             values.countryId === "RW" ? values.districtId : undefined,
           residentSectorId:
             values.countryId === "RW" ? values.sectorId : undefined,
-          state: values.countryId === "RW" ? undefined : values.stateId,
+          stateId: values.countryId === "RW" ? undefined : values.stateId,
           countryId: values.countryId,
           profileImageId: values.profileImageId,
         },
       }).unwrap();
 
+      setUserId(res?.user?.id);
+
       if (res.message) {
-        setSuccess("User profile updated successfully!");
+        setSuccess("Member profile updated successfully!");
         onSuccess();
       }
     } catch (error: any) {

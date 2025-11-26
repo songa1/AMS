@@ -233,6 +233,7 @@ const ChatInterface = ({
         onAction={() => console.log("n")}
         loading={false}
         Icon={Settings}
+        disabled={false}
       />
       <div className="container mx-auto h-full rounded-2xl shadow-2xl overflow-hidden bg-white flex flex-col lg:flex-row">
         <div

@@ -68,7 +68,7 @@ const getInitialValues = (usr: Member | undefined) => ({
   profileImageId: usr?.profileImage || "",
 });
 
-function UpdateProfilepage() {
+function UpdateProfilePage() {
   const { id } = useParams();
   const user = getUser();
 
@@ -555,6 +555,7 @@ function UpdateProfilepage() {
         Icon={Save}
         onAction={handleSubmit}
         loading={isLoading}
+        disabled={false}
       />
       {(error || success) && (
         <div
@@ -670,4 +671,4 @@ function UpdateProfilepage() {
   );
 }
 
-export default UpdateProfilepage;
+export default UpdateProfilePage;

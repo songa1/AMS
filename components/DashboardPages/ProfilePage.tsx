@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import relativeTime from "dayjs/plugin/relativeTime";
 import dayjs from "dayjs";
 import {
@@ -13,56 +13,26 @@ import { Employment } from "../parts/ProfilePageEmployment";
 import Loading from "@/app/loading";
 import ConfirmModal from "../parts/models/confirmModal";
 import { Member } from "@/types/user";
-import { MdSecurity, MdLockOpen } from "react-icons/md";
 import { toastError, toastSuccess } from "@/lib/toast";
 import { PageHeader } from "../parts/PageHeader";
 import { EditIcon } from "lucide-react";
 import { getUser } from "@/helpers/auth";
-import { useRouter } from "next/navigation";
-
-const RoleChip = ({
-  roleName,
-  onClick,
-}: {
-  roleName: string;
-  onClick: () => void;
-}) => {
-  const isAdmin = roleName === "ADMIN";
-  return (
-    <button
-      onClick={onClick}
-      className={`
-        inline-flex items-center px-3 py-1 text-xs font-semibold rounded-full transition-colors duration-200
-        ${
-          isAdmin
-            ? "bg-red-500 text-white hover:bg-red-600"
-            : "bg-blue-100 text-primary hover:bg-blue-200"
-        }
-        ${isAdmin && "cursor-pointer"}
-      `}
-      title={isAdmin ? "Click to change role" : "Only ADMIN can change roles"}
-      disabled={!isAdmin}
-    >
-      {isAdmin ? (
-        <MdSecurity className="w-3 h-3 mr-1" />
-      ) : (
-        <MdLockOpen className="w-3 h-3 mr-1" />
-      )}
-      {roleName}
-    </button>
-  );
-};
+import { useRouter, useSearchParams } from "next/navigation";
+import { RoleChip } from "../ui/role-chip";
 
 function ProfilePage() {
   dayjs.extend(relativeTime);
   const authUser: Member = getUser();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const userId = searchParams.get("userId");
+  console.log(userId);
 
   const [activeTab, setActiveTab] = useState(0);
   const [roleModal, setRoleModal] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const targetId = authUser?.id;
+  const targetId = userId ?? authUser?.id;
   const userProfile = useGetOneUserQuery(targetId, {
     skip: !targetId,
   });
@@ -143,8 +113,9 @@ function ProfilePage() {
         description="View and manage your profile information."
         actionTitle="Update Profile"
         Icon={EditIcon}
-        onAction={() => router.push(`/dashboard/update-profile`)}
+        onAction={() => router.push(`/dashboard/profile/update`)}
         loading={false}
+        disabled={userId ? true : false}
       />
 
       <div className="bg-white rounded-xl shadow-2xl overflow-hidden p-6 sm:p-8">
@@ -187,7 +158,7 @@ function ProfilePage() {
           <div className="border-b border-gray-200">
             <ul className="flex flex-wrap -mb-px text-sm font-medium text-center text-gray-500">
               {tabs.map((tab, index) => (
-                <li key={index} className="mr-2">
+                <li key={index+1} className="mr-2">
                   <button
                     type="button"
                     onClick={() => handleTabClick(index)}
