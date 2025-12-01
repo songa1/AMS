@@ -17,6 +17,7 @@ import {
   User,
   ChevronLeft,
   Settings,
+  Nut,
 } from "lucide-react";
 import { PageHeader } from "../parts/PageHeader";
 import { Member } from "@/types/user";
@@ -234,6 +235,12 @@ const ChatInterface = ({
         loading={false}
         Icon={Settings}
         disabled={false}
+        second={false}
+        actionTitle2=""
+        onAction2={() => console.log("ff")}
+        loading2={false}
+        disabled2={false}
+        Icon2={Nut}
       />
       <div className="container mx-auto h-full rounded-2xl shadow-2xl overflow-hidden bg-white flex flex-col lg:flex-row">
         <div

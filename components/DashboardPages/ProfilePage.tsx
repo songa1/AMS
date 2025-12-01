@@ -15,7 +15,7 @@ import ConfirmModal from "../parts/models/confirmModal";
 import { Member } from "@/types/user";
 import { toastError, toastSuccess } from "@/lib/toast";
 import { PageHeader } from "../parts/PageHeader";
-import { EditIcon } from "lucide-react";
+import { EditIcon, Nut } from "lucide-react";
 import { getUser } from "@/helpers/auth";
 import { useRouter, useSearchParams } from "next/navigation";
 import { RoleChip } from "../ui/role-chip";
@@ -116,6 +116,12 @@ function ProfilePage() {
         onAction={() => router.push(`/dashboard/profile/update`)}
         loading={false}
         disabled={userId ? true : false}
+        second={false}
+        actionTitle2=""
+        onAction2={() => console.log("ff")}
+        loading2={false}
+        disabled2={false}
+        Icon2={Nut}
       />
 
       <div className="bg-white rounded-xl shadow-2xl overflow-hidden p-6 sm:p-8">
@@ -158,7 +164,7 @@ function ProfilePage() {
           <div className="border-b border-gray-200">
             <ul className="flex flex-wrap -mb-px text-sm font-medium text-center text-gray-500">
               {tabs.map((tab, index) => (
-                <li key={index+1} className="mr-2">
+                <li key={index + 1} className="mr-2">
                   <button
                     type="button"
                     onClick={() => handleTabClick(index)}

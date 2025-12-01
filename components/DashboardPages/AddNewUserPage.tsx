@@ -7,7 +7,7 @@ import AddEmployedInfo from "../parts/AddEmployedInfo";
 import { MdCheck } from "react-icons/md";
 import ImportUsersModal from "../parts/models/ImportMembersModal";
 import { PageHeader } from "../parts/PageHeader";
-import { Upload } from "lucide-react";
+import { Upload, User } from "lucide-react";
 import {
   Country,
   Organization,
@@ -181,6 +181,12 @@ function NewProfile() {
         onAction={() => setIsImportModalOpen(true)}
         loading={false}
         disabled={false}
+        second={false}
+        actionTitle2=""
+        onAction2={() => console.log("ff")}
+        loading2={false}
+        disabled2={false}
+        Icon2={User}
       />
       <div className="space-y-8">
         {SECTIONS.map((section) => (

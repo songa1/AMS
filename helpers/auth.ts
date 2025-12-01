@@ -5,12 +5,6 @@ export enum AUTH_STORED_DATA {
   USER = "auth_user_data",
 }
 
-export const isAuthenticated = () => {
-  return (
-    getCookie(AUTH_STORED_DATA?.TOKEN) && getCookie(AUTH_STORED_DATA?.USER)
-  );
-};
-
 export const getUser = () => {
   const user =
     typeof window !== "undefined"
@@ -25,3 +19,9 @@ export const getCookieUser = () => {
 };
 
 export const token = () => getCookie(AUTH_STORED_DATA?.TOKEN);
+
+export const isAuthenticated = () => {
+  const user = getUser();
+  const token = getCookie(AUTH_STORED_DATA?.TOKEN);
+  return user && token ? true : false;
+};

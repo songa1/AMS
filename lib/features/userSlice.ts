@@ -51,13 +51,6 @@ export const usersSlices = createApi({
         body: credentials,
       }),
     }),
-    bulkAddUsers: builder.mutation({
-      query: (credentials) => ({
-        url: "users/bulk",
-        method: "POST",
-        body: credentials,
-      }),
-    }),
     uploadPicture: builder.mutation({
       query: (credentials) => ({
         url: "upload/image",
@@ -79,12 +72,6 @@ export const usersSlices = createApi({
         body: data,
       }),
     }),
-    exportUsers: builder.mutation({
-      query: () => ({
-        url: "users/export",
-        method: "POST",
-      }),
-    }),
   }),
 });
 
@@ -93,11 +80,9 @@ export const {
   useGetOneUserQuery,
   useDeleteUserMutation,
   useUpdatedUserMutation,
-  useBulkAddUsersMutation,
   useUploadPictureMutation,
   useChangeMutation,
   useImportUsersMutation,
-  useExportUsersMutation,
   useCreateUserProfileMutation,
   useInviteUserMutation,
   useAssociateOrganizationMutation

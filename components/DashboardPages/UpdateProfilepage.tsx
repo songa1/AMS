@@ -26,7 +26,7 @@ import { getUser } from "@/helpers/auth";
 import { MdCloudUpload, MdClose, MdEdit } from "react-icons/md";
 import { Member } from "@/types/user";
 import { PageHeader } from "../parts/PageHeader";
-import { Save } from "lucide-react";
+import { Nut, Save } from "lucide-react";
 import { TextAreaField } from "../ui/textarea";
 
 const getInitialValues = (usr: Member | undefined) => ({
@@ -39,33 +39,33 @@ const getInitialValues = (usr: Member | undefined) => ({
   twitter: usr?.twitter || "",
   facebook: usr?.facebook || "",
   bio: usr?.bio || "",
-  gender: usr?.gender || "",
+  gender: usr?.gender?.id || "",
   phoneNumber: usr?.phoneNumber || "",
-  districtName: usr?.residentDistrict || "",
-  sectorId: usr?.residentSector || "",
-  residentCountryId: usr?.residentCountry || "",
-  state: usr?.state || "",
+  districtName: usr?.residentDistrict?.id || "",
+  sectorId: usr?.residentSector?.id || "",
+  residentCountryId: usr?.residentCountry?.id || "",
+  state: usr?.state?.id || "",
   whatsAppNumber: usr?.whatsappNumber || "",
   nearlestLandmark: usr?.nearestLandmark || "",
-  track: usr?.track || "",
-  cohortId: usr?.cohort || "",
+  track: usr?.track?.id || "",
+  cohortId: usr?.cohort?.id || "",
   initiativeName: usr?.organizationFounded?.name || "",
-  mainSector: usr?.organizationFounded?.workingSector || "",
+  mainSector: usr?.organizationFounded?.workingSector?.id || "",
   foundedPosition: usr?.positionInFounded || "",
-  foundedDistrictName: usr?.organizationFounded?.district || "",
-  foundedSectorId: usr?.organizationFounded?.sector || "",
+  foundedDistrictName: usr?.organizationFounded?.district?.id || "",
+  foundedSectorId: usr?.organizationFounded?.sector?.id || "",
   foundedWebsite: usr?.organizationFounded?.website || "",
-  foundedCountry: usr?.organizationFounded?.country || "",
-  foundedState: usr?.organizationFounded?.state || "",
+  foundedCountry: usr?.organizationFounded?.country?.id || "",
+  foundedState: usr?.organizationFounded?.state?.id || "",
   companyName: usr?.organizationEmployed?.name || "",
-  companySector: usr?.organizationEmployed?.workingSector || "",
+  companySector: usr?.organizationEmployed?.workingSector?.id || "",
   companyPosition: usr?.positionInEmployed || "",
   companyWebsite: usr?.organizationEmployed?.website || "",
-  companyDistrictName: usr?.organizationEmployed?.district || "",
-  companySectorId: usr?.organizationEmployed?.sector || "",
-  companyState: usr?.organizationEmployed?.state || "",
-  companyCountry: usr?.organizationEmployed?.country || "",
-  profileImageId: usr?.profileImage || "",
+  companyDistrictName: usr?.organizationEmployed?.district?.id || "",
+  companySectorId: usr?.organizationEmployed?.sector?.id || "",
+  companyState: usr?.organizationEmployed?.state?.id || "",
+  companyCountry: usr?.organizationEmployed?.country?.id || "",
+  profileImageId: usr?.profileImage?.id || "",
 });
 
 function UpdateProfilePage() {
@@ -157,11 +157,11 @@ function UpdateProfilePage() {
       if (usr?.organizationFounded?.country?.id)
         setFoundedCountry(usr.organizationFounded.country.id);
 
-      if (usr.profileImage?.link && !imagePreview) {
+      if (usr.profileImage?.id && !imagePreview) {
         setImagePreview(usr.profileImage.link);
         setValues((prev: any) => ({
           ...prev,
-          profileImageId: usr.profileImage,
+          profileImageId: usr.profileImage?.id,
         }));
       }
     }
@@ -368,36 +368,49 @@ function UpdateProfilePage() {
           bio: formValues.bio,
           phoneNumber: formValues.phoneNumber,
           whatsappNumber: formValues.whatsAppNumber,
-          genderName: formValues.gender?.name,
+          genderName: formValues.gender,
           nearestLandmark: formValues.nearlestLandmark,
-          cohortId: formValues.cohortId?.id,
-          trackId: formValues.track?.id,
-          residentDistrictId: formValues.districtName?.id,
-          residentSectorId: formValues.sectorId?.id,
-          residentCountryId: formValues.residentCountryId?.id,
-          state: formValues.state?.id,
+          cohortId: formValues.cohortId,
+          trackId: formValues.track,
+          residentDistrictId: formValues.districtName,
+          residentSectorId: formValues.sectorId,
+          residentCountryId: formValues.residentCountryId,
+          state: formValues.state,
           positionInFounded: formValues.foundedPosition,
           positionInEmployed: formValues.companyPosition,
-          profileImageId: formValues.profileImageId?.id,
+          profileImageId: formValues.profileImageId,
         },
         organizationFounded: {
-          id: usr?.organizationFounded?.id,
-          name: formValues.initiativeName,
-          workingSector: formValues.mainSector?.id,
-          countryId: formValues.foundedCountry?.id,
-          state: formValues.foundedState?.id,
-          districtId: formValues.foundedDistrictName?.id,
-          sectorId: formValues.foundedSectorId?.id,
+          id: usr?.organizationFounded?.id ?? undefined,
+          name:
+            formValues.initiativeName ??
+            usr?.organizationFounded?.name ??
+            undefined,
+          workingSectorId:
+            formValues.mainSector ??
+            usr?.organizationFounded?.workingSector?.id ??
+            undefined,
+          countryId: formValues.foundedCountry,
+          stateId:
+            formValues.foundedState ??
+            usr?.organizationFounded?.state?.id ??
+            undefined,
+          districtId: formValues.foundedDistrictName,
+          sectorId: formValues.foundedSectorId,
           website: formValues.foundedWebsite,
         },
         organizationEmployed: {
-          id: usr?.organizationEmployed?.id,
+          id: usr?.organizationEmployed?.id ?? undefined,
           name: formValues.companyName,
-          workingSector: formValues.companySector?.id,
-          countryId: formValues.companyCountry?.id,
-          state: formValues.companyState?.id,
-          districtId: formValues.companyDistrictName?.id,
-          sectorId: formValues.companySectorId?.id,
+          workingSectorId:
+            formValues.companySector ??
+            usr?.organizationEmployed?.workingSector?.id ??
+            undefined,
+          countryId: formValues.companyCountry,
+          stateId:
+            formValues.companyState ?? usr?.organizationEmployed?.state?.id,
+          districtId: formValues.companyDistrictName,
+          sectorId: formValues.companySectorId,
           website: formValues.companyWebsite,
         },
       }).unwrap();
@@ -413,10 +426,6 @@ function UpdateProfilePage() {
         }
         setSuccess("User updated successfully!");
         refetch();
-
-        // Redirect logic
-        // globalThis.location.href = id ? `/dashboard/members/${id}` : "/dashboard/profile";
-        // NOTE: Commenting out direct navigation to keep the component renderable and testable.
       }
     } catch (apiError: any) {
       console.error(apiError);
@@ -456,7 +465,10 @@ function UpdateProfilePage() {
 
         if (data?.image) {
           setSuccess("Image uploaded successfully!");
-          setValues((prev: any) => ({ ...prev, profileImageId: data.image }));
+          setValues((prev: any) => ({
+            ...prev,
+            profileImageId: data?.image?.id,
+          }));
           setUploadSuccess(true);
           refetch();
         }
@@ -556,6 +568,12 @@ function UpdateProfilePage() {
         onAction={handleSubmit}
         loading={isLoading}
         disabled={false}
+        second={false}
+        actionTitle2=""
+        onAction2={() => console.log("ff")}
+        loading2={false}
+        disabled2={false}
+        Icon2={Nut}
       />
       {(error || success) && (
         <div
@@ -661,10 +679,7 @@ function UpdateProfilePage() {
               ))}
             </ul>
           </div>
-          <div className="mt-8">
-            {/* The content rendering relies on the external components (Personal, Founded, Employment) */}
-            {tabs[activeTab].content}
-          </div>
+          <div className="mt-8">{tabs[activeTab].content}</div>
         </div>
       </div>
     </div>

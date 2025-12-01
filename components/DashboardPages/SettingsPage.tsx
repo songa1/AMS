@@ -12,6 +12,7 @@ import {
   Trash,
   LogOut,
   Settings as SettingsIcon,
+  Nut,
 } from "lucide-react";
 import { ToggleSwitch } from "../ui/toggle-switch";
 import { TailwindInput } from "../ui/tail-input";
@@ -268,6 +269,12 @@ const SettingsPage = () => {
         onAction={() => {}}
         loading={false}
         disabled={false}
+        second={false}
+        actionTitle2=""
+        onAction2={() => console.log("ff")}
+        loading2={false}
+        disabled2={false}
+        Icon2={Nut}
       />
       <div className="container mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden">
         <nav className="bg-white border-b border-gray-200 p-4 px-6 sm:px-10">

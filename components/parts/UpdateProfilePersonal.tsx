@@ -131,15 +131,15 @@ export const Personal = ({
         value={values.residentCountryId}
         onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
           handleSelectChange(e);
-          const selectedCountry = JSON.parse(e.target.value);
-          setCountry(selectedCountry?.id);
+          const selectedCountry = e.target.value;
+          setCountry(selectedCountry);
         }}
         options={countries}
         placeholder="Select a country"
         disabled={auth}
         error={errors.residentCountryId}
       />
-      {values.residentCountryId && values.residentCountryId.id !== "RW" && (
+      {values.residentCountryId && values.residentCountryId !== "RW" && (
         <TailwindSelect
           label="State"
           id="state"
@@ -151,15 +151,15 @@ export const Personal = ({
           error={errors.state}
         />
       )}
-      {values.residentCountryId && values.residentCountryId.id === "RW" && (
+      {values.residentCountryId && values.residentCountryId === "RW" && (
         <TailwindSelect
           label="District"
           id="districtName"
           value={values.districtName}
           onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
             handleSelectChange(e);
-            const selectedDistrict = JSON.parse(e.target.value);
-            setSelectedDistrict(selectedDistrict.name);
+            const selectedDistrict = e.target.value;
+            setSelectedDistrict(selectedDistrict);
           }}
           options={districts}
           placeholder="Select a district"
@@ -167,7 +167,7 @@ export const Personal = ({
           error={errors.districtName}
         />
       )}
-      {values.residentCountryId && values.residentCountryId.id === "RW" && (
+      {values.residentCountryId && values.residentCountryId === "RW" && (
         <TailwindSelect
           label="Sector"
           id="sectorId"
