@@ -23,6 +23,8 @@ import InviteUserModal from "../parts/models/InviteUser";
 import ConfirmModal from "../parts/models/confirmModal";
 import { toastError, toastSuccess } from "@/lib/toast";
 import { getUser } from "@/helpers/auth";
+import * as XLSX from "xlsx";
+import { BiExport } from "react-icons/bi";
 
 const MembersPage = () => {
   const authUser: Member = getUser();
@@ -37,6 +39,7 @@ const MembersPage = () => {
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState("");
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const [exporting, setExporting] = useState(false);
   const [members, setMembers] = useState<Member[]>([]);
   const MEMBERS_PER_PAGE = 10;
   const isAdmin = authUser?.role?.name === "ADMIN";
@@ -133,6 +136,61 @@ const MembersPage = () => {
     }
   };
 
+  const exportToExcel = () => {
+    setExporting(true);
+    const exportData = filteredMembers.map((member: Member, index: number) => ({
+      ID: index + 1,
+      FirstName: member.firstName,
+      MiddleName: member.middleName || "",
+      LastName: member.lastName || "",
+      Email: member.email,
+      Gender: member?.gender?.name ?? "N/A",
+      Bio: member?.bio ?? "",
+      "Phone Number": member?.phoneNumber ?? "N/A",
+      "WhatsApp Number": member?.whatsappNumber ?? "N/A",
+      "Resident Country": member?.residentCountry?.name ?? "N/A",
+      "State/Province (If not in Rwanda)": member?.state?.name ?? "N/A",
+      "Resident District (If In Rwanda)":
+        member?.residentDistrict?.name ?? "N/A",
+      "Resident Sector (If In Rwanda)": member?.residentSector?.name ?? "N/A",
+      "Nearest Landmark": member?.nearestLandmark ?? "N/A",
+      Cohort: member?.cohort?.name ?? "N/A",
+      Track: member?.track?.name ?? "N/A",
+      "Organization/Initiative you started (If available)":
+        member?.organizationFounded?.name ?? "N/A",
+      "Your Position in Initiative you Started":
+        member?.positionInFounded ?? "",
+      "Organization that employ you (If you are currently employed)":
+        member?.organizationEmployed?.name ?? "N/A",
+      "Your position in your employment": member?.positionInEmployed ?? "",
+      "Profile Picture Link": member?.profileImage?.link,
+      "Created At": member?.createdAt,
+      "LinkedIn Account": member?.linkedin ?? "",
+      "Facebook Account": member?.facebook ?? "",
+      "Instagram Account": member?.instagram ?? "",
+      "X Account": member?.twitter ?? "",
+    }));
+
+    if (exportData.length === 0) {
+      toastError("No users to export with selected filters.");
+      setExporting(false);
+      return;
+    }
+
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Members");
+
+    XLSX.writeFile(
+      workbook,
+      `members-export-${new Date().toISOString().slice(0, 10)}.xlsx`
+    );
+
+    setExporting(false);
+    toastSuccess("Excel file exported successfully!");
+  };
+
   return (
     <div className="container mx-auto p-4 md:p-8">
       <InviteUserModal
@@ -160,6 +218,12 @@ const MembersPage = () => {
         onAction={() => setIsModalOpen(true)}
         loading={false}
         disabled={!isAdmin}
+        second={true}
+        actionTitle2="Export Members"
+        onAction2={exportToExcel}
+        loading2={exporting}
+        disabled2={false}
+        Icon2={BiExport}
       />
 
       <div className="bg-white p-5 rounded-xl shadow-lg mb-6">

@@ -45,7 +45,7 @@ export const Employment = ({ user }: { user: Member | null }) => (
         </div>
       )}
     {user?.organizationEmployed &&
-      user?.organizationEmployed?.country?.name === "RW" && (
+      user?.organizationEmployed?.country?.id === "RW" && (
         <div className="flex flex-col">
           <label className="text-sm font-semibold text-gray-500 mb-1">
             Sector:
@@ -54,7 +54,7 @@ export const Employment = ({ user }: { user: Member | null }) => (
         </div>
       )}
     {user?.organizationEmployed &&
-      user?.organizationEmployed?.country?.name !== "RW" && (
+      user?.organizationEmployed?.country?.id !== "RW" && (
         <div className="flex flex-col">
           <label className="text-sm font-semibold text-gray-500 mb-1">
             State:

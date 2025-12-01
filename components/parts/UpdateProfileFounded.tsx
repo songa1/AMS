@@ -61,15 +61,15 @@ export const Founded = ({
       value={values.foundedCountry}
       onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
         handleSelectChange(e);
-        const selectedCountry = JSON.parse(e.target.value);
-        setCountry(selectedCountry?.id);
+        const selectedCountry = e.target.value;
+        setCountry(selectedCountry);
       }}
       options={countries}
       placeholder="Select a country"
       disabled={auth}
       error={errors.foundedCountry}
     />
-    {values.foundedCountry && values.foundedCountry.id !== "RW" && (
+    {values.foundedCountry && values.foundedCountry !== "RW" && (
       <TailwindSelect
         label="State"
         id="foundedState"
@@ -81,15 +81,15 @@ export const Founded = ({
         error={errors.foundedState}
       />
     )}
-    {values.foundedCountry && values.foundedCountry.id == "RW" && (
+    {values.foundedCountry && values.foundedCountry == "RW" && (
       <TailwindSelect
         label="District"
         id="foundedDistrictName"
         value={values.foundedDistrictName}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
           handleSelectChange(e);
-          const selectedDistrict = JSON.parse(e.target.value);
-          setSelectedDistrict(selectedDistrict.name);
+          const selectedDistrict = e.target.value;
+          setSelectedDistrict(selectedDistrict);
         }}
         options={districts}
         placeholder="Select a district"
@@ -97,7 +97,7 @@ export const Founded = ({
         error={errors.foundedDistrictName}
       />
     )}
-    {values.foundedCountry && values.foundedCountry.id == "RW" && (
+    {values.foundedCountry && values.foundedCountry == "RW" && (
       <TailwindSelect
         label="Sector"
         id="foundedSectorId"

@@ -12,6 +12,7 @@ import {
   X,
   AlertTriangle,
   Settings,
+  Nut,
 } from "lucide-react";
 import { getUser } from "@/helpers/auth";
 import { useNotificationsQuery } from "@/lib/features/notificationSlice";
@@ -130,6 +131,12 @@ function Notifications() {
           Icon={Settings}
           loading={false}
           disabled={false}
+          second={false}
+          actionTitle2=""
+          onAction2={() => console.log("ff")}
+          loading2={false}
+          disabled2={false}
+          Icon2={Nut}
         />
 
         <div className="flex flex-col lg:flex-row bg-white rounded-xl shadow-2xl overflow-hidden min-h-[70vh]">

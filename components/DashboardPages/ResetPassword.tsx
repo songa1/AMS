@@ -6,7 +6,7 @@ import { useChangePasswordMutation } from "@/lib/features/authSlice";
 import { AUTH_STORED_DATA, getUser } from "@/helpers/auth";
 import { deleteCookie } from "cookies-next";
 import { MdLockOpen, MdDone, MdError, MdVpnKey } from "react-icons/md"; // Added icons
-import { Save } from "lucide-react";
+import { Nut, Save } from "lucide-react";
 import { PageHeader } from "../parts/PageHeader";
 import { logout } from "@/helpers/logout";
 
@@ -179,6 +179,12 @@ const ChangePasswordPage = () => {
         onAction={handleSubmit}
         loading={loading}
         disabled={false}
+        second={false}
+        actionTitle2=""
+        onAction2={() => console.log("ff")}
+        loading2={false}
+        disabled2={false}
+        Icon2={Nut}
       />
       <div className="w-full max-w-lg flex justify-center items-center mx-auto my-3">
         <form onSubmit={handleSubmit} className="w-full flex flex-col gap-6">
