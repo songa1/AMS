@@ -1,6 +1,6 @@
 // Layout.tsx
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Copyright from "../parts/Copyright";
 import { MdMenu } from "react-icons/md";
 import Sidebar from "../parts/DashboardSidebar";
@@ -18,7 +18,7 @@ function Layout({ children }: { children: React.ReactNode }) {
   const [member, setMember] = React.useState<Member>();
 
   React.useEffect(() => {
-    setLoading(true)
+    setLoading(true);
     setMember(getUser());
     setLoading(false);
   }, []);
@@ -29,8 +29,8 @@ function Layout({ children }: { children: React.ReactNode }) {
 
   const contentMargin = isSidebarOpen ? "ml-60" : "ml-20";
 
-  if(loading){
-    return <Loading/>
+  if (loading) {
+    return <Loading />;
   }
 
   return (

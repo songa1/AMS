@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import StoreProvider from "./StoreProvider";
 import AuthProvider from "@/helpers/provider";
+import AccessibilityLoader from "@/components/Other/AccessibilityLoader";
 
 export const metadata: Metadata = {
   title: "YALI Alumni Management System",
@@ -17,7 +18,10 @@ export default function RootLayout({
     <html>
       <body>
         <AuthProvider>
-          <StoreProvider>{children}</StoreProvider>
+          <StoreProvider>
+            <AccessibilityLoader />
+            {children}
+          </StoreProvider>
         </AuthProvider>
       </body>
     </html>

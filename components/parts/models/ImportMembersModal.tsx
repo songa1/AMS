@@ -42,18 +42,15 @@ const ImportUsersModal: React.FC<ImportUsersModalProps> = ({ closeModal }) => {
       const sheetName = workbook.SheetNames[0];
       const worksheet = workbook.Sheets[sheetName];
 
-      // Convert sheet data to array of objects
       const json = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
       if (json.length > 1) {
-        // Assuming the first row is the header
         const headers = json[0] as string[];
         const users = json.slice(1).map((row: any) => {
           const user: any = {};
           headers.forEach((header, index) => {
             user[header] = row[index];
           });
-          // **NOTE**: Implement your actual validation and data mapping here
           return user;
         });
         setPreviewData(users);
